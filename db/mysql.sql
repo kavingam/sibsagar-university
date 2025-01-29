@@ -1,0 +1,19 @@
+-- Database Name 
+sibsagar_university
+-- student table
+student
+CREATE TABLE student (
+    id INT AUTO_INCREMENT PRIMARY KEY,         
+    roll_no VARCHAR(50) NOT NULL UNIQUE,  -- Unique constraint
+    name VARCHAR(255) NOT NULL,                
+    department INT NOT NULL,                   
+    semester INT NOT NULL,                     
+    course INT NOT NULL                        
+);
+CREATE TABLE student (
+    roll_no VARCHAR(50) PRIMARY KEY,  -- roll_no is now the primary key
+    name VARCHAR(255) NOT NULL,                
+    department INT NOT NULL,                   
+    semester INT NOT NULL,                     
+    course INT NOT NULL                        
+);
