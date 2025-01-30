@@ -1,7 +1,17 @@
-<?php include 'includes/header.php'; ?>
+<?php include 'includes/header.php'; 
+try {
+    $sql = "SELECT * FROM departments";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $departments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo "Error: " . $e->getMessage();
+}
+?>
+
 <div class="container my-4">
     <form id="uploadForm" enctype="multipart/form-data">
-        <div class="row no-gutters">
+        <div class="row no-gutters d-flex justify-content-center">
             <div class="col-md-12 col-12 mb-3">
                 <h4 class="text-center text-primary semi-bold text-uppercase">Import Student CSV File</h4>
             </div>
@@ -9,11 +19,22 @@
                 <label for="departmentSelect" class="form-label">Department:</label>
                 <select id="departmentSelect" name="department" class="form-select" required>
                     <option value="0" disabled selected>Select Department</option>
-                    <option value="1">Computer Science</option>
+                    <!-- <option value="1">Computer Science</option>
                     <option value="2">Assamese</option>
                     <option value="3">English</option>
-                    <option value="4">Electronics</option>
-                    
+                    <option value="4">Electronics</option> -->
+                    <?php
+                        // Check if departments were found and display them as options
+                        $departments = array_reverse($departments);
+                        if ($departments) {
+                            foreach ($departments as $department) {
+                                // Output each department as an option
+                                echo "<option value='" . $department['department_id'] . "'>" . $department['department_name'] . "</option>";
+                            }
+                        } else {
+                            echo "<option value='0'>No departments available</option>";
+                        } 
+                    ?>
                 </select>
             </div>
             <div class="col-md-2 col-12 mb-3">

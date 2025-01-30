@@ -17,3 +17,12 @@ CREATE TABLE student (
     semester INT NOT NULL,                     
     course INT NOT NULL                        
 );
+
+-- CREATE DATABASE department_db;
+
+-- USE department_db;
+
+CREATE TABLE departments (
+    department_id VARCHAR(50) PRIMARY KEY,  -- department_id is the primary key
+    department_name VARCHAR(100) NOT NULL   -- department_name is required
+);
