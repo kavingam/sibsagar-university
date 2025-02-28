@@ -1,0 +1,657 @@
+
+.blog-logo {
+    font-weight: 800;
+    color: lightgreen;
+    margin-right: 8px;
+}
+.wrapper-menu {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: transform 330ms ease-out;
+  }
+  
+  .wrapper-menu.open {
+    transform: rotate(-45deg);  
+  }
+  
+  .line-menu {
+    background-color: #fff;
+    border-radius: 5px;
+    width: 100%;
+    height: 6px;
+  }
+  
+  .line-menu.half {
+    width: 50%;
+  }
+  
+  .line-menu.start {
+    transition: transform 330ms cubic-bezier(0.54, -0.81, 0.57, 0.57);
+    transform-origin: right;
+  }
+  
+  .open .line-menu.start {
+    transform: rotate(-90deg) translateX(3px);
+  }
+  
+  .line-menu.end {
+    align-self: flex-end;
+    transition: transform 330ms cubic-bezier(0.54, -0.81, 0.57, 0.57);
+    transform-origin: left;
+  }
+  
+  .open .line-menu.end {
+    transform: rotate(-90deg) translateX(-3px);
+  }
+  
+  
+/* header */
+.ts-5 {
+    color: #443C68;
+    /* background-color: #18122B; */
+}
+/* Navbar for color */
+.logo-content {
+    background: #443C68;
+    color: #fff;
+}
+.nav-content {
+    background: #635985;
+    color: #fff;
+}
+/* Custom button styling */
+.btn-light-purple {
+    background-color: #443C68;
+    color: white; /* White text color */
+    border: none; /* Remove border */
+    border-radius: 50px; /* 50% radius for circular/pill shape */
+    padding: 10px 20px; /* Adjust padding for size */
+    font-size: 14px; /* Font size */
+    transition: all 0.3s ease; /* Smooth hover effect */    
+}
+/* Hover effect */
+.btn-light-purple:hover {
+    background-color: #635985;
+    color: white; /* Keep text white */
+    transform: scale(1.05); /* Slightly enlarge button */
+}
+
+/* Active effect */
+.btn-light-purple:active {
+    background-color: #443C68;
+    transform: scale(0.95); /* Slightly shrink on click */
+}
+.btn-purple {
+    background-color: #18122B;
+    color: white; /* White text color */
+    border: none; /* Remove border */
+    border-radius: 50px; /* 50% radius for circular/pill shape */
+    padding: 10px 20px; /* Adjust padding for size */
+    font-size: 14px; /* Font size */
+    transition: all 0.3s ease; /* Smooth hover effect */
+}
+
+/* Hover effect */
+.btn-purple:hover {
+    background-color: #393053;
+    color: white; /* Keep text white */
+    transform: scale(1.05); /* Slightly enlarge button */
+}
+
+/* Active effect */
+.btn-purple:active {
+    background-color: #393053;
+    transform: scale(0.95); /* Slightly shrink on click */
+}
+
+/* Style for the container div */
+.contact-info {
+    display: flex;
+    align-items: center;
+    /* gap: 15px; */
+    /* padding: 10px; */
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+/* Style for individual contact items */
+.contact-item {
+    display: flex;
+    align-items: center;
+    /* padding: 5px 15px; */
+    /* border-radius: 25px; */
+    /* background-color: #f0f0f0; */
+    transition: background-color 0.3s ease;
+    margin-bottom: 10px; /* Add space between items on smaller screens */
+}
+
+/* Hover effect for contact items */
+.contact-item:hover {
+    /* background-color: #d1ffd1; */
+}
+
+/* Style for the icons */
+.contact-item i {
+    font-size: 14px;
+    margin-right: 10px;
+    color: #4CAF50;
+}
+
+/* Style for the anchor links */
+.contact-item a {
+    color: #333;
+    text-decoration: none;
+    /* font-weight: bold; */
+    transition: color 0.3s ease;
+}
+
+/* Change text color on hover */
+.contact-item a:hover {
+    color: #4CAF50;
+}
+
+/* Style for the container of icons */
+.social-icons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px; /* Space between icons */
+    /* padding: 15px; */
+}
+
+/* Style for the icons */
+.social-icons i {
+    font-size: 14px; /* Larger icon size */
+    transition: color 0.3s ease; /* Smooth color transition */
+}
+/* Style for A tags */
+.social-icons a {
+    color: #18122B;/* Default text color */
+    text-decoration: none; /* Remove underline */
+}
+
+/* Twitter brand color */
+.social-icons .bi-twitter {
+    color: #1DA1F2; /* Twitter blue */
+}
+
+/* Facebook brand color */
+.social-icons .bi-facebook {
+    color: #1877F2; /* Facebook blue */
+}
+
+/* Pinterest brand color */
+.social-icons .bi-pinterest {
+    color: #E60023; /* Pinterest red */
+}
+
+/* Hover effect for icons */
+.social-icons i:hover {
+    opacity: 0.8; /* Make icons slightly transparent on hover */
+}
+
+
+
+.cs-dropdown-link {
+    display: block;
+    margin-bottom: 5px;
+    padding: 0;
+    text-align: left;
+    color: #FFFFFF;
+    font-size: 15px;
+    font-weight: normal;
+    text-transform: capitalize;
+    transition: .3s;
+    text-decoration: none;
+}
+
+.cs-dropdown-link::before {
+    /* position: relative; */
+    /* content: "\f105"; */
+    /* font-family: "Font Awesome 5 Free"; */
+    font-weight: 900;
+    margin-right: 10px;
+    text-decoration: none;
+}
+
+
+.cs-dropdown-link:hover {
+    letter-spacing: 1px;
+    box-shadow: none;
+    text-decoration: none;
+}
+
+
+.cs-dropdown:hover .cs-dropdown-menu {
+    display: block;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Dropdown Items */
+.cs-dropdown-item {
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    color: #ffffff;
+    padding: 10px 15px;
+    text-decoration: none;
+    display: block;
+    background-color: #70b5ff;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.cs-dropdown-item:hover {
+    background: #f8f9fa;
+    color: #70b5ff;
+}
+
+
+/* Responsive Design for tablets */
+
+/* footers */
+.footer {
+    background: #635985;
+    color: #fff;
+}
+/* Remove default bullets */
+.custom-list {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+/* Add arrows */
+.custom-list li {
+    position: relative;
+    padding-left: 20px;
+}
+
+.custom-list li::before {
+    content: "→"; /* You can use any arrow symbol here */
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-size: 16px; /* Adjust size as needed */
+}
+.custom-list li a {
+    color: #fff;
+    font-size: 16px;
+    font-family: system-ui;
+    font-weight: 100;
+}
+.custom-list li a:hover {
+    color: #18122B;
+    transform: scale(1.05); /* Slightly enlarge button */
+}
+
+
+/* Style for the list container */
+.contact-info-list {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 15px; /* Space between items */
+    padding: 15px;
+    list-style: none; /* Remove default list styling (dots) */
+    margin: 0; /* Remove default margin of ul */
+}
+
+/* Style for each list item */
+.contact-info-list li {
+    display: inline-flex;
+    align-items: center;
+    font-size: 14px;
+    gap: 10px; /* Space between icon and text */
+}
+
+/* Style for the icons */
+.contact-info-list i {
+    font-size: 14px; /* Icon size */
+    color: #18122B;
+}
+
+/* Specific color for the geo icon */
+.bi-geo-alt-fill {
+    color: #28a745; /* Green for location */
+}
+
+/* Specific color for the envelope icon */
+.bi-envelope-paper-heart-fill {
+    color: #dc3545; /* Red for email */
+}
+
+/* Hover effect for items */
+.contact-info-list li:hover {
+    opacity: 0.8; /* Slightly transparent on hover */
+}
+
+.icon-list {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px; /* Space between icons */
+    padding: 5px;
+    list-style: none; /* Remove default list styling (dots) */
+    margin: 0; /* Remove default margin of ul */
+}
+
+/* Style for each list item */
+.icon-list li {
+    display: inline-block;
+}
+
+/* Style for the icons */
+.icon-list i {
+    font-size: 2rem; /* Larger icon size */
+    transition: opacity 0.3s ease; /* Smooth opacity transition */
+}
+
+/* Brand colors for each social media icon */
+.bi-twitter-x {
+    /* color: #1DA1F2;  */
+    /* Twitter blue */
+    color: #000000;
+}
+
+.bi-discord {
+    color: #7289DA; /* Discord blue */
+}
+
+.bi-telegram {
+    color: #0088CC; /* Telegram blue */
+}
+
+.bi-facebook {
+    color: #1877F2; /* Facebook blue */
+}
+
+.bi-youtube {
+    color: #FF0000; /* YouTube red */
+}
+
+/* Hover effect for icons */
+.icon-list i:hover {
+    opacity: 0.7; /* Slightly transparent on hover */
+}
+
+.app-download-list {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px; /* Space between items */
+    padding: 5px;
+    list-style: none; /* Remove default list styling (dots) */
+    margin: 0; /* Remove default margin of ul */
+}
+
+/* Style for each list item */
+.app-download-list li {
+    display: inline-flex;
+    align-items: center;
+    font-size: 14px;
+    gap: 10px; /* Space between icon and text */
+    font-weight: bold;
+    /* color: #18122B; */
+    color: #fff;
+    font-stretch: inherit;
+    font-family: unset;
+}
+
+/* Style for the icons */
+.app-download-list i {
+    font-size: 2rem; /* Larger icon size */
+}
+
+/* Icon colors */
+.bi-google-play {
+    color: #34a853; /* Google Play green */
+}
+
+.bi-apple {
+    color: #333; /* Apple black */
+}
+
+/* Hover effect for items */
+.app-download-list li:hover {
+    opacity: 0.8; /* Slightly transparent on hover */
+}
+/* General styling for the form */
+
+form#subscribeForm {
+    background-color: #443C68;  /* Dark Purple Background */
+    padding: 15px;
+    max-width: auto;
+    /* margin: 50px auto; */
+    border-radius: 8px;
+    /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); */
+}
+
+/* Fieldset styling */
+form#subscribeForm fieldset {
+    border: none;
+    padding: 0;
+}
+
+legend {
+    font-size: 12px;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 15px;
+}
+
+/* Input fields */
+input.form-control {
+    width: 100%;
+    padding: 5px;
+    margin: 10px 0;
+    border: 2px solid #393053;  /* Dark Purple Border */
+    border-radius: 5px;
+    background-color: #fff;
+    color: #333;
+    font-size: 12px;
+    transition: all 0.3s ease-in-out;
+}
+
+input.form-control:focus {
+    border-color: #443C68;  /* Focus Border Color */
+    outline: none;
+    box-shadow: 0 0 8px rgba(68, 60, 104, 0.3);
+}
+*/
+/* Submit button */
+button.btn-purple {
+    width: 50%;
+    /* padding: 10px; */
+    background-color: #393053;  /* Dark Purple Button */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.3s ease-in-out;
+}
+
+button.btn-purple:hover {
+    background-color: #443C68;  /* Darker Purple on Hover */
+    box-shadow: 0 0 8px rgba(68, 60, 104, 0.3);
+}
+
+button.btn-purple i {
+    margin-right: 10px;
+}
+/* contact pages */
+.contact-form-wrapper {
+    /* background: linear-gradient(145deg, #393053, #443C68); */
+    margin-top: 100px;
+    margin-bottom: 100px;
+    background-color: #635985;
+    padding: 30px;
+    border-radius: 10px;
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
+    width: auto;
+    max-width: 100%;
+    color: #fff;
+}
+
+.contact-form-group {
+    margin-bottom: 20px;
+}
+
+.contact-form-label {
+    font-size: 14px;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.contact-form-control {
+    width: 100%;
+    /* padding: 5px 10px; */
+    border: none;
+    border-bottom: 1px solid #fff;
+    background-color: transparent;
+    color: #fff;
+    font-size: 16px;
+    /* transition: border 0.3s ease; */
+}
+
+.contact-form-control:focus {
+    border-bottom: 1px solid #fff;
+    outline: none;
+    color: #fff;
+}
+
+textarea.contact-form-control {
+    border: 1px solid #fff;
+    resize: vertical;
+    min-height: 120px;
+}
+
+.contact-form-btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    /* border-radius: 8px; */
+    background-color: #443C68;/* Softer orange color */
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.contact-form-btn:hover {
+    background-color: #18122B; /* Darker shade on hover */
+}
+
+.contact-form-orange-button i {
+    margin-right: 10px;
+}
+/* Card Styling */
+.custom-card {
+    max-width: 260px;
+    margin: 20px auto;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.custom-card img {
+    width: 260px;
+    height: 200px;
+    object-fit: cover;
+}
+
+/* Card Content */
+.custom-card .card-body {
+    padding: 20px;
+    text-align: center;
+}
+
+/* Titles */
+.custom-card h4 {
+    font-size: 1.5rem;
+    margin: 10px 0;
+    font-weight: bold;
+}
+
+.custom-card h6 {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+/* Responsive Design for mobile screens */
+@media (max-width: 768px) {
+    .contact-info {
+        justify-content: center; /* Center the items on smaller screens */
+    }
+    .contact-item {
+        width: 100%; /* Make each contact item full-width */
+        justify-content: center; /* Center the content inside each item */
+        margin-bottom: 15px; /* Add space between items */
+    }
+    .contact-item a {
+        color: #fff;
+        font-weight: 200;
+    }
+    .social-icons {
+        gap: 3px; /* Reduce space between icons on mobile */
+    }
+    .social-icons i {
+        font-size: 1.8rem; /* Slightly smaller icons for mobile */
+    }
+    .social-icons a {
+        font-size: 10px;
+        color: #fff;
+    }
+    /*css for footers  */
+    .contact-info-list {
+        gap: 12px; /* Reduce space between items on mobile */
+    }
+    .contact-info-list i {
+        font-size: 1.6rem; /* Slightly smaller icons for mobile */
+    }
+    .icon-list {
+        gap: 10px; /* Reduce space between icons on mobile */
+    }
+    .icon-list i {
+        font-size: 1.8rem; /* Slightly smaller icons for mobile */
+    } 
+    .app-download-list {
+        gap: 15px; /* Reduce space between items on mobile */
+    }
+    .app-download-list i {
+        font-size: 1.8rem; /* Slightly smaller icons for mobile */
+    }
+}
+
+/* For extra small screens (phones in portrait mode) */
+@media (max-width: 576px) {
+    .contact-item i {
+        font-size: 1.5em; /* Make the icon bigger for small screens */
+    }
+    .social-icons i {
+        font-size: 1.5rem; /* Smaller icons for very small screens */
+    }    
+    /* footer for css */
+    .contact-info-list {
+        gap: 8px; /* Even less space between items */
+    }
+    .contact-info-list i {
+        font-size: 1.4rem; /* Smaller icons for smaller devices */
+    }
+    .icon-list {
+        gap: 12px; /* Even less space between icons */
+    }
+    .icon-list i {
+        font-size: 1.6rem; /* Smaller icons for smaller devices */
+    }
+    .app-download-list {
+        gap: 12px; /* Even less space between items */
+    }
+    .app-download-list i {
+        font-size: 1.6rem; /* Smaller icons for smaller devices */
+    }
+}

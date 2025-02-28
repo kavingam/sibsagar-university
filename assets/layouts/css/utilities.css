@@ -1,0 +1,137 @@
+@font-face {
+    font-family: 'Galada';
+    src: url('assets/layouts/css/Galada-Regular.ttf') format('Galada-Regular');
+}
+.web-title {
+    color: #fff;
+    font-family: "Galada", serif;
+    font-weight: 400;
+    font-style: normal;
+    text-decoration: none;
+    font-size: 32px;
+}
+.galada-regular {
+    /* color: #fff; */
+    font-family: "Galada", serif;
+    font-weight: 400;
+    font-style: normal;
+}  
+/* Default nav-link styling */
+.nav-link {
+    font-size: 14px;
+    color: #fff;/* Default text color */
+    font-weight: 400;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+}
+
+/* Hover state */
+.nav-link:hover {
+    /* background-color: rgb(181, 255, 181);  */
+    /* Background color on hover */
+    color: #18122B; /* Text color on hover */
+}
+
+/* Active state */
+.nav-link.active {
+    /* background-color: rgb(119, 255, 119);  */
+    /* Background color for active link */
+    color: #18122B; /* Text color for active link */
+}
+
+
+keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.dropdown .dropdown-menu {
+    opacity: 0;
+}
+.dropdown .dropdown-menu.show {
+    opacity: 1;
+    animation: fadeIn 0.5s ease;
+    display: block;
+    visibility: visible;
+    transition: all 0.5s ease;
+}
+
+
+
+/* Style for the entire list */
+.md-dropdown {
+    list-style-type: none; 
+    /* Remove default list bullets */
+    padding-left: 0; 
+    /* Remove default left padding */
+    margin: 0; 
+    /* Remove default margin */
+    background-color: #635985;
+}
+
+/* Style for each list item */
+.md-dropdown-item {
+    background-color: #635985; /* Primary background color (Bootstrap's primary color) */
+    color: white; /* Text color */
+    padding: 8px;
+    border: 0px;
+    /* border-bottom: 1px solid #fff; */
+    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+    cursor: pointer; 
+    margin-bottom: 15px;
+}
+
+.md-dropdown-item a {
+    color: white;
+    margin-left: 8px;
+    margin-bottom: -15px;
+    text-decoration: none;
+    font-size: 15px;
+    color: #fff;/* Default text color */
+    font-weight: 400;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+}
+/* Hover effect for list item */
+.md-dropdown-item:hover {
+    background-color: #18122B; /* Darker blue on hover */
+}
+
+
+/*  */
+.box-link {
+    color : red;
+}
+.box-link::before {
+    content: ">>";
+}
+
+/* Responsive Design for mobile screens */
+@media (max-width: 768px) {
+    .nav-link {
+        font-weight: 400;
+        font-size: 21px;
+    }
+    .web-title {
+        color: #fff;
+        font-family: "Galada", serif;
+        font-weight: 400;
+        font-style: normal;
+        text-decoration: none;
+        font-size: 24px;
+        margin-top: 20px;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,20 @@
+.blog-header {
+    background-color: #C5D3E8;
+    padding: 60px;
+    margin-bottom: 20px;
+    color: #fff;
+}
+.blog-header-title {
+    color: #18122B;
+}
+.blog-bar {
+    font-size: 12px;
+    font-weight: 600;
+    font-family: sans-serif;
+}
+
+.blog-box {
+    /* border: 1px solid #18122B; */
+}
+
+/* content: "→"; */

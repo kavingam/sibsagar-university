@@ -11,6 +11,10 @@
         <a class="nav-link active text-light active" aria-current="page" href="<?php echo BASE_URL; echo "index.php"; ?>">Home</a>
         <a class="nav-link active text-light active" aria-current="page" href="<?php echo BASE_URL; echo "import.php"; ?>">Import</a>
         <a class="nav-link active text-light active" aria-current="page" href="<?php echo BASE_URL; echo "export.php"; ?>">Export</a>
+        <a class="nav-link active text-light active" aria-current="page" href="<?php echo BASE_URL; echo "room.php"; ?>">Add Room</a>
+        <a class="nav-link active text-light active" aria-current="page" href="<?php echo BASE_URL; echo "view-room.php"; ?>">View Room</a>
+        <a href="<?php echo BASE_URL; echo "exam-schedule.php"; ?>" aria-current="page" class="nav-link active text-light active" >Seating Plan</a>
+        
     </div>
   </div>
 </nav>
