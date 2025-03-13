@@ -282,7 +282,7 @@ function addRow() {
         <td id="${semester}">${semester}</td>
         <td class="text-center">
             <button class="btn btn-transparent" style="background: none; border: none;" onclick="deleteRow(this)">
-                <i class="bi bi-trash3-fill text-danger" style="font-size: 1.2rem;"></i>
+                <i class="bi bi-trash-fill text-danger" style="font-size: 1.2rem;"></i>
             </button>
         </td>
     `;
