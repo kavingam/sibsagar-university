@@ -34,7 +34,7 @@ try {
                 </select>
             </div>
             <div class="col-md-2 col-12 mb-3">
-                <label for="semesterSelect" class="form-label">Semester:</label>
+                <!-- <label for="semesterSelect" class="form-label">Semester:</label>
                 <select id="semesterSelect" name="semester" class="form-select" required>
                     <option value="0" disabled selected>Select Semester</option>
                     <option value="1">Semester 1</option>
@@ -45,15 +45,41 @@ try {
                     <option value="6">Semester 6</option>
                     <option value="7">Semester 7</option>
                     <option value="8">Semester 8</option>
+                </select> -->
+                <label for="semesterSelect" class="form-label">Semester:</label>
+                <select id="semesterSelect" name="semester" class="form-select" required>
+                    <option value="0" disabled selected>Select Semester</option>
+                    <?php
+                        for ($i = 1; $i <= 8; $i++) {
+                            echo "<option value='$i'>Semester $i</option>";
+                        }
+                    ?>
                 </select>
+
             </div>
             <div class="col-md-2 col-12 mb-3">
-                <label for="courseSelect" class="form-label">Course:</label>
+                <!-- <label for="courseSelect" class="form-label">Course:</label>
                 <select id="courseSelect" name="course" class="form-select" required>
                     <option value="0" disabled selected>Select Course</option>
                     <option value="1">UG</option>
                     <option value="2">PG</option>
+                </select> -->
+                <label for="courseSelect" class="form-label">Course:</label>
+                <select id="courseSelect" name="course" class="form-select" required>
+                    <option value="0" disabled selected>Select Course</option>
+                    <?php
+                        $courses = [
+                            1 => "UG",
+                            2 => "PG",
+                            3 => "TDC",
+                            4 => "FYUG"
+                        ];
+                        foreach ($courses as $value => $name) {
+                            echo "<option value='$value'>$name</option>";
+                        }
+                    ?>
                 </select>
+
             </div>
             <div class="col-md-3 col-12 mb-3">
                 <label for="csvFile" class="form-label">Import CSV File:</label>
