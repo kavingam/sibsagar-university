@@ -1,74 +1,64 @@
 <?php include 'includes/header.php'; ?>
+<?php include('db/pdo_connect.php'); ?>
+
 <?php
-    $sql = "SELECT COUNT(*) AS total_students FROM student";
+// Fetch total students count
+$sql = "SELECT COUNT(*) AS total_students FROM student";
+$stmt = $pdo->prepare($sql);
+$stmt->execute();
+$row = $stmt->fetch(PDO::FETCH_ASSOC);
+$totalStudents = $row['total_students'];
+
+// Fetch all departments
+try {
+    $sql = "SELECT department_id, department_name FROM departments";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    $totalStudents = $row['total_students'];
-
-    try {
-        $sql = "SELECT * FROM departments";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute();
-        $departments = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        echo "Error: " . $e->getMessage();
-    }
-
-
+    $departments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo "Error: " . $e->getMessage();
+}
 ?>
-        
+
 <div class="container my-4">
-    <div class="row no-gutters justify-content-center d-flex">
+    <div class="row no-gutters fieldGroup justify-content-center d-flex">
         <div class="col-md-12 col-12 mb-3">
-            <h4 class="text-center text-primary semi-bold text-uppercase">Export student csv file</h4>
+            <h4 class="text-center text-primary semi-bold text-uppercase">Export Student CSV File</h4>
         </div>
+        
         <div class="col-md-2 col-12 mb-3">
-            <label for="departmentSelect" class="form-label">Department:</label>
-            <select id="departmentSelect" class="form-select">
-                <option value="0" disabled selected>Select Department</option>
-                <!-- <option value="1">Computer Science</option>
-                <option value="2">Assamese</option>
-                <option value="3">English</option>
-                <option value="4">Electronics</option> -->
-                <?php
-                    // Check if departments were found and display them as options
-                    $departments = array_reverse($departments);
-                    if ($departments) {
-                        foreach ($departments as $department) {
-                            // Output each department as an option
-                            echo "<option value='" . $department['department_id'] . "'>" . $department['department_name'] . "</option>";
-                        }
-                    } else {
-                        echo "<option value='0'>No departments available</option>";
-                    } 
-                ?>                
-            </select>
+            <div class="container p-2">
+                <label>Department:</label>
+                <select id="departmentSelect" name="department" class="form-control departmentSelect" onchange="fetchCoursesAndSemesters(this)">
+                    <option value="">Select Department</option>
+                    <?php foreach ($departments as $department): ?>
+                        <option value="<?= htmlspecialchars($department['department_id']); ?>">
+                            <?= htmlspecialchars($department['department_name']); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
         </div>
+
         <div class="col-md-2 col-12 mb-3">
-            <label for="semesterSelect" class="form-label">Semester:</label>
-            <select id="semesterSelect" class="form-select">
-                <option value="" disabled selected>Select Semester</option>
-                <option value="1">Semester 1</option>
-                <option value="2">Semester 2</option>
-                <option value="3">Semester 3</option>
-                <option value="4">Semester 4</option>
-                <option value="5">Semester 5</option>
-                <option value="6">Semester 6</option>
-                <option value="7">Semester 7</option>
-                <option value="8">Semester 8</option>
-            </select>
+           <div class="container p-2">
+                <label>Course:</label>
+                <select id="courseSelect" name="course" class="form-control courseSelect">
+                    <option value="">Select Course</option>
+                </select>
+            </div>
         </div>
+
         <div class="col-md-2 col-12 mb-3">
-            <label for="courseSelect" class="form-label">Course:</label>
-            <select id="courseSelect" class="form-select">
-                <option value="0" disabled selected>Select Course</option>
-                <option value="1">UG</option>
-                <option value="2">PG</option>
-            </select>
+            <div class="container p-2">
+                <label>Semester:</label>
+                <select id="semesterSelect" name="semester" class="form-control semesterSelect">
+                    <option value="">Select Semester</option>
+                </select>
+            </div>
         </div>
+
         <div class="col-md-1 col-12 mb-3" style="margin-top: 30px;">
-            <label for="" class="form-label"></label>
             <button class="btn btn-primary" onclick="fetchStudents()">Submit</button>
         </div>
     </div>
@@ -76,7 +66,7 @@
     <div class="row mt-4 justify-content-center">
         <div class="col-md-10">
             <div id="dataNotFound"></div>
-            <table id="studentTable" class="table table-bordered">
+            <table id="studentTable" class="table table-bordered text-center">
                 <thead>
                     <tr>
                         <th>Roll No</th>
@@ -86,173 +76,104 @@
                         <th>Course</th>
                     </tr>
                 </thead>
-                <tbody>
-                </tbody>
+                <tbody></tbody>
             </table>
+
             <div class="container my-4">
                 <div class="d-flex justify-content-between">
-                    <div class="p-2" id="a">
-                        <h6>Total Students: <span id="totalStudents">0</span></h6>
+                    <div class="p-2">
+                        <h6>Total Students (Filtered): <span id="totalStudentsFiltered">0</span></h6>
                     </div>
-                    <div class="p-2" id="b">
-                        <h6>Total All Students: <span id="totalStudents"><?php echo $totalStudents; ?></span></h6>
+                    <div class="p-2">
+                        <h6>Total All Students: <span id="totalStudents"><?= $totalStudents; ?></span></h6>
                     </div>
                 </div>
             </div>
         </div>
-
-
     </div>
-
 </div>
 
-
 <script>
-/* v.0
-function fetchStudents() {
-    const department = document.getElementById('departmentSelect').value;
-    const semester = document.getElementById('semesterSelect').value;
-    const course = document.getElementById('courseSelect').value;
-    if (department && semester && course) {
-        const formData = new FormData();
-        formData.append('department', department);
-        formData.append('semester', semester);
-        formData.append('course', course);
-
-        fetch('procs/export_std.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            const tableBody = document.querySelector('#studentTable tbody');
-            const totalStudentsElement = document.getElementById('totalStudents');
-            const dataNotFound = document.getElementById('dataNotFound');
-            tableBody.innerHTML = '';
-            dataNotFound.innerHTML = '';
-
-            // If no data is returned, display "Not Found"
-            if (data.length === 0) {
-                dataNotFound.innerHTML = "<p class='text-center text-danger'>No students found matching your filters.</p>";
-                totalStudentsElement.textContent = 0;
-            } else {
-                // Populate the table with student data
-                data.forEach(student => {
-                    let departmentName = '';
-                    let courseName = '';
-
-                    // Set department name
-                    if (student.department == 1) {
-                        departmentName = 'Computer Science';
-                    } else if (student.department == 2) {
-                        departmentName = 'Assamese';
-                    } else if (student.department == 3) {
-                        departmentName = 'History';
-                    } else {
-                        departmentName = 'Unknown';
-                    }
-
-                    // Set course name
-                    if (student.course == 1) {
-                        courseName = 'UG';
-                    } else {
-                        courseName = 'PG';
-                    }
-
-                    // Add a row for each student
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${student.roll_no}</td>
-                        <td>${student.name}</td>
-                        <td>${departmentName}</td>
-                        <td>${student.semester}</td>
-                        <td>${courseName}</td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-
-                // Update total number of students
-                totalStudentsElement.textContent = data.length;
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching students:', error);
-        });
-    } else {
-        alert('Please select all filters (Department, Semester, and Course).');
-    }
-}
-*/
 function fetchStudents() {
     const department = document.getElementById('departmentSelect').value;
     const semester = document.getElementById('semesterSelect').value;
     const course = document.getElementById('courseSelect').value;
 
-    // Check if all filters are selected
-    if (department && semester && course) {
-        const formData = new FormData();
-        formData.append('department', department);
-        formData.append('semester', semester);
-        formData.append('course', course);
-
-        fetch('procs/export_std.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            const tableBody = document.querySelector('#studentTable tbody');
-            const totalStudentsElement = document.getElementById('totalStudents');
-            const dataNotFound = document.getElementById('dataNotFound');
-
-            // Clear previous results
-            tableBody.innerHTML = '';
-            dataNotFound.innerHTML = '';
-
-            // If no data is returned, display "Not Found"
-            if (data.length === 0) {
-                dataNotFound.innerHTML = "<p class='text-center text-danger'>No students found matching your filters.</p>";
-                totalStudentsElement.textContent = 0;
-            } else {
-                // Populate the table with student data
-                data.forEach(student => {
-                    // departmentName is now dynamically assigned based on the department_name returned from PHP
-                    const departmentName = student.department_name || 'Unknown';  // Use department_name from the PHP response
-
-                    // Set course name
-                    let courseName = '';
-                    if (student.course == 1) {
-                        courseName = 'UG';
-                    } else {
-                        courseName = 'PG';
-                    }
-
-                    // Add a row for each student
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${student.roll_no}</td>
-                        <td>${student.name}</td>
-                        <td>${departmentName}</td>
-                        <td>${student.semester}</td>
-                        <td>${courseName}</td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-
-                // Update total number of students
-                totalStudentsElement.textContent = data.length;
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching students:', error);
-        });
-    } else {
+    if (!department || !semester || !course) {
         alert('Please select all filters (Department, Semester, and Course).');
+        return;
     }
+
+    const formData = new FormData();
+    formData.append('department', department);
+    formData.append('semester', semester);
+    formData.append('course', course);
+
+    fetch('procs/export_std.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        const tableBody = document.querySelector('#studentTable tbody');
+        const totalStudentsElement = document.getElementById('totalStudentsFiltered');
+        const dataNotFound = document.getElementById('dataNotFound');
+
+        tableBody.innerHTML = '';
+        dataNotFound.innerHTML = '';
+
+        if (data.length === 0) {
+            dataNotFound.innerHTML = "<p class='text-center text-danger'>No students found matching your filters.</p>";
+            totalStudentsElement.textContent = 0;
+        } else {
+            data.forEach(student => {
+                const departmentName = student.department_name || 'Unknown';
+                const courseName = student.course == 1 ? 'UG' : 'PG';
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student.roll_no}</td>
+                    <td>${student.name}</td>
+                    <td>${departmentName}</td>
+                    <td>${student.semester}</td>
+                    <td>${courseName}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            totalStudentsElement.textContent = data.length;
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching students:', error);
+    });
 }
 
+function fetchCoursesAndSemesters(selectElement) {
+    var departmentId = selectElement.value;
+    var row = selectElement.closest('.fieldGroup');
 
+    if (departmentId) {
+        fetch(`procs/fetch_courses_semesters.php?department_id=${departmentId}`)
+        .then(response => response.json())
+        .then(data => {
+            var courseDropdown = row.querySelector('.courseSelect');
+            var semesterDropdown = row.querySelector('.semesterSelect');
+
+            courseDropdown.innerHTML = '<option value="">Select Course</option>';
+            semesterDropdown.innerHTML = '<option value="">Select Semester</option>';
+
+            data.courses.forEach(course => {
+                courseDropdown.innerHTML += `<option value="${course.id}">${course.name}</option>`;
+            });
+
+            data.semesters.forEach(semester => {
+                semesterDropdown.innerHTML += `<option value="${semester}">Semester ${semester}</option>`;
+            });
+        })
+        .catch(error => console.error('Error fetching data:', error));
+    }
+}
 </script>
-
 
 <?php include 'includes/footer.php'; ?>

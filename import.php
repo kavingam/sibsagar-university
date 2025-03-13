@@ -19,10 +19,6 @@ try {
                 <label for="departmentSelect" class="form-label">Department:</label>
                 <select id="departmentSelect" name="department" class="form-select" required>
                     <option value="0" disabled selected>Select Department</option>
-                    <!-- <option value="1">Computer Science</option>
-                    <option value="2">Assamese</option>
-                    <option value="3">English</option>
-                    <option value="4">Electronics</option> -->
                     <?php
                         // Check if departments were found and display them as options
                         $departments = array_reverse($departments);
