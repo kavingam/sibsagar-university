@@ -45,12 +45,12 @@
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById("submitBtn").addEventListener("click", function () {
-        let roomNo = document.getElementById("roomNo").value.trim();
-        let roomName = document.getElementById("roomName").value.trim();
-        let bench_order = document.getElementById("bench_order").value;
-        let seatCapacity = document.getElementById("seatCapacity").value.trim();
+$(document).ready(function () {
+    $("#submitBtn").click(function () {
+        let roomNo = $("#roomNo").val().trim();
+        let roomName = $("#roomName").val().trim();
+        let bench_order = $("#bench_order").val();
+        let seatCapacity = $("#seatCapacity").val().trim();
 
         // Basic validation
         if (!roomNo || !roomName || !bench_order || !seatCapacity) {
@@ -64,26 +64,30 @@ document.addEventListener("DOMContentLoaded", function () {
         formData.append("bench_order", bench_order);
         formData.append("seatCapacity", seatCapacity);
 
-        fetch("procs/import_room.php", {
-            method: "POST",
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            alert(data.message);
-            if (data.success) {
-                document.getElementById("roomNo").value = "";
-                document.getElementById("roomName").value = "";
-                document.getElementById("bench_order").value = "2";
-                document.getElementById("seatCapacity").value = "";
+        $.ajax({
+            url: "procs/import_room.php",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: "json",
+            success: function (response) {
+                alert(response.message);
+                if (response.success) {
+                    $("#roomNo").val("");
+                    $("#roomName").val("");
+                    $("#bench_order").val("2");
+                    $("#seatCapacity").val("");
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error:", error);
+                alert("An error occurred while processing your request.");
             }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-            alert("An error occurred while processing your request.");
         });
     });
 });
+
 </script>
 
 <?php include 'includes/footer.php'; ?>

@@ -126,46 +126,33 @@ function editRoom(roomNo, roomName, benchOrder, capacity) {
 }
 
 function updateRoom() {
-    let roomNo = document.getElementById("editRoomNo").value;
-    let roomName = document.getElementById("editRoomName").value;
-    let size = document.getElementById("editSize").value;
-    let capacity = document.getElementById("editCapacity").value;
+    let roomNo = $("#editRoomNo").val();
+    let roomName = $("#editRoomName").val();
+    let size = $("#editSize").val();
+    let capacity = $("#editCapacity").val();
 
-    fetch("procs/update_room.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ roomNo, roomName, size, capacity })
-    })
-    .then(response => response.json())
-    .then(data => {
-        alert(data.message);
-        if (data.success) {
-            location.reload();  // Full page reload
+    $.ajax({
+        url: "procs/update_room.php",
+        type: "POST",
+        contentType: "application/json",
+        dataType: "json",
+        data: JSON.stringify({ roomNo, roomName, size, capacity }),
+        success: function (response) {
+            alert(response.message);
+            if (response.success) {
+                location.reload();  // Full page reload
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error updating room:", error);
         }
-    })
-    .catch(error => console.error("Error updating room:", error));
+    });
 }
 
 
 
+
 // Delete a room
-// function deleteRoom(roomNo) {
-//     if (confirm(`Are you sure you want to delete Room No: ${roomNo}? This action cannot be undone.`)) {
-//         fetch("procs/delete_room.php", {
-//             method: "POST",
-//             headers: { "Content-Type": "application/json" },
-//             body: JSON.stringify({ roomNo })
-//         })
-//         .then(response => response.json())
-//         .then(data => {
-//             alert(data.message);
-//             if (data.success) {
-//                 fetchRooms();
-//             }
-//         })
-//         .catch(error => console.error("Error deleting room:", error));
-//     }
-// }
 function deleteRoom(roomNo) {
     if (confirm(`Are you sure you want to delete Room No: ${roomNo}? This action cannot be undone.`)) {
         $.ajax({
