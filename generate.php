@@ -110,42 +110,21 @@ class BenchSeatPlan extends SeatPlan {
         $studentObj = new Student();
         $allRooms = $roomObj->getAllRooms();
 
+        /*
         $seat_capacities = array_map(function($room) {
             return (int) $room['seat_capacity']; // Convert to integer for safety
         }, $allRooms);
-
-        // foreach ($this->tableData as $info) {}
-
-        /*
-        print_r($roomObj->getAllRooms());
-        
-        foreach ($this->tableData as $info) {
-            $department = htmlspecialchars($info['department']);
-            $course = htmlspecialchars($info['course']);
-            $semester = htmlspecialchars($info['semester']);
-            $students = $studentObj->getStudentsByCriteria($department, $semester, $course);
-        
-            // Display results
-            if (!empty($students)) {
-                echo "<h6>Students in $department - $course (Semester: $semester)</h6 >";
-                echo "<table border='1'>";
-                echo "<tr><th>Roll No</th><th>Name</th><th>Department</th><th>Course</th><th>Semester</th></tr>";
-        
-                foreach ($students as $student) {
-                    echo "<tr>";
-                    echo "<td>" . htmlspecialchars($student['roll_no']) . "</td>";
-                    echo "<td>" . htmlspecialchars($student['name']) . "</td>";
-                    echo "<td>" . htmlspecialchars($student['department']) . "</td>";
-                    echo "<td>" . htmlspecialchars($student['course']) . "</td>";
-                    echo "<td>" . htmlspecialchars($student['semester']) . "</td>";
-                    echo "</tr>";
-                }
-                echo "</table><br>";
-            } else {
-                echo "<p>No students found for $department - $course (Semester: $semester).</p><hr>";
-            }
-        }
         */
+
+        $seat_capacities = array_map(function($room) {
+            return [
+                'room_name'    => $room['room_name'],
+                'bench_order'  => (int) $room['bench_order'],  // Convert to integer
+                'seat_capacity' => (int) $room['seat_capacity'], // Convert to integer
+            ];
+        }, $allRooms);
+    
+        //print_r($seat_capacities); // Print the array for debugging
 
         $mergedStudents = [];
 
@@ -163,34 +142,6 @@ class BenchSeatPlan extends SeatPlan {
         
         // Remove duplicate student entries if any
         $mergedStudents = array_unique($mergedStudents, SORT_REGULAR);
-        
-        // Display results if students exist
-        /*
-        if (!empty($mergedStudents)) {
-            echo "<h4 class='text-center'>All Students List</h4>";
-            echo "<table border='1'>";
-            echo "<tr><th>Roll No</th><th>Name</th><th>Department</th><th>Course</th><th>Semester</th></tr>";
-        
-            foreach ($mergedStudents as $student) {
-                echo "<tr>";
-                echo "<td>" . htmlspecialchars($student['roll_no']) . "</td>";
-                echo "<td>" . htmlspecialchars($student['name']) . "</td>";
-                echo "<td>" . htmlspecialchars($student['department']) . "</td>";
-                echo "<td>" . htmlspecialchars($student['course']) . "</td>";
-                echo "<td>" . htmlspecialchars($student['semester']) . "</td>";
-                echo "</tr>";
-            }
-        
-            echo "</table>";
-        } else {
-            echo "<p class='text-danger'>No students found.</p>";
-        }
-        */
-        
-        
-
-        // print_r($roomObj->getAllRooms());
-
         $totalStudents = 0;
         foreach ($this->tableData as $info) {
             $department = htmlspecialchars($info['department']);
@@ -320,23 +271,17 @@ echo "</div>"; // Close container
     
 }
 
-
-// Create an instance of BenchSeatPlan
-// $benchPlan = new BenchSeatPlan();
-
-// Call the getSingleBench() method and display the result
-// echo $benchPlan->getSingleBench();
 ?>
 
 <?php
 // Create an instance of Room class
-$roomObj = new Room();
-$allRooms = $roomObj->getAllRooms();
+// $roomObj = new Room();
+// $allRooms = $roomObj->getAllRooms();
 
-// Extract seat capacities into an array
-$seat_capacities = array_map(function($room) {
-    return (int) $room['seat_capacity']; // Convert to integer for safety
-}, $allRooms);
+// // Extract seat capacities into an array
+// $seat_capacities = array_map(function($room) {
+//     return (int) $room['seat_capacity']; // Convert to integer for safety
+// }, $allRooms);
 
 // Output the seat capacities array
 // echo "<pre>";
@@ -354,7 +299,7 @@ $seat_capacities = array_map(function($room) {
 // }
 
 
-
+/*
 function knnAllocateRooms($room_capacities, $bench_seat, $total_students) {
     // Sort room capacities in ascending order
     sort($room_capacities);
@@ -424,8 +369,71 @@ function knnAllocateRooms($room_capacities, $bench_seat, $total_students) {
 // echo "Total Seated: $total_seated\n";
 // echo "Remaining Students: $remaining_students\n";
 // echo "Total Benches Used: $total_benches_used\n";
+*/
 ?>
 
 <?php
+function knnAllocateRooms($room_capacities, $bench_seat, $total_students) {
+    // Sort rooms by seat capacity in ascending order
+    usort($room_capacities, function ($a, $b) {
+        return $a['seat_capacity'] - $b['seat_capacity'];
+    });
+
+    $allocated_rooms = [];
+    $remaining_students = $total_students;
+    $total_seated = 0;
+    $total_benches_used = 0;
+
+    while ($remaining_students > 0 && !empty($room_capacities)) {
+        // Find the closest room capacity using KNN logic
+        $nearest_room = null;
+        $min_difference = PHP_INT_MAX;
+        $room_index = -1;
+
+        foreach ($room_capacities as $index => $room) {
+            $capacity = $room['seat_capacity'];
+            $actual_capacity = $capacity * $bench_seat;
+            $difference = abs($actual_capacity - $remaining_students);
+
+            if ($difference < $min_difference) {
+                $min_difference = $difference;
+                $nearest_room = $room;
+                $room_index = $index;
+            }
+        }
+
+        // If no suitable room is found, break
+        if ($nearest_room === null) {
+            break;
+        }
+
+        // Calculate actual seating capacity
+        $actual_capacity = $nearest_room['seat_capacity'] * $bench_seat;
+        $students_assigned = min($actual_capacity, $remaining_students);
+        $benches_used = ceil($students_assigned / $bench_seat); // Calculate benches used
+
+        // Store allocated room details including name and bench order
+        $allocated_rooms[] = [
+            'room_name' => $nearest_room['room_name'],
+            'bench_order' => $nearest_room['bench_order'],
+            'room_capacity' => $nearest_room['seat_capacity'],
+            'bench_seat' => $bench_seat,
+            'actual_seating_capacity' => $actual_capacity,
+            'students_assigned' => $students_assigned,
+            'benches_used' => $benches_used
+        ];
+
+        // Reduce remaining students
+        $remaining_students -= $students_assigned;
+        $total_seated += $students_assigned;
+        $total_benches_used += $benches_used;
+
+        // Remove used room
+        unset($room_capacities[$room_index]);
+        $room_capacities = array_values($room_capacities); // Re-index array
+    }
+
+    return [$allocated_rooms, $total_seated, $remaining_students];
+}
 
 ?>
