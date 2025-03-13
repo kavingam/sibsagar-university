@@ -173,7 +173,7 @@ class BenchSeatPlan extends SeatPlan {
 $student_count = 0; // Start from index 0 for array
 $room_number = 1;
 $total_students = count($mergedStudents);
-
+print_r($rooms);
 echo "<div class='container  p-2'>";
 
 ?>
@@ -199,51 +199,123 @@ echo "</div>";
 echo "<hr/>";
 echo "<div class='row'>"; // Bootstrap row with gap
 
-foreach ($rooms as $room) {
-    echo "<div class='col-6'>"; // 3 cols on lg, 2 on md, 1 on sm
-    echo "<h5 class='fw-bold p-2 fs-6 text-center bg-dark text-white'>Room $room_number</h5>";               
-    echo "<table style='width:100%; border-collapse: collapse; border: 2px solid black;'>"; 
-    echo "<thead>";
-    echo "<tr style='border: 1px solid black;'>";
-    echo "<th style='border: 1px solid black; padding: 5px;'>Bench No.</th>";
-    echo "<th style='border: 1px solid black; padding: 5px;'>Left Seat</th>";
-    echo "<th style='border: 1px solid black; padding: 5px;'>Right Seat</th>";
-    echo "</tr>";
-    echo "</thead>";
-    echo "<tbody>";
 
-    for ($bench = 1; $bench <= $room['benches_used']; $bench++) {
+
+
+foreach ($rooms as $room) {
+
+    $benches_per_row = ceil($room['benches_used'] / $room['bench_order']);
+    // echo  $benches_per_row;
+    if (1 == $room['bench_order']) {
+
+        echo "<div class='col-6'>"; // 3 cols on lg, 2 on md, 1 on sm
+        // echo "<h5 class='fw-bold p-2 fs-6 text-center bg-dark text-white'>Room $room_number</h5>";   
+        echo "<h5 class='fw-bold p-2 fs-6 text-center bg-dark text-white'>Room ".$room['room_name']."</h5>";               
+        echo "<table style='width:100%; border-collapse: collapse; border: 2px solid black;'>"; 
+        echo "<thead>";
+        echo "<tr style='border: 1px solid black;'>";
+        echo "<th style='border: 1px solid black; padding: 5px;'>Bench No.</th>";
+        echo "<th style='border: 1px solid black; padding: 5px;'>Left Seat</th>";
+        echo "<th style='border: 1px solid black; padding: 5px;'>Right Seat</th>";
+        echo "</tr>";
+        echo "</thead>";
+        echo "<tbody>";
+
+
+        for ($bench = 1; $bench <= $room['benches_used']; $bench++) {
+
+
+            echo "<tr style='border: 1px solid black;'>";
+
+            // Bench Number
+            echo "<td style='border: 1px solid black; padding: 5px;'><strong>Bench $bench</strong></td>";
+
+            if ($bench % 2 == 1) { // Odd benches: Assign left, leave right empty
+                // Left Seat
+                if ($student_count < $total_students) {
+                    echo "<td style='border: 1px solid black; padding: 5px;'>" . htmlspecialchars($mergedStudents[$student_count]['roll_no']) . "</td>";
+                    $student_count++;
+                } else {
+                    echo "<td style='border: 1px solid black; padding: 5px;'></td>";
+                }
+
+                // Right Seat (empty)
+                echo "<td style='border: 1px solid black; padding: 5px;'></td>";
+
+            } else { // Even benches: Leave left empty, assign right
+                // Left Seat (empty)
+                echo "<td style='border: 1px solid black; padding: 5px;'></td>";
+
+                // Right Seat
+                if ($student_count < $total_students) {
+                    echo "<td style='border: 1px solid black; padding: 5px;'>" . htmlspecialchars($mergedStudents[$student_count]['roll_no']) . "</td>";
+                    $student_count++;
+                } else {
+                    echo "<td style='border: 1px solid black; padding: 5px;'></td>";
+                }
+            }
+
+            echo "</tr>";
+        }
+
+    }
+    else {
+        echo "<div class='col-12'>";
+        echo "<h5 class='fw-bold p-2 fs-6 text-center bg-dark text-white'>Room ".$room['room_name']."</h5>";               
+        echo "<table style='width:100%; border-collapse: collapse; border: 2px solid black;'>"; 
+        echo "<thead>";
         echo "<tr style='border: 1px solid black;'>";
 
-        // Bench Number
-        echo "<td style='border: 1px solid black; padding: 5px;'><strong>Bench $bench</strong></td>";
-
-        if ($bench % 2 == 1) { // Odd benches: Assign left, leave right empty
-            // Left Seat
-            if ($student_count < $total_students) {
-                echo "<td style='border: 1px solid black; padding: 5px;'>" . htmlspecialchars($mergedStudents[$student_count]['roll_no']) . "</td>";
-                $student_count++;
-            } else {
-                echo "<td style='border: 1px solid black; padding: 5px;'></td>";
-            }
-
-            // Right Seat (empty)
-            echo "<td style='border: 1px solid black; padding: 5px;'></td>";
-
-        } else { // Even benches: Leave left empty, assign right
-            // Left Seat (empty)
-            echo "<td style='border: 1px solid black; padding: 5px;'></td>";
-
-            // Right Seat
-            if ($student_count < $total_students) {
-                echo "<td style='border: 1px solid black; padding: 5px;'>" . htmlspecialchars($mergedStudents[$student_count]['roll_no']) . "</td>";
-                $student_count++;
-            } else {
-                echo "<td style='border: 1px solid black; padding: 5px;'></td>";
-            }
+        for ($bench_order = 1; $bench_order <= $room['bench_order']; $bench_order++) {
+            echo "<th style='border: 1px solid black; padding: 5px;'>Bench No.".$bench_order."</th>";
+            echo "<th style='border: 1px solid black; padding: 5px;'>Left Seat</th>";
+            echo "<th style='border: 1px solid black; padding: 5px;'>Right Seat</th>";
         }
 
         echo "</tr>";
+        echo "</thead>";
+        echo "<tbody>";
+        // echo $benches_per_row;   
+            for ($bench = 1; $bench <= $benches_per_row; $bench++) {
+
+
+                    echo "<tr style='border: 1px solid black;'>";    
+
+                    for ($bench_order = 1; $bench_order <= $room['bench_order']; $bench_order++){
+ 
+                    // Bench Number
+                    echo "<td style='border: 1px solid black; padding: 5px;'><strong>Bench $bench</strong></td>";
+        
+                    if ($bench % 2 == 1) { // Odd benches: Assign left, leave right empty
+                        // Left Seat
+                        if ($student_count < $total_students) {
+                            echo "<td style='border: 1px solid black; padding: 5px;'>" . htmlspecialchars($mergedStudents[$student_count]['roll_no']) . "</td>";
+                            $student_count++;
+                        } else {
+                            echo "<td style='border: 1px solid black; padding: 5px;'></td>";
+                        }
+        
+                        // Right Seat (empty)
+                        echo "<td style='border: 1px solid black; padding: 5px;'></td>";
+        
+                    } else { // Even benches: Leave left empty, assign right
+                        // Left Seat (empty)
+                        echo "<td style='border: 1px solid black; padding: 5px;'></td>";
+        
+                        // Right Seat
+                        if ($student_count < $total_students) {
+                            echo "<td style='border: 1px solid black; padding: 5px;'>" . htmlspecialchars($mergedStudents[$student_count]['roll_no']) . "</td>";
+                            $student_count++;
+                        } else {
+                            echo "<td style='border: 1px solid black; padding: 5px;'></td>";
+                        }
+                    }
+                    }
+                    echo "</tr>";
+            }
+
+        
+        
     }
 
     echo "</tbody>";
