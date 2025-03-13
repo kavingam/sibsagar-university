@@ -2,7 +2,7 @@
 <div class="container my-4">
     <div class="row g-0 justify-content-center d-flex">
         <div class="col-lg-12 my-3">
-            <h4 class="text-center text-primary text-uppercase fw-semi-bold">Export Room</h4>
+            <h4 class="text-center text-primary text-uppercase fw-semi-bold">Room Details</h4>
         </div>
         <div class="col-lg-12">
             <div class="container p-3">
@@ -12,21 +12,19 @@
                             <th>SNO</th>
                             <th>Room No</th>
                             <th>Room Name</th>
-                            <th>Size</th>
+                            <th>Bench Order</th>
                             <th>Capacity</th>
                             <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody id="roomTableBody">
-                        
-                    </tbody>
+                    <tbody id="roomTableBody"></tbody>
                 </table>
             </div>
         </div>
     </div>
 </div>
 
-
+<!-- Edit Room Modal -->
 <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -41,11 +39,16 @@
                     <input type="text" id="editRoomName" class="form-control">
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Size:</label>
+                    <label for="editSize">Bench Order:</label>
                     <select id="editSize" class="form-select">
-                        <option value="small">Small</option>
-                        <option value="medium">Medium</option>
-                        <option value="large">Large</option>
+                        <option value="1">1 X 1 COLUMN</option>
+                        <option value="2">1 X 2 COLUMN</option>
+                        <option value="3">1 X 3 COLUMN</option>
+                        <option value="4">1 X 4 COLUMN</option>
+                        <option value="5">1 X 5 COLUMN</option>
+                        <option value="6">1 X 6 COLUMN</option>
+                        <option value="7">1 X 7 COLUMN</option>
+                        <option value="8">1 X 8 COLUMN</option>
                     </select>
                 </div>
                 <div class="mb-3">
@@ -61,12 +64,13 @@
     </div>
 </div>
 
-
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     fetchRooms();
 });
 
+/*
+// Fetch rooms and populate the table
 function fetchRooms() {
     fetch("procs/fetch_rooms.php")
         .then(response => response.json())
@@ -79,10 +83,51 @@ function fetchRooms() {
                         <td>${index + 1}</td>
                         <td>${room.room_no}</td>
                         <td>${room.room_name}</td>
-                        <td>${room.size}</td>
+                        <td>${room.bench_order}</td>
                         <td>${room.seat_capacity}</td>
                         <td class="justify-content-center d-flex">
-                            <button class="ms-2 btn btn-warning" onclick="editRoom('${room.room_no}', '${room.room_name}', '${room.size}', '${room.seat_capacity}')">Edit</button>
+                            <button class="ms-2 btn btn-warning" onclick="editRoom('${room.room_no}', '${room.room_name}', '${room.bench_order}', '${room.seat_capacity}')">Edit</button>
+                            <button class="ms-2 btn btn-danger" onclick="deleteRoom('${room.room_no}')">Delete</button>
+                        </td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+        })
+        .catch(error => console.error("Error fetching rooms:", error));
+}
+*/
+function fetchRooms() {
+    fetch("procs/fetch_rooms.php")
+        .then(response => response.json())
+        .then(data => {
+            let tableBody = document.getElementById("roomTableBody");
+            tableBody.innerHTML = "";
+
+            // Mapping numbers to "1 X N COLUMN" labels
+            const benchOrderLabels = {
+                1: "1 X 1 COLUMN",
+                2: "1 X 2 COLUMN",
+                3: "1 X 3 COLUMN",
+                4: "1 X 4 COLUMN",
+                5: "1 X 5 COLUMN",
+                6: "1 X 6 COLUMN",
+                7: "1 X 7 COLUMN",
+                8: "1 X 8 COLUMN"
+            };
+
+            data.forEach((room, index) => {
+                let benchOrderText = benchOrderLabels[room.bench_order] || "Unknown"; // Default to "Unknown" if not mapped
+                
+                let row = `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${room.room_no}</td>
+                        <td>${room.room_name}</td>
+                        <td>${benchOrderText}</td>
+                        <td>${room.seat_capacity}</td>
+                        <td class="justify-content-center d-flex">
+                            <button class="ms-2 btn btn-warning" onclick="editRoom('${room.room_no}', '${room.room_name}', '${room.bench_order}', '${room.seat_capacity}')">Edit</button>
                             <button class="ms-2 btn btn-danger" onclick="deleteRoom('${room.room_no}')">Delete</button>
                         </td>
                     </tr>
@@ -93,12 +138,15 @@ function fetchRooms() {
         .catch(error => console.error("Error fetching rooms:", error));
 }
 
-function editRoom(roomNo, roomName, size, capacity) {
+// Populate the edit modal
+function editRoom(roomNo, roomName, benchOrder, capacity) {
     document.getElementById("editRoomNo").value = roomNo;
-    document.getElementById("editRoomName").value = roomName;
-    document.getElementById("editSize").value = size;
+    document.getElementById("editRoomName").value = decodeURIComponent(roomName);
+    document.getElementById("editSize").value = benchOrder;
     document.getElementById("editCapacity").value = capacity;
-    $("#editModal").modal("show");
+    
+    var editModal = new bootstrap.Modal(document.getElementById("editModal"));
+    editModal.show();
 }
 
 function updateRoom() {
@@ -115,13 +163,18 @@ function updateRoom() {
     .then(response => response.json())
     .then(data => {
         alert(data.message);
-        $("#editModal").modal("hide");
-        fetchRooms();
-    });
+        if (data.success) {
+            location.reload();  // Full page reload
+        }
+    })
+    .catch(error => console.error("Error updating room:", error));
 }
 
+
+
+// Delete a room
 function deleteRoom(roomNo) {
-    if (confirm("Are you sure you want to delete this room?")) {
+    if (confirm(`Are you sure you want to delete Room No: ${roomNo}? This action cannot be undone.`)) {
         fetch("procs/delete_room.php", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -130,8 +183,11 @@ function deleteRoom(roomNo) {
         .then(response => response.json())
         .then(data => {
             alert(data.message);
-            fetchRooms();
-        });
+            if (data.success) {
+                fetchRooms();
+            }
+        })
+        .catch(error => console.error("Error deleting room:", error));
     }
 }
 </script>

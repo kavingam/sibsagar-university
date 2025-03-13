@@ -14,9 +14,9 @@
         <div class="col-9">
             <div class="container p-3">
                 <div id="dynamicFields" class="scrollable-container">
-                    <div class="row fieldGroup container border border-secondary mb-2 g-0 p-2">
+                    <div class="row fieldGroup container g-0 mb-2 p-2">
                         <div class="col-md-4">
-                            <div class="container">
+                            <div class="container p-2 border">
                                 <label for="">Department:</label>
                                 <select name="department[]" class="select form-control">
                                     <option value="">default</option>
@@ -28,7 +28,7 @@
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="container">
+                            <div class="container p-2 border">
                                 <label for="">Course:</label>
                                 <select name="course[]" class="select form-control">
                                     <option value="">default</option>
@@ -38,7 +38,7 @@
                             </div>                        
                         </div>
                         <div class="col-md-4">
-                            <div class="container">
+                            <div class="container p-2 border">
                                 <label for="">Semester:</label>
                                 <select name="semester[]" class="select form-control">
                                     <option value="">default</option>
@@ -87,3 +87,28 @@ function removeField() {
 </script>
 
 <?php include "includes/footer.php"; ?>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Table Rows with Check</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .scrollable-container {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

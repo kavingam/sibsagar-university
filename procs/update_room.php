@@ -2,12 +2,14 @@
 include('../db/pdo_connect.php');
 
 $data = json_decode(file_get_contents("php://input"), true);
-if ($data) {
-    $stmt = $pdo->prepare("UPDATE rooms SET room_name = :room_name, size = :size, seat_capacity = :seat_capacity WHERE room_no = :room_no");
+
+if ($data && isset($data['roomNo'], $data['roomName'], $data['size'], $data['capacity'])) {
+    $stmt = $pdo->prepare("UPDATE rooms SET room_name = :room_name, bench_order = :bench_order, seat_capacity = :seat_capacity WHERE room_no = :room_no");
+    
     $stmt->execute([
         ':room_no' => $data['roomNo'],
         ':room_name' => $data['roomName'],
-        ':size' => $data['size'],
+        ':bench_order' => $data['size'],  // Fixed column name
         ':seat_capacity' => $data['capacity']
     ]);
 

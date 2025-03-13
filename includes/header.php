@@ -19,6 +19,9 @@
         max-height: 70vh;
         overflow-y: auto; /* Enable vertical scrolling */
       }
+      .fs-7 {
+        font-size: 0.7rem;
+      }
     </style>
   </head>
   <body>
