@@ -7,7 +7,7 @@
         <div class="col-lg-12">
             <div class="container p-3">
                 <table class="table table-bordered border border-secondary">
-                    <thead class="text-start">
+                    <thead class="text-center">
                         <tr>
                             <th>SNO</th>
                             <th>Room No</th>
@@ -69,34 +69,6 @@ document.addEventListener("DOMContentLoaded", function () {
     fetchRooms();
 });
 
-/*
-// Fetch rooms and populate the table
-function fetchRooms() {
-    fetch("procs/fetch_rooms.php")
-        .then(response => response.json())
-        .then(data => {
-            let tableBody = document.getElementById("roomTableBody");
-            tableBody.innerHTML = "";
-            data.forEach((room, index) => {
-                let row = `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${room.room_no}</td>
-                        <td>${room.room_name}</td>
-                        <td>${room.bench_order}</td>
-                        <td>${room.seat_capacity}</td>
-                        <td class="justify-content-center d-flex">
-                            <button class="ms-2 btn btn-warning" onclick="editRoom('${room.room_no}', '${room.room_name}', '${room.bench_order}', '${room.seat_capacity}')">Edit</button>
-                            <button class="ms-2 btn btn-danger" onclick="deleteRoom('${room.room_no}')">Delete</button>
-                        </td>
-                    </tr>
-                `;
-                tableBody.innerHTML += row;
-            });
-        })
-        .catch(error => console.error("Error fetching rooms:", error));
-}
-*/
 function fetchRooms() {
     fetch("procs/fetch_rooms.php")
         .then(response => response.json())
@@ -127,8 +99,12 @@ function fetchRooms() {
                         <td>${benchOrderText}</td>
                         <td>${room.seat_capacity}</td>
                         <td class="justify-content-center d-flex">
-                            <button class="ms-2 btn btn-warning" onclick="editRoom('${room.room_no}', '${room.room_name}', '${room.bench_order}', '${room.seat_capacity}')">Edit</button>
-                            <button class="ms-2 btn btn-danger" onclick="deleteRoom('${room.room_no}')">Delete</button>
+                            <button class="ms-2 btn" onclick="editRoom('${room.room_no}', '${room.room_name}', '${room.bench_order}', '${room.seat_capacity}')">
+                                <i class="bi bi-pencil-square text-primary"></i>
+                            </button>
+                            <button class="ms-2 btn" onclick="deleteRoom('${room.room_no}')">
+                                <i class="bi bi-trash-fill text-danger"></i>
+                            </button>
                         </td>
                     </tr>
                 `;
@@ -173,23 +149,44 @@ function updateRoom() {
 
 
 // Delete a room
+// function deleteRoom(roomNo) {
+//     if (confirm(`Are you sure you want to delete Room No: ${roomNo}? This action cannot be undone.`)) {
+//         fetch("procs/delete_room.php", {
+//             method: "POST",
+//             headers: { "Content-Type": "application/json" },
+//             body: JSON.stringify({ roomNo })
+//         })
+//         .then(response => response.json())
+//         .then(data => {
+//             alert(data.message);
+//             if (data.success) {
+//                 fetchRooms();
+//             }
+//         })
+//         .catch(error => console.error("Error deleting room:", error));
+//     }
+// }
 function deleteRoom(roomNo) {
     if (confirm(`Are you sure you want to delete Room No: ${roomNo}? This action cannot be undone.`)) {
-        fetch("procs/delete_room.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ roomNo })
-        })
-        .then(response => response.json())
-        .then(data => {
-            alert(data.message);
-            if (data.success) {
-                fetchRooms();
+        $.ajax({
+            url: "procs/delete_room.php",
+            type: "POST",
+            data: JSON.stringify({ roomNo }),
+            contentType: "application/json",
+            dataType: "json",
+            success: function (response) {
+                alert(response.message);
+                if (response.success) {
+                    fetchRooms();
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error deleting room:", error);
             }
-        })
-        .catch(error => console.error("Error deleting room:", error));
+        });
     }
 }
+
 </script>
 
 <?php include 'includes/footer.php'; ?>
