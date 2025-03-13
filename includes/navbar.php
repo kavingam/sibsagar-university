@@ -13,7 +13,7 @@
         <a class="nav-link active text-light active" aria-current="page" href="<?php echo BASE_URL; echo "export.php"; ?>">Export</a>
         <a class="nav-link active text-light active" aria-current="page" href="<?php echo BASE_URL; echo "room.php"; ?>">Add Room</a>
         <a class="nav-link active text-light active" aria-current="page" href="<?php echo BASE_URL; echo "view-room.php"; ?>">View Room</a>
-        <a href="<?php echo BASE_URL; echo "seat-plan.php"; ?>" aria-current="page" class="nav-link active text-light active" >Seating Plan</a>
+        <a href="<?php echo BASE_URL; echo "seat-plan.php"; ?>" aria-current="page" class="nav-link active text-light active" >Seat Plan</a>
         
     </div>
   </div>

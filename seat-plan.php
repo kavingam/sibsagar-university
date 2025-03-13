@@ -6,7 +6,7 @@
         </div>
         <div class="col-3">
             <div class="container p-3">
-                <label for="startTime" class="form-label">Start Time:</label>
+                <label for="startTime" class="form-label">Exam Start Time:</label>
                 <input type="time" class="form-control" id="startTime" name="startTime">
             </div>
             <div class="container p-3">
