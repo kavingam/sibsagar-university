@@ -234,11 +234,11 @@ echo "        <div class='col-12 text-cebrer'>";
 echo "            <h5 class='fw-bold mb-0'>Sibsagar University</h5>";
 echo "        </div>";
 echo "        <div class='col-6 text-start'>";
-echo "            <p class='fw-bold mb-0'>Examination Date: " . htmlspecialchars($this->startTime) . "</p>";
+echo "            <p class='fw-bold mb-0'>Examination Time: " . htmlspecialchars($this->startTime) . "</p>";
 echo "        </div>";
 echo "    </div>";
 echo "    <div class='text-center mt-2'>";
-echo "        <p class='fw-bold'>Student Seat Plan</p>";
+echo "        <p class='fw-bold'>Students Examination Seat Plan</p>";
 echo "    </div>";
 echo "</div>";
 ?>
