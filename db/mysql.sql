@@ -10,6 +10,10 @@ CREATE TABLE `rooms` (
     `department_name` varchar(100) NOT NULL
   ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
   
+  -- Adding MBA, MCA (Data Science), and LLM
+INSERT INTO `departments` (`department_id`, `department_name`)
+SELECT IFNULL(MAX(CAST(department_id AS UNSIGNED)), 0) + 1, 'MBA' FROM `departments`;
+
   CREATE TABLE `student` (
     `roll_no` varchar(50) NOT NULL,
     `name` varchar(255) NOT NULL,

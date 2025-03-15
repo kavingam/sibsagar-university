@@ -21,7 +21,7 @@ try {
                     <option value="0" disabled selected>Select Department</option>
                     <?php
                         // Check if departments were found and display them as options
-                        $departments = array_reverse($departments);
+                        // $departments = array_reverse($departments);
                         if ($departments) {
                             foreach ($departments as $department) {
                                 // Output each department as an option
@@ -85,9 +85,13 @@ try {
                 <label for="csvFile" class="form-label">Import CSV File:</label>
                 <input type="file" id="csvFile" name="csvFile" class="form-control" accept=".csv" required>
             </div>
-            <div class="col-md-1 col-12 mb-3" style="margin-top: 30px;">
-                <button type="submit" class="btn btn-primary">Submit</button>
+            <div class="col-md-2 col-sm-4 col-6 mb-3 d-flex justify-content-center" style="margin-top: 30px;">
+                <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-database-add"></i>
+                 IMPORT
+                </button>
             </div>
+
         </div>
     </form>
     <div id="responseMessage"></div>

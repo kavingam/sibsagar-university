@@ -59,7 +59,7 @@ try {
         </div>
 
         <div class="col-md-1 col-12 mb-3" style="margin-top: 30px;">
-            <button class="btn btn-primary" onclick="fetchStudents()">Submit</button>
+            <button class="btn btn-primary" onclick="fetchStudents()">SHOW</button>
         </div>
     </div>
 
@@ -126,6 +126,68 @@ function fetchStudents() {
             dataNotFound.innerHTML = "<p class='text-center text-danger'>No students found matching your filters.</p>";
             totalStudentsElement.textContent = 0;
         } else {
+            const courseMap = {
+                1: "UG",
+                2: "PG",
+                3: "TDC",
+                4: "FYUG"
+            };
+
+            data.forEach(student => {
+                const departmentName = student.department_name || 'Unknown';
+                const courseName = courseMap[student.course] || 'Unknown';
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student.roll_no}</td>
+                    <td>${student.name}</td>
+                    <td>${departmentName}</td>
+                    <td>${student.semester}</td>
+                    <td>${courseName}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            totalStudentsElement.textContent = data.length;
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching students:', error);
+    });
+}
+
+/*function fetchStudents() {
+    const department = document.getElementById('departmentSelect').value;
+    const semester = document.getElementById('semesterSelect').value;
+    const course = document.getElementById('courseSelect').value;
+
+    if (!department || !semester || !course) {
+        alert('Please select all filters (Department, Semester, and Course).');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('department', department);
+    formData.append('semester', semester);
+    formData.append('course', course);
+
+    fetch('procs/export_std.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        const tableBody = document.querySelector('#studentTable tbody');
+        const totalStudentsElement = document.getElementById('totalStudentsFiltered');
+        const dataNotFound = document.getElementById('dataNotFound');
+
+        tableBody.innerHTML = '';
+        dataNotFound.innerHTML = '';
+
+        if (data.length === 0) {
+            dataNotFound.innerHTML = "<p class='text-center text-danger'>No students found matching your filters.</p>";
+            totalStudentsElement.textContent = 0;
+        } else {
             data.forEach(student => {
                 const departmentName = student.department_name || 'Unknown';
                 const courseName = student.course == 1 ? 'UG' : 'PG';
@@ -148,7 +210,7 @@ function fetchStudents() {
         console.error('Error fetching students:', error);
     });
 }
-
+*/
 function fetchCoursesAndSemesters(selectElement) {
     var departmentId = selectElement.value;
     var row = selectElement.closest('.fieldGroup');
