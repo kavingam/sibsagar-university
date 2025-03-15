@@ -1,4 +1,4 @@
-<?php include 'includes/header.php';?>
+<?php include 'includes/header.php'; ?>
 <div class="container my-4">
     <div class="row no-gutters">
         <div class="col-md-6 col-12 mb-3">

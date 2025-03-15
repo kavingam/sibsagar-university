@@ -1,5 +1,6 @@
-<?php 
-function findBestFitRoom($room_capacities, $required_capacity) {
+<?php
+function findBestFitRoom($room_capacities, $required_capacity)
+{
     sort($room_capacities);
     $best_fit = null;
 
@@ -15,7 +16,8 @@ function findBestFitRoom($room_capacities, $required_capacity) {
 
 ?>
 <?php
-function knnAllocateRooms($room_capacities, $total_students) {
+function knnAllocateRooms($room_capacities, $total_students)
+{
     // Sort room capacities in ascending order for KNN search
     sort($room_capacities);
 
@@ -57,37 +59,39 @@ function knnAllocateRooms($room_capacities, $total_students) {
 
         // Remove the used room to avoid duplicate allocation
         unset($room_capacities[$room_index]);
-        $room_capacities = array_values($room_capacities); // Re-index array
+        $room_capacities = array_values($room_capacities);  // Re-index array
     }
 
     return [$allocated_rooms, $total_seated, $remaining_students];
 }
+
 /*
-// Example Data
-$room_seat_capacity = [20, 30, 32, 45]; // Given room capacities (fixed)
-$total_students = 150; // Total students to allocate
-
-// Allocate rooms using KNN logic
-list($rooms, $total_seated, $remaining_students) = knnAllocateRooms($room_seat_capacity, $total_students);
-
-// Display results
-echo "<h3>Room Allocation using KNN for $total_students Students</h3>\n";
-foreach ($rooms as $index => $room) {
-    echo "Room " . ($index + 1) . ": Capacity " . $room['room_capacity'] . " | Students Assigned: " . $room['students_assigned'] . "<br>\n";
-}
-
-// Display total students seated
-echo "<h3>Total Students Seated: $total_seated</h3>\n";
-
-// If students are still left, show warning
-if ($remaining_students > 0) {
-    echo "<h3 style='color: red;'>Warning: $remaining_students students could not be seated! No more available rooms.</h3>\n";
-}
-    */
+ * // Example Data
+ * $room_seat_capacity = [20, 30, 32, 45]; // Given room capacities (fixed)
+ * $total_students = 150; // Total students to allocate
+ *
+ * // Allocate rooms using KNN logic
+ * list($rooms, $total_seated, $remaining_students) = knnAllocateRooms($room_seat_capacity, $total_students);
+ *
+ * // Display results
+ * echo "<h3>Room Allocation using KNN for $total_students Students</h3>\n";
+ * foreach ($rooms as $index => $room) {
+ *     echo "Room " . ($index + 1) . ": Capacity " . $room['room_capacity'] . " | Students Assigned: " . $room['students_assigned'] . "<br>\n";
+ * }
+ *
+ * // Display total students seated
+ * echo "<h3>Total Students Seated: $total_seated</h3>\n";
+ *
+ * // If students are still left, show warning
+ * if ($remaining_students > 0) {
+ *     echo "<h3 style='color: red;'>Warning: $remaining_students students could not be seated! No more available rooms.</h3>\n";
+ * }
+ */
 ?>
 
 <?php
-function findNearestRoom($room_capacities, $required_capacity) {
+function findNearestRoom($room_capacities, $required_capacity)
+{
     // Sort capacities in ascending order
     sort($room_capacities);
 
@@ -98,7 +102,7 @@ function findNearestRoom($room_capacities, $required_capacity) {
     // Loop through available capacities
     foreach ($room_capacities as $capacity) {
         $difference = abs($capacity - $required_capacity);
-        
+
         if ($difference < $min_difference) {
             $min_difference = $difference;
             $nearest = $capacity;

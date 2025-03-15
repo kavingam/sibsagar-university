@@ -1,4 +1,4 @@
-<?php include "includes/header.php"; ?>
+<?php include 'includes/header.php'; ?>
 <div class="container">
     <div class="row g-0">
         <div class="col-12 my-3">
@@ -33,11 +33,11 @@
     <div class="row fieldGroup container g-0 mb-2 p-2">
         <div class="col-3">
             <?php
-                include('db/pdo_connect.php');
-                $sql = "SELECT department_id, department_name FROM departments";
-                $stmt = $pdo->prepare($sql);
-                $stmt->execute();
-                $departments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            include ('db/pdo_connect.php');
+            $sql = 'SELECT department_id, department_name FROM departments';
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute();
+            $departments = $stmt->fetchAll(PDO::FETCH_ASSOC);
             ?>
             <div class="container p-2 border border-end-0">
                 <label>Department:</label>
@@ -319,4 +319,4 @@ function fetchCoursesAndSemesters(selectElement) {
 }
 </script>
 
-<?php include "includes/footer.php"; ?>
+<?php include 'includes/footer.php'; ?>

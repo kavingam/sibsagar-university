@@ -1,9 +1,9 @@
 <?php include 'includes/header.php'; ?>
-<?php include('db/pdo_connect.php'); ?>
+<?php include ('db/pdo_connect.php'); ?>
 
 <?php
 // Fetch total students count
-$sql = "SELECT COUNT(*) AS total_students FROM student";
+$sql = 'SELECT COUNT(*) AS total_students FROM student';
 $stmt = $pdo->prepare($sql);
 $stmt->execute();
 $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -11,12 +11,12 @@ $totalStudents = $row['total_students'];
 
 // Fetch all departments
 try {
-    $sql = "SELECT department_id, department_name FROM departments";
+    $sql = 'SELECT department_id, department_name FROM departments';
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
     $departments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-    echo "Error: " . $e->getMessage();
+    echo 'Error: ' . $e->getMessage();
 }
 ?>
 

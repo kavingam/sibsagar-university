@@ -1,11 +1,12 @@
-<?php include 'includes/header.php'; 
+<?php
+include 'includes/header.php';
 try {
-    $sql = "SELECT * FROM departments";
+    $sql = 'SELECT * FROM departments';
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
     $departments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-    echo "Error: " . $e->getMessage();
+    echo 'Error: ' . $e->getMessage();
 }
 ?>
 
@@ -20,16 +21,16 @@ try {
                 <select id="departmentSelect" name="department" class="form-select" required>
                     <option value="0" disabled selected>Select Department</option>
                     <?php
-                        // Check if departments were found and display them as options
-                        // $departments = array_reverse($departments);
-                        if ($departments) {
-                            foreach ($departments as $department) {
-                                // Output each department as an option
-                                echo "<option value='" . $department['department_id'] . "'>" . $department['department_name'] . "</option>";
-                            }
-                        } else {
-                            echo "<option value='0'>No departments available</option>";
-                        } 
+                    // Check if departments were found and display them as options
+                    // $departments = array_reverse($departments);
+                    if ($departments) {
+                        foreach ($departments as $department) {
+                            // Output each department as an option
+                            echo "<option value='" . $department['department_id'] . "'>" . $department['department_name'] . '</option>';
+                        }
+                    } else {
+                        echo "<option value='0'>No departments available</option>";
+                    }
                     ?>
                 </select>
             </div>
@@ -38,9 +39,9 @@ try {
                 <select id="semesterSelect" name="semester" class="form-select" required>
                     <option value="0" disabled selected>Select Semester</option>
                     <?php
-                        for ($i = 1; $i <= 8; $i++) {
-                            echo "<option value='$i'>Semester $i</option>";
-                        }
+                    for ($i = 1; $i <= 8; $i++) {
+                        echo "<option value='$i'>Semester $i</option>";
+                    }
                     ?>
                 </select>
 
@@ -50,15 +51,15 @@ try {
                 <select id="courseSelect" name="course" class="form-select" required>
                     <option value="0" disabled selected>Select Course</option>
                     <?php
-                        $courses = [
-                            1 => "UG",
-                            2 => "PG",
-                            3 => "TDC",
-                            4 => "FYUG"
-                        ];
-                        foreach ($courses as $value => $name) {
-                            echo "<option value='$value'>$name</option>";
-                        }
+                    $courses = [
+                        1 => 'UG',
+                        2 => 'PG',
+                        3 => 'TDC',
+                        4 => 'FYUG'
+                    ];
+                    foreach ($courses as $value => $name) {
+                        echo "<option value='$value'>$name</option>";
+                    }
                     ?>
                 </select>
 

@@ -1,7 +1,7 @@
 <?php
-include "generate.php";
+include 'generate.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $data = json_decode(file_get_contents("php://input"), true);
+    $data = json_decode(file_get_contents('php://input'), true);
 
     if (!$data) {
         echo "<p class='text-danger'>Invalid data received!</p>";
@@ -19,34 +19,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // $benchPlan-> printTableData();
             break;
         case 2:
-            echo "Two seat bench";
+            echo 'Two seat bench';
             break;
         case 3:
-            echo "Three seat bench";
+            echo 'Three seat bench';
             break;
         case 4:
-            echo "Four seat bench";
+            echo 'Four seat bench';
             break;
         case 5:
-            echo "Five seat bench";
+            echo 'Five seat bench';
             break;
         case 6:
-            echo "Six seat bench";
+            echo 'Six seat bench';
             break;
         case 7:
-            echo "Seven seat bench";
+            echo 'Seven seat bench';
             break;
         case 8:
-            echo "Eight seat bench";
+            echo 'Eight seat bench';
             break;
         case 9:
-            echo "Nine seat bench";
+            echo 'Nine seat bench';
             break;
         case 10:
-            echo "Ten seat bench";
+            echo 'Ten seat bench';
             break;
         default:
-            echo "Invalid bench seat value";
+            echo 'Invalid bench seat value';
             break;
     }
 }
