@@ -29,66 +29,6 @@
         <!-- Dynamic Fields -->
         <div class="col-9">
             <div class="container p-3">
-                <!--
-                <div id="dynamicFields">
-                    <div class="row fieldGroup container g-0 mb-2 p-2">
-                        <div class="col-3">
-                            <?php
-                                // include('db/pdo_connect.php');
-
-                                // $sql = "SELECT department_id, department_name FROM departments";
-                                // $stmt = $pdo->prepare($sql);
-                                // $stmt->execute();
-                                // $departments = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                                ?>
-                            <div class="container p-2 border border-end-0">
-                                <label>Department:</label>
-                                <select name="department[]" class="form-control">
-                                    <option value="">default</option>
-                                    <?php 
-                                    // foreach ($departments as $department): ?>
-                                        <option value="<?php// echo htmlspecialchars($department['department_id']); ?>">
-                                            <?php //echo htmlspecialchars($department['department_name']); ?>
-                                        </option>
-                                    <?php //endforeach; ?>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-3">
-                            <div class="container p-2 border border-start-0 border-end-0">
-                                <label>Course:</label>
-                                <select name="course[]" class="form-control">
-                                    <option value="">default</option>
-                                    <option value="1">UG</option>
-                                    <option value="2">PG</option>
-                                    <option value="3">TDC</option>
-                                    <option value="4">FYUG</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-3">
-                            <div class="container p-2 border border-start-0">
-                                <label>Semester:</label>
-                                <select name="semester[]" class="form-control">
-                                    <option value="">default</option>
-                                    <?php //for ($i = 1; $i <= 8; $i++) {
-                                       // echo "<option value=\"$i\">Semester $i</option>";
-                                   // } ?>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-3">
-                            <div class="container d-flex justify-content-center align-items-center mt-1" style="">
-                                <div class="text-center">
-                                    <button type="button" class="btn btn-success btn-sm w-100 mb-2" onclick="addRow()">Add Exam</button>
-                                    <button type="button" class="btn btn-danger btn-sm w-100" onclick="removeRow()">Remove</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div> 
-                                    -->
-                <!-- code -->
 <div id="dynamicFields">
     <div class="row fieldGroup container g-0 mb-2 p-2">
         <div class="col-3">
