@@ -19,7 +19,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // $benchPlan-> printTableData();
             break;
         case 2:
-            echo 'Two seat bench';
+            $benchPlan = new BenchSeatPlan($startTime, $benchSeat, $tableData);
+            echo $benchPlan->getDoubleBench();
+            // echo 'Two seat bench';
             break;
         case 3:
             echo 'Three seat bench';

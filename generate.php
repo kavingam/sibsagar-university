@@ -170,6 +170,7 @@ class BenchSeatPlan extends SeatPlan
         // Remove duplicate student entries if any
         $mergedStudents = array_unique($mergedStudents, SORT_REGULAR);
         $totalStudents = 0;
+
         foreach ($this->tableData as $info) {
             $department = htmlspecialchars($info['department']);
             $course = htmlspecialchars($info['course']);
@@ -200,7 +201,7 @@ class BenchSeatPlan extends SeatPlan
         $student_count = 0;  // Start from index 0 for array
         $room_number = 1;
         $total_students = count($mergedStudents);
-        print_r($rooms);
+        // print_r($rooms);
         echo "<div class='container  p-2'>";
 
 ?>
@@ -228,7 +229,6 @@ class BenchSeatPlan extends SeatPlan
 
         foreach ($rooms as $room) {
             $benches_per_row = ceil($room['benches_used'] / $room['bench_order']);
-            // echo  $benches_per_row;
             if (1 == $room['bench_order']) {
                 echo "<div class='col-6'>";  // 3 cols on lg, 2 on md, 1 on sm
                 // echo "<h5 class='fw-bold p-2 fs-6 text-center bg-dark text-white'>Room $room_number</h5>";
@@ -335,6 +335,7 @@ class BenchSeatPlan extends SeatPlan
 
         echo '</div>';  // Close row
         echo '</div>';  // Close container
+
 ?>
 
 
@@ -348,107 +349,331 @@ class BenchSeatPlan extends SeatPlan
         // return "Single Bench allocated at {$this->startTime}";
         return null;
     }
+
+    public function getDoubleBench()
+    {
+        $roomObj = new Room();
+        $studentObj = new Student();
+        $allRooms = $roomObj->getAllRooms();
+        $seat_capacities = array_map(function ($room) {
+            return [
+                'room_name' => $room['room_name'],
+                'bench_order' => (int) $room['bench_order'],
+                'seat_capacity' => (int) $room['seat_capacity'],
+            ];
+        }, $allRooms);
+        // print_r($seat_capacities);
+        $studentGroups = [];  // Renamed from $mergedStudents
+
+        foreach ($this->tableData as $info) {
+            $department = htmlspecialchars($info['department']);
+            $course = htmlspecialchars($info['course']);
+            $semester = htmlspecialchars($info['semester']);
+
+            $students = $studentObj->getStudentsByCriteria($department, $semester, $course);
+            $studentGroups[$department][$course][$semester] = $students;  // Updated variable name
+        }
+
+
+
+        $mergedStudents = [];  
+        $maxCount = max(array_map('count', array_merge(...array_merge(...array_values($studentGroups)))));
+        
+        for ($i = 0; $i < $maxCount; $i++) {
+            foreach ($studentGroups as $departmentKey => $departments) {
+                foreach ($departments as $courseKey => $courses) {
+                    foreach ($courses as $semesterKey => $semesterStudents) {
+                        if (isset($semesterStudents[$i])) {
+                            // Unique tracking within department, course, and semester
+                            $key = $departmentKey . '_' . $courseKey . '_' . $semesterKey;
+                            
+                            if (!isset($seenStudents[$key])) {
+                                $seenStudents[$key] = [];
+                            }
+        
+                            if (!in_array($semesterStudents[$i], $seenStudents[$key], true)) {
+                                $mergedStudents[] = $semesterStudents[$i];
+                                $seenStudents[$key][] = $semesterStudents[$i]; // Track student within category
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        $uniqueStudents = [];
+        $duplicateStudents = [];
+        
+        // Track seen department-semester-course combinations
+        $seenCombinations = [];
+        
+        foreach ($mergedStudents as $key => $student) {
+            // Unique identifier based on department, semester, and course
+            $identifier = $student['department'] . '-' . $student['semester'] . '-' . $student['course'];
+        
+            if (!isset($seenCombinations[$identifier])) {
+                // If this combination is not seen before, add it to unique students
+                $seenCombinations[$identifier] = true;
+                $uniqueStudents[$key] = $student;
+            } else {
+                // If it's repeated, move it to duplicate students
+                $duplicateStudents[$key] = $student;
+            }
+        }
+        
+// Display Results
+echo "<pre>Unique Students:\n";
+print_r($uniqueStudents);
+echo "</pre>";
+
+echo "<pre>Duplicate Students:\n";
+print_r($duplicateStudents);
+echo "</pre>";
+        /*
+        // Flattening the array while merging alternately
+        $mergedStudents = [];  // Renamed from $finalStudentList
+        $maxCount = max(array_map('count', array_merge(...array_merge(...array_values($studentGroups)))));
+
+        
+
+        for ($i = 0; $i < $maxCount; $i++) {
+            foreach ($studentGroups as $departments) {
+                foreach ($departments as $courses) {
+                    foreach ($courses as $semesterStudents) {
+                        if (isset($semesterStudents[$i])) {
+                            $mergedStudents[] = $semesterStudents[$i];  // Updated variable name
+                        }
+                    }
+                }
+            }
+        }
+        
+
+        // Remove duplicates
+        $mergedStudents = array_unique($mergedStudents, SORT_REGULAR);
+
+        // Print merged student list
+        // print_r($mergedStudents);
+        */
+        $totalStudents = 0;
+        foreach ($this->tableData as $info) {
+            $department = htmlspecialchars($info['department']);
+            $course = htmlspecialchars($info['course']);
+            $semester = htmlspecialchars($info['semester']);
+            $count = $studentObj->getTotalStudentsByCriteria($department, $semester, $course);
+            $totalStudents += $count;
+            echo "<h6>Department: $department | Course: $course | Semester: $semester | Students: $count</h6>";
+        }
+        echo "<h3>Total Students Across All Batches: $totalStudents</h3>";
+
+        // list($rooms, $total_seated, $remaining_students) = allocateFlexibleRooms($seat_capacities, $this->benchSeat, $totalStudents);
+        list($rooms, $total_seated, $remaining_students) = allocateFlexibleRooms($seat_capacities, $this->benchSeat, $totalStudents);
+        $student_count = 0;  // Start from index 0 for array
+        $room_number = 1;
+        $total_students = count($mergedStudents);
+        echo "<div class='container  p-2'>";
+        echo '<hr/>';
+        echo "<div class='row'>";
+
+        foreach ($rooms as $room) {
+            $benches_per_row = ceil($room['benches_used'] / $room['bench_order']);
+
+            echo "<div class='col-12'>";
+            echo "<h5 class='fw-bold p-2 fs-6 text-center bg-dark text-white'>Room " . htmlspecialchars($room['room_name']) . '</h5>';
+            echo "<table style='width:100%; border-collapse: collapse; border: 2px solid black;'>";
+            echo '<thead>';
+            echo "<tr style='border: 1px solid black;'>";
+
+            for ($bench_order = 1; $bench_order <= $room['bench_order']; $bench_order++) {
+                echo "<th style='border: 1px solid black; padding: 5px;'>Bench No.</th>";
+                echo "<th style='border: 1px solid black; padding: 5px;'>Left Seat</th>";
+                echo "<th style='border: 1px solid black; padding: 5px;'>Right Seat</th>";
+            }
+
+            echo '</tr>';
+            echo '</thead>';
+            echo '<tbody>';
+
+            for ($bench = 1; $bench <= $benches_per_row; $bench++) {
+                echo "<tr style='border: 1px solid black;'>";
+
+                for ($bench_order = 1; $bench_order <= $room['bench_order']; $bench_order++) {
+                    echo "<td style='border: 1px solid black; padding: 5px;'><strong>Bench " . ($bench + ($bench_order - 1) * $benches_per_row) . '</strong></td>';
+
+                    $lastBenchCourse = '';
+                    $lastBenchSemester = '';
+                    $rowHasConflict = false;
+
+                    switch ($room['bench_order']) {
+                        case 1:
+                            // One Seat Per Bench (Alternating Zigzag)
+                            if ($bench % 2 == 1) {
+                                $left_seat = ($student_count < $total_students) ? htmlspecialchars($mergedStudents[$student_count]['roll_no']) : '';
+                                $right_seat = '';  // Empty right seat
+                            } else {
+                                $right_seat = ($student_count < $total_students) ? htmlspecialchars($mergedStudents[$student_count]['roll_no']) : '';
+                                $left_seat = '';  // Empty left seat
+                            }
+                            break;
+
+                        case 2:
+                            // Zigzag with Conflict Prevention (Same Course/Semester Avoidance)
+                            $currentCourse = $mergedStudents[$student_count]['course'] ?? '';
+                            $currentSemester = $mergedStudents[$student_count]['semester'] ?? '';
+
+                            if ($currentCourse === $lastBenchCourse && $currentSemester === $lastBenchSemester) {
+                                // If same course & semester, assign only one seat in zigzag
+                                if ($bench % 2 == 1) {
+                                    $left_seat = ($student_count < $total_students) ? htmlspecialchars($mergedStudents[$student_count++]['roll_no']) : '';
+                                    $right_seat = '';
+                                } else {
+                                    $right_seat = ($student_count < $total_students) ? htmlspecialchars($mergedStudents[$student_count++]['roll_no']) : '';
+                                    $left_seat = '';
+                                }
+                            } else {
+                                // Normal allocation
+                                $left_seat = ($student_count < $total_students) ? htmlspecialchars($mergedStudents[$student_count++]['roll_no']) : '';
+                                $right_seat = ($student_count < $total_students) ? htmlspecialchars($mergedStudents[$student_count++]['roll_no']) : '';
+                            }
+
+                            // Store assigned values
+                            $lastBenchCourse = $currentCourse;
+                            $lastBenchSemester = $currentSemester;
+                            break;
+
+                        case 3:
+                            // Three Benches per row with Conflict Prevention
+                            $currentCourse = $mergedStudents[$student_count]['course'] ?? '';
+                            $currentSemester = $mergedStudents[$student_count]['semester'] ?? '';
+
+                            if ($currentCourse === $lastBenchCourse && $currentSemester === $lastBenchSemester) {
+                                // Conflict detected: Assign only one seat in zigzag
+                                if ($bench % 2 == 1) {
+                                    $left_seat = ($student_count < $total_students) ? htmlspecialchars($mergedStudents[$student_count++]['roll_no']) : '';
+                                    $right_seat = '';
+                                } else {
+                                    $right_seat = ($student_count < $total_students) ? htmlspecialchars($mergedStudents[$student_count++]['roll_no']) : '';
+                                    $left_seat = '';
+                                }
+                            } else {
+                                // Normal zigzag assignment
+                                if ($bench % 2 == 1) {
+                                    $left_seat = ($student_count < $total_students) ? htmlspecialchars($mergedStudents[$student_count++]['roll_no']) : '';
+                                    $right_seat = ($student_count < $total_students) ? htmlspecialchars($mergedStudents[$student_count++]['roll_no']) : '';
+                                } else {
+                                    $right_seat = ($student_count < $total_students) ? htmlspecialchars($mergedStudents[$student_count++]['roll_no']) : '';
+                                    $left_seat = ($student_count < $total_students) ? htmlspecialchars($mergedStudents[$student_count++]['roll_no']) : '';
+                                }
+                            }
+
+                            // Store assigned values
+                            $lastBenchCourse = $currentCourse;
+                            $lastBenchSemester = $currentSemester;
+                            break;
+
+                        case 4:
+                            // Full Zigzag with Conflict Prevention
+                            $currentCourse = $mergedStudents[$student_count]['course'] ?? '';
+                            $currentSemester = $mergedStudents[$student_count]['semester'] ?? '';
+
+                            if ($bench % 4 == 1 || $bench % 4 == 2) {
+                                // First 2 Benches → Normal Order
+                                if ($currentCourse === $lastBenchCourse && $currentSemester === $lastBenchSemester) {
+                                    $left_seat = ($student_count < $total_students) ? htmlspecialchars($mergedStudents[$student_count++]['roll_no']) : '';
+                                    $right_seat = '';
+                                } else {
+                                    $left_seat = ($student_count < $total_students) ? htmlspecialchars($mergedStudents[$student_count++]['roll_no']) : '';
+                                    $right_seat = ($student_count < $total_students) ? htmlspecialchars($mergedStudents[$student_count++]['roll_no']) : '';
+                                }
+                            } else {
+                                // Next 2 Benches → Reverse Order
+                                if ($currentCourse === $lastBenchCourse && $currentSemester === $lastBenchSemester) {
+                                    $right_seat = ($student_count < $total_students) ? htmlspecialchars($mergedStudents[$student_count++]['roll_no']) : '';
+                                    $left_seat = '';
+                                } else {
+                                    $right_seat = ($student_count < $total_students) ? htmlspecialchars($mergedStudents[$student_count++]['roll_no']) : '';
+                                    $left_seat = ($student_count < $total_students) ? htmlspecialchars($mergedStudents[$student_count++]['roll_no']) : '';
+                                }
+                            }
+
+                            // Store assigned values
+                            $lastBenchCourse = $currentCourse;
+                            $lastBenchSemester = $currentSemester;
+                            break;
+                        case 5:
+                            // Get current student course & semester
+                            $currentCourse = $mergedStudents[$student_count]['course'] ?? '';
+                            $currentSemester = $mergedStudents[$student_count]['semester'] ?? '';
+
+                            // Check if all benches in this row have the same course & semester
+                            if ($bench % 4 == 1) {  // New row starts (assuming 4 benches per row)
+                                $lastRowCourse = $currentCourse;
+                                $lastRowSemester = $currentSemester;
+                                $rowHasConflict = false;
+                            } else {
+                                if ($currentCourse === $lastRowCourse && $currentSemester === $lastRowSemester) {
+                                    $rowHasConflict = true;  // Mark row as conflict row
+                                }
+                            }
+
+                            if ($rowHasConflict) {
+                                // If row has a conflict, assign only one seat per bench in zigzag format
+                                if ($bench % 2 == 1) {
+                                    $left_seat = ($student_count < $total_students) ? htmlspecialchars($mergedStudents[$student_count++]['roll_no']) : '';
+                                    $right_seat = '';
+                                } else {
+                                    $right_seat = ($student_count < $total_students) ? htmlspecialchars($mergedStudents[$student_count++]['roll_no']) : '';
+                                    $left_seat = '';
+                                }
+                            } else {
+                                // Normal zigzag assignment
+                                if ($bench % 2 == 1) {
+                                    $left_seat = ($student_count < $total_students) ? htmlspecialchars($mergedStudents[$student_count++]['roll_no']) : '';
+                                    $right_seat = ($student_count < $total_students) ? htmlspecialchars($mergedStudents[$student_count++]['roll_no']) : '';
+                                } else {
+                                    $right_seat = ($student_count < $total_students) ? htmlspecialchars($mergedStudents[$student_count++]['roll_no']) : '';
+                                    $left_seat = ($student_count < $total_students) ? htmlspecialchars($mergedStudents[$student_count++]['roll_no']) : '';
+                                }
+                            }
+
+                            break;
+
+                        default:
+                            // Default seating with Conflict Prevention
+                            $currentCourse = $mergedStudents[$student_count]['course'] ?? '';
+                            $currentSemester = $mergedStudents[$student_count]['semester'] ?? '';
+
+                            if ($currentCourse === $lastBenchCourse && $currentSemester === $lastBenchSemester) {
+                                $left_seat = ($student_count < $total_students) ? htmlspecialchars($mergedStudents[$student_count++]['roll_no']) : '';
+                                $right_seat = '';
+                            } else {
+                                $left_seat = ($student_count < $total_students) ? htmlspecialchars($mergedStudents[$student_count++]['roll_no']) : '';
+                                $right_seat = ($student_count < $total_students) ? htmlspecialchars($mergedStudents[$student_count++]['roll_no']) : '';
+                            }
+
+                            // Store assigned values
+                            $lastBenchCourse = $currentCourse;
+                            $lastBenchSemester = $currentSemester;
+                            break;
+                    }
+
+                    echo "<td style='border: 1px solid black; padding: 5px;'><strong>$left_seat</strong></td>";
+                    echo "<td style='border: 1px solid black; padding: 5px;'><strong>$right_seat</strong></td>";
+                }
+
+                echo '</tr>';
+            }
+
+            echo '</tbody>';
+            echo '</table>';
+            echo '</div>';  // Close col-12 div
+        }
+
+        echo '</div>';  // Close row div
+        return null;
+    }
 }
-
 ?>
-
-<?php
-// Create an instance of Room class
-// $roomObj = new Room();
-// $allRooms = $roomObj->getAllRooms();
-
-// // Extract seat capacities into an array
-// $seat_capacities = array_map(function($room) {
-//     return (int) $room['seat_capacity']; // Convert to integer for safety
-// }, $allRooms);
-
-// Output the seat capacities array
-// echo "<pre>";
-// print_r($seat_capacities);
-// echo "</pre>";
-
-// Output Room Details
-// echo "<h2>All Room Details</h2>";
-// foreach ($allRooms as $room) {
-//     echo "Room No: " . htmlspecialchars($room['room_no']) . "<br>";
-//     echo "Room Name: " . htmlspecialchars($room['room_name']) . "<br>";
-//     echo "Bench Order: " . htmlspecialchars($room['bench_order']) . "<br>";
-//     echo "Seat Capacity: " . htmlspecialchars($room['seat_capacity']) . "<br><br>";
-// }
-
-/*
- * function knnAllocateRooms($room_capacities, $bench_seat, $total_students) {
- *     // Sort room capacities in ascending order
- *     sort($room_capacities);
- *
- *     $allocated_rooms = [];
- *     $remaining_students = $total_students;
- *     $total_seated = 0;
- *     $total_benches_used = 0;
- *
- *     while ($remaining_students > 0 && !empty($room_capacities)) {
- *         // Find the closest room capacity using KNN logic
- *         $nearest_room = null;
- *         $min_difference = PHP_INT_MAX;
- *         $room_index = -1;
- *
- *         foreach ($room_capacities as $index => $capacity) {
- *             // Actual seating capacity considering bench_seat
- *             $actual_capacity = $capacity * $bench_seat;
- *             $difference = abs($actual_capacity - $remaining_students);
- *
- *             if ($difference < $min_difference) {
- *                 $min_difference = $difference;
- *                 $nearest_room = $capacity;
- *                 $room_index = $index;
- *             }
- *         }
- *
- *         // If no suitable room is found, break
- *         if ($nearest_room === null) {
- *             break;
- *         }
- *
- *         // Calculate actual capacity of the chosen room
- *         $actual_capacity = $nearest_room * $bench_seat;
- *         $students_assigned = min($actual_capacity, $remaining_students);
- *         $benches_used = ceil($students_assigned / $bench_seat); // Calculate benches used
- *
- *         $allocated_rooms[] = [
- *             'room_capacity' => $nearest_room,
- *             'bench_seat' => $bench_seat,
- *             'actual_seating_capacity' => $actual_capacity,
- *             'students_assigned' => $students_assigned,
- *             'benches_used' => $benches_used
- *         ];
- *
- *         // Reduce remaining students
- *         $remaining_students -= $students_assigned;
- *         $total_seated += $students_assigned;
- *         $total_benches_used += $benches_used;
- *
- *         // Remove the used room
- *         unset($room_capacities[$room_index]);
- *         $room_capacities = array_values($room_capacities); // Re-index array
- *     }
- *
- *     return [$allocated_rooms, $total_seated, $remaining_students, $total_benches_used];
- * }
- *
- * // Example Usage:
- * // $room_capacities = [10, 20, 15]; // Number of benches in each room
- * // $bench_seat = 2; // Two seats per bench
- * // $total_students = 35;
- *
- * // list($allocated_rooms, $total_seated, $remaining_students, $total_benches_used) = knnAllocateRooms($room_capacities, $bench_seat, $total_students);
- *
- * // print_r($allocated_rooms);
- * // echo "Total Seated: $total_seated\n";
- * // echo "Remaining Students: $remaining_students\n";
- * // echo "Total Benches Used: $total_benches_used\n";
- */
-?>
-
 <?php
 function knnAllocateRooms($room_capacities, $bench_seat, $total_students)
 {
@@ -514,4 +739,86 @@ function knnAllocateRooms($room_capacities, $bench_seat, $total_students)
     return [$allocated_rooms, $total_seated, $remaining_students];
 }
 
+function allocateFlexibleRooms($room_capacities, $bench_seat, $total_students)
+{
+    // Sort rooms by seat capacity in ascending order
+    usort($room_capacities, function ($a, $b) {
+        return $a['seat_capacity'] - $b['seat_capacity'];
+    });
+
+    $allocated_rooms = [];
+    $remaining_students = $total_students;
+    $total_seated = 0;
+    $total_benches_used = 0;
+    $bench_allocation = []; // Track which students are seated on which bench
+
+    while ($remaining_students > 0 && !empty($room_capacities)) {
+        // Find the closest room capacity using KNN logic
+        $nearest_room = null;
+        $min_difference = PHP_INT_MAX;
+        $room_index = -1;
+
+        foreach ($room_capacities as $index => $room) {
+            $actual_capacity = $room['seat_capacity'] * $bench_seat;
+            $difference = abs($actual_capacity - $remaining_students);
+
+            if ($difference < $min_difference) {
+                $min_difference = $difference;
+                $nearest_room = $room;
+                $room_index = $index;
+            }
+        }
+
+        // If no suitable room is found, break
+        if ($nearest_room === null) {
+            break;
+        }
+
+        // Calculate actual seating capacity
+        $actual_capacity = $nearest_room['seat_capacity'] * $bench_seat;
+        $students_assigned = min($actual_capacity, $remaining_students);
+        $benches_used = ceil($students_assigned / $bench_seat);
+
+        // Track assigned students
+        $bench_counter = 1;
+        for ($i = 0; $i < $students_assigned; $i++) {
+            $bench_key = "Bench " . $bench_counter;
+
+            if (!isset($bench_allocation[$bench_key])) {
+                $bench_allocation[$bench_key] = [];
+            }
+
+            $bench_allocation[$bench_key][] = "Student " . ($total_seated + 1);
+
+            // Prevent conflicts by moving to the next bench
+            $bench_counter++;
+            if ($bench_counter > $benches_used) {
+                $bench_counter = 1;
+            }
+
+            $total_seated++;
+        }
+
+        // Store allocated room details
+        $allocated_rooms[] = [
+            'room_name' => $nearest_room['room_name'],
+            'bench_order' => $nearest_room['bench_order'],
+            'room_capacity' => $nearest_room['seat_capacity'],
+            'bench_seat' => $bench_seat,
+            'actual_seating_capacity' => $actual_capacity,
+            'students_assigned' => $students_assigned,
+            'benches_used' => $benches_used,
+            'bench_allocation' => $bench_allocation
+        ];
+
+        // Reduce remaining students
+        $remaining_students -= $students_assigned;
+
+        // Remove used room
+        unset($room_capacities[$room_index]);
+        $room_capacities = array_values($room_capacities);
+    }
+
+    return [$allocated_rooms, $total_seated, $remaining_students];
+}
 ?>
