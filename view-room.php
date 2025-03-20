@@ -5,7 +5,8 @@
             <h4 class="text-center text-primary text-uppercase fw-semi-bold">Room Details</h4>
         </div>
         <div class="col-lg-12">
-            <div class="container p-3">
+            <div class="container border p-3">
+                <div class="overflow-auto" style="max-height: 500px;">
                 <table class="table table-bordered border border-secondary">
                     <thead class="text-center">
                         <tr>
@@ -19,6 +20,7 @@
                     </thead>
                     <tbody id="roomTableBody"></tbody>
                 </table>
+                </div>
             </div>
         </div>
     </div>
@@ -58,7 +60,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="updateRoom()">Save Changes</button>
+                <button type="button" class="btn btn-primary" onclick="updateRoom()">Update</button>
             </div>
         </div>
     </div>

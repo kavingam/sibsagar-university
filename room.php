@@ -8,13 +8,13 @@
         <div class="col-lg-3">
             <div class="p-3">
                 <label for="roomNo">Room No:</label>
-                <input type="text" id="roomNo" class="form-control" placeholder="enter a room no" required>
+                <input type="text" id="roomNo" class="form-control" placeholder="Enter a room serial no" required>
             </div>
         </div>
         <div class="col-lg-3">
             <div class="p-3">
                 <label for="roomName">Room Name:</label>
-                <input type="text" id="roomName" class="form-control" placeholder="enter room name" required>
+                <input type="text" id="roomName" class="form-control" placeholder="Enter room name" required>
             </div>
         </div>
         <div class="col-lg-3">
@@ -34,7 +34,7 @@
         </div>
         <div class="col-lg-3">
             <div class="p-3">
-                <label for="seatCapacity">Seat Capacity:</label>
+                <label for="seatCapacity">Total Bench:</label>
                 <input type="number" id="seatCapacity" class="form-control" required min="1">
             </div>
         </div>

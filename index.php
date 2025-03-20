@@ -13,6 +13,7 @@
         </div>
         <div class="col-md-6 col-12 mb-3">
             <h5>Department Table</h5>
+            <div class="border p-3 overflow-auto" style="max-height: 500px;">
             <table class="table table-bordered">
                 <thead class="text-center">
                     <tr>
@@ -24,6 +25,7 @@
                 <tbody id="departmentTableBody">
                 </tbody>
             </table>
+            </div>
             <!-- <p>Total Departments: <span id="totalDepartments">0</span></p> -->
         </div>
     </div>

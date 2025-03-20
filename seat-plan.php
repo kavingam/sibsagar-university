@@ -11,14 +11,11 @@
             </div>
             <div class="container p-3">
                 <label for="benchSeat">Select Bench Seat:</label>
-                <select class="form-select" size="6" aria-label="Size 3 select example" id="benchSeat">
+                <select class="form-select" aria-label="Size 3 select example" id="benchSeat">
                     <option selected>Open this select menu</option>
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
                 </select>
             </div>
             <div class="container p-3">
@@ -81,7 +78,7 @@
             </div>
 
             <!-- Table -->
-            <div class="container mt-5 p-3">
+            <div class="container p-3">
             <div class="container p-2">
                 <h6 class="text-start fs-6 text-dark text-uppercase fw-semi-bold">Examination Details</h6>
             </div>
