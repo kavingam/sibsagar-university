@@ -438,13 +438,13 @@ class BenchSeatPlan extends SeatPlan
             $total_groupedStudents += count($group);
         }
         
-        /*
-        echo "<pre>Grouped Students:\n". $total_groupedStudents;
-        echo "</pre>";
-        echo "<pre>Remaining Students:\n";
-        echo count($remainingStudents);
-        echo "</pre>";
-        */
+
+        // echo "<pre>Grouped Students:\n". $total_groupedStudents;
+        // echo "</pre>";
+        // echo "<pre>Remaining Students:\n";
+        // echo count($remainingStudents);
+        // echo "</pre>";
+
 ?>
 <?php
         echo "<div class='container  p-2'>";
@@ -464,6 +464,9 @@ class BenchSeatPlan extends SeatPlan
 ?>
 <?php
         list($rooms, $total_seated, $remaining_students) =  knnAllocateRooms($seat_capacities, $this->benchSeat, count($remainingStudents));
+
+
+        
         $room_names = array_column($rooms, 'room_name'); // Extract all room names
         $room_counts = array_count_values($room_names); // Count occurrences of each room name
         $rooms_to_remove = $room_names;        
@@ -536,20 +539,6 @@ class BenchSeatPlan extends SeatPlan
                 }
 
             }
-            /*         
-            for ($bench = 1; $bench <= $fxroom['benches_used']; $bench++) {
-                
-               
-        
-                // Bench Number
-                
-        
-
-        
-                
-            }
-            // }
-            */
             echo '</tbody>';
             echo '</table>';
             echo '</div>'; // Close col div
@@ -557,6 +546,7 @@ class BenchSeatPlan extends SeatPlan
         
         echo '</div>'; // Close row div
         // echo '</div>'; // Close container
+        
 ?>
 <?php
 

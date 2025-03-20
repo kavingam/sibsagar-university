@@ -10,7 +10,7 @@
                 <table class="table table-bordered border border-secondary">
                     <thead class="text-center">
                         <tr>
-                            <th>SNO</th>
+                            <!-- <th>SNO</th> -->
                             <th>Room No</th>
                             <th>Room Name</th>
                             <th>Bench Order</th>
@@ -70,7 +70,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     fetchRooms();
 });
-
+/*
 function fetchRooms() {
     fetch("procs/fetch_rooms.php")
         .then(response => response.json())
@@ -96,6 +96,106 @@ function fetchRooms() {
                 let row = `
                     <tr>
                         <td>${index + 1}</td>
+                        <td>${room.room_no}</td>
+                        <td>${room.room_name}</td>
+                        <td>${benchOrderText}</td>
+                        <td>${room.seat_capacity}</td>
+                        <td class="justify-content-center d-flex">
+                            <button class="ms-2 btn" onclick="editRoom('${room.room_no}', '${room.room_name}', '${room.bench_order}', '${room.seat_capacity}')">
+                                <i class="bi bi-pencil-square text-primary"></i>
+                            </button>
+                            <button class="ms-2 btn" onclick="deleteRoom('${room.room_no}')">
+                                <i class="bi bi-trash-fill text-danger"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+        })
+        .catch(error => console.error("Error fetching rooms:", error));
+}
+*/
+/*
+function fetchRooms() {
+    fetch("procs/fetch_rooms.php")
+        .then(response => response.json())
+        .then(data => {
+            let tableBody = document.getElementById("roomTableBody");
+            tableBody.innerHTML = "";
+
+            // Sorting the rooms by room_no in descending order
+            data.sort((a, b) => b.room_no.localeCompare(a.room_no, undefined, { numeric: true }));
+            
+
+            // Mapping numbers to "1 X N COLUMN" labels
+            const benchOrderLabels = {
+                1: "1 X 1 COLUMN",
+                2: "1 X 2 COLUMN",
+                3: "1 X 3 COLUMN",
+                4: "1 X 4 COLUMN",
+                5: "1 X 5 COLUMN",
+                6: "1 X 6 COLUMN",
+                7: "1 X 7 COLUMN",
+                8: "1 X 8 COLUMN"
+            };
+
+            data.forEach((room, index) => {
+                let benchOrderText = benchOrderLabels[room.bench_order] || "Unknown"; // Default to "Unknown" if not mapped
+                
+                let row = `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${room.room_no}</td>
+                        <td>${room.room_name}</td>
+                        <td>${benchOrderText}</td>
+                        <td>${room.seat_capacity}</td>
+                        <td class="justify-content-center d-flex">
+                            <button class="ms-2 btn" onclick="editRoom('${room.room_no}', '${room.room_name}', '${room.bench_order}', '${room.seat_capacity}')">
+                                <i class="bi bi-pencil-square text-primary"></i>
+                            </button>
+                            <button class="ms-2 btn" onclick="deleteRoom('${room.room_no}')">
+                                <i class="bi bi-trash-fill text-danger"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+        })
+        .catch(error => console.error("Error fetching rooms:", error));
+}
+*/
+function fetchRooms() {
+    fetch("procs/fetch_rooms.php")
+        .then(response => response.json())
+        .then(data => {
+            let tableBody = document.getElementById("roomTableBody");
+            tableBody.innerHTML = "";
+
+            // Sorting the rooms by room_no in descending order
+            // data.sort((a, b) => b.room_no.localeCompare(a.room_no, undefined, { numeric: true }));
+            data.sort((a, b) => a.room_no.localeCompare(b.room_no, undefined, { numeric: true }));
+
+
+            // Mapping numbers to "1 X N COLUMN" labels
+            const benchOrderLabels = {
+                1: "1 X 1 COLUMN",
+                2: "1 X 2 COLUMN",
+                3: "1 X 3 COLUMN",
+                4: "1 X 4 COLUMN",
+                5: "1 X 5 COLUMN",
+                6: "1 X 6 COLUMN",
+                7: "1 X 7 COLUMN",
+                8: "1 X 8 COLUMN"
+            };
+
+            // <td>${index + 1}</td>
+            data.forEach((room, index) => {
+                let benchOrderText = benchOrderLabels[room.bench_order] || "Unknown"; // Default to "Unknown" if not mapped
+                
+                let row = `
+                    <tr>
                         <td>${room.room_no}</td>
                         <td>${room.room_name}</td>
                         <td>${benchOrderText}</td>
