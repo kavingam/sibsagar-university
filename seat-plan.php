@@ -90,6 +90,7 @@
                                 <th>Department</th>
                                 <th>Course</th>
                                 <th>Semester</th>
+                                <th>Total Student</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -148,8 +149,6 @@ function fetchDepartments() {
         .catch(error => console.error("Error fetching departments:", error));
 }
 </script>
-
-
 <script>
     function printContent() {
     let printWindow = window.open('', '_blank');
@@ -188,7 +187,7 @@ function downloadPDF() {
 
 <!-- JavaScript -->
 <script>
-
+/*
 let rowCount = 1;
 
 function addRow() {
@@ -227,6 +226,14 @@ function addRow() {
     tableBody.appendChild(newRow);
     rowCount++;
 }
+*/
+
+
+// Function to delete row
+function deleteRow(button) {
+    button.closest('tr').remove();
+}
+
 
 function removeRow() {
     const tableBody = document.getElementById('tableBody');
@@ -242,7 +249,8 @@ function deleteRow(button) {
     button.closest('tr').remove();
     rowCount--;
 }
-
+/*
+v0.0
 document.getElementById('generate').addEventListener('click', function () {
     const startTime = document.getElementById('startTime').value;
     const benchSeat = document.getElementById('benchSeat').value;
@@ -283,6 +291,134 @@ document.getElementById('generate').addEventListener('click', function () {
         new bootstrap.Modal(document.getElementById('generatedDataModal')).show();
     });
 });
+*/
+document.getElementById('generate').addEventListener('click', function () {
+    const startTime = document.getElementById('startTime').value.trim();
+    const benchSeat = document.getElementById('benchSeat').value.trim();
+    const rows = document.querySelectorAll("#tableBody tr");
+
+    if (!startTime || !benchSeat || rows.length === 0) {
+        alert("Please select Start Time, Bench Seat, and add at least one row.");
+        return;
+    }
+
+    let tableData = [];
+    rows.forEach(row => {
+        let department = row.cells[1].getAttribute('data-department') || row.cells[1].textContent.trim();
+        let course = row.cells[2].getAttribute('data-course') || row.cells[2].textContent.trim();
+        let semester = row.cells[3].getAttribute('data-semester') || row.cells[3].textContent.trim();
+
+        // Ensure all values are present before adding to array
+        if (department && course && semester) {
+            tableData.push({ department, course, semester });
+        }
+    });
+
+    if (tableData.length === 0) {
+        alert("No valid data found in the table.");
+        return;
+    }
+
+    // Send the data using AJAX
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'process.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                document.getElementById('modalBodyContent').innerHTML = xhr.responseText;
+                new bootstrap.Modal(document.getElementById('generatedDataModal')).show();
+            } else {
+                console.error("AJAX Error:", xhr.statusText);
+                alert("An error occurred while processing the request.");
+            }
+        }
+    };
+
+    xhr.send(JSON.stringify({ startTime, benchSeat, tableData }));
+});
+
+let rowCount = 1;
+
+function addRow() {
+    const departmentSelect = document.querySelector('select[name="department[]"]');
+    const courseSelect = document.querySelector('select[name="course[]"]');
+    const semesterSelect = document.querySelector('select[name="semester[]"]');
+
+    if (!departmentSelect || !courseSelect || !semesterSelect) {
+        alert('Dropdown elements are missing!');
+        return;
+    }
+
+    const department = departmentSelect.value.trim();
+    const departmentText = departmentSelect.options[departmentSelect.selectedIndex].text;
+
+    const course = courseSelect.value.trim();
+    const courseText = courseSelect.options[courseSelect.selectedIndex].text;
+
+    const semester = semesterSelect.value.trim();
+    const semesterText = semesterSelect.options[semesterSelect.selectedIndex].text;
+
+    if (!department || !course || !semester) {
+        alert('Please select all fields!');
+        return;
+    }
+
+    // Create an AJAX request
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'procs/getTotalStudents.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                try {
+                    const data = JSON.parse(xhr.responseText);
+                    
+                    if (data.error) {
+                        console.error('Error:', data.error);
+                        alert('Error fetching student count: ' + data.error);
+                        return;
+                    }
+
+                    const totalStudents = data.total ?? 0; // Default to 0 if not provided
+
+                    const tableBody = document.getElementById('tableBody');
+                    const newRow = document.createElement('tr');
+
+                    newRow.innerHTML = `
+                        <td>${rowCount}</td>
+                        <td data-department="${department}">${departmentText}</td>
+                        <td data-course="${course}">${courseText}</td>
+                        <td data-semester="${semester}">${semesterText}</td>
+                        <td class="text-center">${totalStudents}</td>
+                        <td class="text-center">
+                            <button class="btn btn-transparent" style="background: none; border: none;" onclick="deleteRow(this)">
+                                <i class="bi bi-trash-fill text-danger" style="font-size: 1.2rem;"></i>
+                            </button>
+                        </td>
+                    `;
+
+                    tableBody.appendChild(newRow);
+                    rowCount++;
+                } catch (error) {
+                    console.error("JSON Parsing Error:", error);
+                    alert("An error occurred while processing the response.");
+                }
+            } else {
+                console.error("AJAX Error:", xhr.statusText);
+                alert("An error occurred while fetching student count.");
+            }
+        }
+    };
+
+    // Send data
+    const params = `department=${encodeURIComponent(department)}&course=${encodeURIComponent(course)}&semester=${encodeURIComponent(semester)}`;
+    xhr.send(params);
+}
+
+
 
 </script>
 

@@ -98,14 +98,43 @@ class Student extends Database
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function getTotalStudentsByCriteria($department, $semester, $course)
+
+     public function getTotalStudentsByCriteria($department, $semester, $course)
+      {
+          $sql = 'SELECT COUNT(*) as total FROM student WHERE department = ? AND semester = ? AND course = ?';
+          $stmt = $this->db->prepare($sql);
+          $stmt->execute([$department, $semester, $course]);
+          $result = $stmt->fetch(PDO::FETCH_ASSOC);
+          return ($result && isset($result['total'])) ? (int) $result['total'] : 0;
+      }
+     
+    /*
+    public function getTotalStudentsByCriteria($department, $semester, $course, $order = 'ASC')
     {
-        $sql = 'SELECT COUNT(*) as total FROM student WHERE department = ? AND semester = ? AND course = ?';
+        // Ensure order is either ASC or DESC, default to 'ASC'
+        $validOrders = ['ASC', 'DESC'];
+        if (!in_array(strtoupper($order), $validOrders)) {
+            $order = 'ASC';  // default to ascending order if the input is invalid
+        }
+
+        // SQL query to get total students based on the criteria with ordering by total students count
+        $sql = 'SELECT department, semester, course, COUNT(*) as total 
+            FROM student 
+            WHERE department = ? AND semester = ? AND course = ?
+            GROUP BY department, semester, course
+            ORDER BY total ' . strtoupper($order);
+
+        // Prepare and execute the query
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$department, $semester, $course]);
+
+        // Fetch the result and return the total number of students
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Check if the result contains a valid 'total' key and return it
         return ($result && isset($result['total'])) ? (int) $result['total'] : 0;
     }
+    */
 }
 ?>
 <?php
@@ -433,11 +462,10 @@ class BenchSeatPlan extends SeatPlan
 
         // Display the grouped results
         $total_groupedStudents = 0;
-        
+
         foreach ($groupedStudents as $group) {
             $total_groupedStudents += count($group);
         }
-        
 
         // echo "<pre>Grouped Students:\n". $total_groupedStudents;
         // echo "</pre>";
@@ -463,22 +491,20 @@ class BenchSeatPlan extends SeatPlan
         echo '</div>';
 ?>
 <?php
-        list($rooms, $total_seated, $remaining_students) =  knnAllocateRooms($seat_capacities, $this->benchSeat, count($remainingStudents));
+        list($rooms, $total_seated, $remaining_students) = knnAllocateRooms($seat_capacities, $this->benchSeat, count($remainingStudents));
 
-
-        
-        $room_names = array_column($rooms, 'room_name'); // Extract all room names
-        $room_counts = array_count_values($room_names); // Count occurrences of each room name
-        $rooms_to_remove = $room_names;        
+        $room_names = array_column($rooms, 'room_name');  // Extract all room names
+        $room_counts = array_count_values($room_names);  // Count occurrences of each room name
+        $rooms_to_remove = $room_names;
         $filtered_rooms = array_filter($allRooms, function ($room) use ($rooms_to_remove) {
             return isset($room['room_name']) && !in_array($room['room_name'], $rooms_to_remove);
         });
         // Now `$filtered_rooms` contains all rooms except NS 8 C and NS 8 D
         // print_r(array_values($filtered_rooms)); // Re-index array
-        list($flexible_rooms, $flexible_total_seated, $flexible_remaining_students) =  knnAllocateRooms(array_values($filtered_rooms), 1, $total_groupedStudents);        
+        list($flexible_rooms, $flexible_total_seated, $flexible_remaining_students) = knnAllocateRooms(array_values($filtered_rooms), 1, $total_groupedStudents);
         // Ensure $groupedStudents is properly structured
-        $groupedStudents = reset($groupedStudents); // Extracts the inner associative array
-        $groupedStudents = array_values($groupedStudents); // Reindex numerically
+        $groupedStudents = reset($groupedStudents);  // Extracts the inner associative array
+        $groupedStudents = array_values($groupedStudents);  // Reindex numerically
         $total_students = count($groupedStudents);
         $student_count = 0;
         $lastBenchCourse = null;
@@ -486,17 +512,17 @@ class BenchSeatPlan extends SeatPlan
         // print_r($groupedStudents);
         echo '<hr/>';
         echo "<div class='row'>";
-        
+
         // Iterate over flexible rooms
         foreach ($flexible_rooms as $fxroom) {
             $benches_per_row = ceil($fxroom['benches_used'] / $fxroom['bench_order']);
-            if (1 == $fxroom['bench_order']){
+            if (1 == $fxroom['bench_order']) {
                 echo 'ok';
             } else {
                 echo "<div class='col-12'>";
                 echo "<h5 class='fw-bold p-2 fs-6 text-center bg-dark text-white'>Room " . $fxroom['room_name'] . '</h5>';
                 echo "<table style='width:100%; border-collapse: collapse; border: 2px solid black;'>";
-                echo '<thead>';                
+                echo '<thead>';
                 echo "<tr style='border: 1px solid black;'>";
                 for ($bench_order = 1; $bench_order <= $fxroom['bench_order']; $bench_order++) {
                     echo "<th style='border: 1px solid black; padding: 5px;'>Bench No." . $bench_order . '</th>';
@@ -507,7 +533,6 @@ class BenchSeatPlan extends SeatPlan
                 echo '</thead>';
                 echo '<tbody>';
                 for ($bench = 1; $bench <= $benches_per_row; $bench++) {
-
                     echo "<tr style='border: 1px solid black;'>";
                     for ($bench_order = 1; $bench_order <= $fxroom['bench_order']; $bench_order++) {
                         echo "<td style='border: 1px solid black; padding: 5px;'><strong>Bench $bench</strong></td>";
@@ -519,13 +544,13 @@ class BenchSeatPlan extends SeatPlan
                             } else {
                                 echo "<td style='border: 1px solid black; padding: 5px;'></td>";
                             }
-                
+
                             // Right Seat (empty)
                             echo "<td style='border: 1px solid black; padding: 5px;'></td>";
                         } else {  // Even benches: Leave left empty, assign right
                             // Left Seat (empty)
                             echo "<td style='border: 1px solid black; padding: 5px;'></td>";
-                
+
                             // Right Seat
                             if ($student_count < $total_students) {
                                 echo "<td style='border: 1px solid black; padding: 5px;'>" . htmlspecialchars($groupedStudents[$student_count]['roll_no']) . '</td>';
@@ -537,36 +562,36 @@ class BenchSeatPlan extends SeatPlan
                     }
                     echo '</tr>';
                 }
-
             }
             echo '</tbody>';
             echo '</table>';
-            echo '</div>'; // Close col div
+            echo '</div>';  // Close col div
         }
-        
-        echo '</div>'; // Close row div
+
+        echo '</div>';  // Close row div
         // echo '</div>'; // Close container
-        
+
 ?>
 <?php
 
         /*
-        $totalStudents = 0;
-        foreach ($this->tableData as $info) {
-            $department = htmlspecialchars($info['department']);
-            $course = htmlspecialchars($info['course']);
-            $semester = htmlspecialchars($info['semester']);
-            $count = $studentObj->getTotalStudentsByCriteria($department, $semester, $course);
-            $totalStudents += $count;
-             echo "<h6>Department: $department | Course: $course | Semester: $semester | Students: $count</h6>";
-        }
-        echo "<h3>Total Students Across All Batches: $totalStudents</h3>";
-        */
+         * $totalStudents = 0;
+         * foreach ($this->tableData as $info) {
+         *     $department = htmlspecialchars($info['department']);
+         *     $course = htmlspecialchars($info['course']);
+         *     $semester = htmlspecialchars($info['semester']);
+         *     $count = $studentObj->getTotalStudentsByCriteria($department, $semester, $course);
+         *     $totalStudents += $count;
+         *      echo "<h6>Department: $department | Course: $course | Semester: $semester | Students: $count</h6>";
+         * }
+         * echo "<h3>Total Students Across All Batches: $totalStudents</h3>";
+         */
 
 ?>
 
-<?php        
-        // print_r($remainingStudents);
+<?php
+        print_r($remainingStudents);
+/*
         $student_count = 0;  // Start from index 0 for array
         $room_number = 1;
         $total_students = count($remainingStudents);
@@ -615,6 +640,7 @@ class BenchSeatPlan extends SeatPlan
                             break;
 
                         case 2:
+                            
                             $currentCourse = $remainingStudents[$student_count]['course'] ?? '';
                             $currentSemester = $remainingStudents[$student_count]['semester'] ?? '';
 
@@ -646,6 +672,9 @@ class BenchSeatPlan extends SeatPlan
                             // Store assigned values to check for the next student
                             $lastBenchCourse = $currentCourse;
                             $lastBenchSemester = $currentSemester;
+                            
+                            
+
                             break;
 
                         case 3:
@@ -747,7 +776,7 @@ class BenchSeatPlan extends SeatPlan
 
                         default:
                             // Default seating with Conflict Prevention
-  
+
                             $currentCourse = $remainingStudents[$student_count]['course'] ?? '';
                             $currentSemester = $remainingStudents[$student_count]['semester'] ?? '';
 
@@ -763,7 +792,6 @@ class BenchSeatPlan extends SeatPlan
                             $lastBenchCourse = $currentCourse;
                             $lastBenchSemester = $currentSemester;
                             break;
-
                     }
 
                     echo "<td style='border: 1px solid black; padding: 5px;'><strong>$left_seat</strong></td>";
@@ -781,8 +809,147 @@ class BenchSeatPlan extends SeatPlan
         echo '</div>';  // Close row div
         echo '</div>';
         return null;
+        */
+        $student_count = 0;  // Start from index 0 for array
+        $room_number = 1;
+        $total_students = count($remainingStudents);
+        echo '<hr/>';
+        echo "<div class='row'>";
+        
+        foreach ($rooms as $room) {
+            $benches_per_row = ceil($room['benches_used'] / $room['bench_order']);
+            echo "<div class='col-12'>";
+            echo "<h5 class='fw-bold p-2 fs-6 text-center bg-dark text-white'>Room " . htmlspecialchars($room['room_name']) . '</h5>';
+            echo "<table style='width:100%; border-collapse: collapse; border: 2px solid black;'>";
+            echo '<thead>';
+            echo "<tr style='border: 1px solid black;'>";
+            
+            for ($bench_order = 1; $bench_order <= $room['bench_order']; $bench_order++) {
+                echo "<th style='border: 1px solid black; padding: 5px;'>Bench No.</th>";
+                echo "<th style='border: 1px solid black; padding: 5px;'>Left Seat</th>";
+                echo "<th style='border: 1px solid black; padding: 5px;'>Right Seat</th>";
+            }
+            
+            echo '</tr>';
+            echo '</thead>';
+            echo '<tbody>';
+        
+            $lastBenchCourse = '';
+            $lastBenchSemester = '';
+            for ($bench = 1; $bench <= $benches_per_row; $bench++) {
+                echo "<tr style='border: 1px solid black;'>";
+        
+                for ($bench_order = 1; $bench_order <= $room['bench_order']; $bench_order++) {
+                    echo "<td style='border: 1px solid black; padding: 5px;'><strong>Bench " . ($bench + ($bench_order - 1) * $benches_per_row) . '</strong></td>';
+        
+                    $left_seat = '';
+                    $right_seat = '';
+        
+                    $currentCourse = $remainingStudents[$student_count]['course'] ?? '';
+                    $currentSemester = $remainingStudents[$student_count]['semester'] ?? '';
+        
+                    switch ($room['bench_order']) {
+                        case 1:
+                            // One Seat Per Bench (Alternating Zigzag)
+                            if ($bench % 2 == 1) {
+                                $left_seat = ($student_count < $total_students) ? htmlspecialchars($remainingStudents[$student_count]['roll_no']) : '';
+                            } else {
+                                $right_seat = ($student_count < $total_students) ? htmlspecialchars($remainingStudents[$student_count]['roll_no']) : '';
+                            }
+                            break;
+        
+                        case 2:
+                            // Two Seats Per Bench (Alternating Zigzag)
+                            if ($currentCourse === $lastBenchCourse && $currentSemester === $lastBenchSemester) {
+                                if ($bench % 2 == 1) {
+                                    $left_seat = ($student_count < $total_students) ? htmlspecialchars($remainingStudents[$student_count++]['roll_no']) : '';
+                                } else {
+                                    $right_seat = ($student_count < $total_students) ? htmlspecialchars($remainingStudents[$student_count++]['roll_no']) : '';
+                                }
+                            } else {
+                                if ($bench % 2 == 1) {
+                                    $left_seat = ($student_count < $total_students) ? htmlspecialchars($remainingStudents[$student_count++]['roll_no']) : '';
+                                    $right_seat = ($student_count < $total_students) ? htmlspecialchars($remainingStudents[$student_count++]['roll_no']) : '';
+                                } else {
+                                    $right_seat = ($student_count < $total_students) ? htmlspecialchars($remainingStudents[$student_count++]['roll_no']) : '';
+                                    $left_seat = ($student_count < $total_students) ? htmlspecialchars($remainingStudents[$student_count++]['roll_no']) : '';
+                                }
+                            }
+                            break;
+        
+                        case 3:
+                            // Three Benches per row with Conflict Prevention
+                            if ($currentCourse === $lastBenchCourse && $currentSemester === $lastBenchSemester) {
+                                if ($bench % 2 == 1) {
+                                    $left_seat = ($student_count < $total_students) ? htmlspecialchars($remainingStudents[$student_count++]['roll_no']) : '';
+                                } else {
+                                    $right_seat = ($student_count < $total_students) ? htmlspecialchars($remainingStudents[$student_count++]['roll_no']) : '';
+                                }
+                            } else {
+                                if ($bench % 2 == 1) {
+                                    $left_seat = ($student_count < $total_students) ? htmlspecialchars($remainingStudents[$student_count++]['roll_no']) : '';
+                                    $right_seat = ($student_count < $total_students) ? htmlspecialchars($remainingStudents[$student_count++]['roll_no']) : '';
+                                } else {
+                                    $right_seat = ($student_count < $total_students) ? htmlspecialchars($remainingStudents[$student_count++]['roll_no']) : '';
+                                    $left_seat = ($student_count < $total_students) ? htmlspecialchars($remainingStudents[$student_count++]['roll_no']) : '';
+                                }
+                            }
+                            break;
+        
+                        case 4:
+                            // Full Zigzag with Conflict Prevention
+                            if ($bench % 4 == 1 || $bench % 4 == 2) {
+                                if ($currentCourse === $lastBenchCourse && $currentSemester === $lastBenchSemester) {
+                                    $left_seat = ($student_count < $total_students) ? htmlspecialchars($remainingStudents[$student_count++]['roll_no']) : '';
+                                    $right_seat = '';
+                                } else {
+                                    $left_seat = ($student_count < $total_students) ? htmlspecialchars($remainingStudents[$student_count++]['roll_no']) : '';
+                                    $right_seat = ($student_count < $total_students) ? htmlspecialchars($remainingStudents[$student_count++]['roll_no']) : '';
+                                }
+                            } else {
+                                if ($currentCourse === $lastBenchCourse && $currentSemester === $lastBenchSemester) {
+                                    $right_seat = ($student_count < $total_students) ? htmlspecialchars($remainingStudents[$student_count++]['roll_no']) : '';
+                                    $left_seat = '';
+                                } else {
+                                    $right_seat = ($student_count < $total_students) ? htmlspecialchars($remainingStudents[$student_count++]['roll_no']) : '';
+                                    $left_seat = ($student_count < $total_students) ? htmlspecialchars($remainingStudents[$student_count++]['roll_no']) : '';
+                                }
+                            }
+                            break;
+        
+                        default:
+                            // Default Zigzag Assignment with Conflict Prevention
+                            if ($currentCourse === $lastBenchCourse && $currentSemester === $lastBenchSemester) {
+                                $left_seat = ($student_count < $total_students) ? htmlspecialchars($remainingStudents[$student_count++]['roll_no']) : '';
+                                $right_seat = '';
+                            } else {
+                                $left_seat = ($student_count < $total_students) ? htmlspecialchars($remainingStudents[$student_count++]['roll_no']) : '';
+                                $right_seat = ($student_count < $total_students) ? htmlspecialchars($remainingStudents[$student_count++]['roll_no']) : '';
+                            }
+                            break;
+                    }
+        
+                    // Store assigned values for next iteration
+                    $lastBenchCourse = $currentCourse;
+                    $lastBenchSemester = $currentSemester;
+        
+                    echo "<td style='border: 1px solid black; padding: 5px;'><strong>$left_seat</strong></td>";
+                    echo "<td style='border: 1px solid black; padding: 5px;'><strong>$right_seat</strong></td>";
+                }
+        
+                echo '</tr>';
+            }
+        
+            echo '</tbody>';
+            echo '</table>';
+            echo '</div>';  // Close col-12 div
+        }
+        
+        echo '</div>';  // Close row div
+        echo '</div>';
+        
     }
-    
+
 }
 ?>
 <?php
@@ -849,5 +1016,3 @@ function knnAllocateRooms($room_capacities, $bench_seat, $total_students)
 
     return [$allocated_rooms, $total_seated, $remaining_students];
 }
-
-
