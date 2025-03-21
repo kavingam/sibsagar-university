@@ -66,8 +66,9 @@ try {
     <div class="row mt-4 justify-content-center">
         <div class="col-md-10">
             <div id="dataNotFound"></div>
-            <table id="studentTable" class="table table-bordered text-center">
-                <thead>
+            <div class="overflow-auto" style="max-height: 500px;">
+            <table id="studentTable" class="table table-bordered border text-center">
+                <thead class="sticky-top">
                     <tr>
                         <th>Roll No</th>
                         <th>Name</th>
@@ -78,7 +79,7 @@ try {
                 </thead>
                 <tbody></tbody>
             </table>
-
+            </div>
             <div class="container my-4">
                 <div class="d-flex justify-content-between">
                     <div class="p-2">

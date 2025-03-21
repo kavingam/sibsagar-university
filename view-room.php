@@ -5,10 +5,10 @@
             <h4 class="text-center text-primary text-uppercase fw-semi-bold">Room Details</h4>
         </div>
         <div class="col-lg-12">
-            <div class="container border p-3">
+            <div class="container">
                 <div class="overflow-auto" style="max-height: 500px;">
                 <table class="table table-bordered border border-secondary">
-                    <thead class="text-center">
+                    <thead class="text-center sticky-top border">
                         <tr>
                             <!-- <th>SNO</th> -->
                             <th>Room No</th>

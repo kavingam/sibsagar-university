@@ -13,9 +13,9 @@
         </div>
         <div class="col-md-6 col-12 mb-3">
             <h5>Department Table</h5>
-            <div class="border p-3 overflow-auto" style="max-height: 500px;">
+            <div class="border overflow-auto" style="max-height: 500px;">
             <table class="table table-bordered">
-                <thead class="text-center">
+                <thead class="text-center sticky-top">
                     <tr>
                         <th scope="col">Department ID</th>
                         <th scope="col">Department Name</th>
