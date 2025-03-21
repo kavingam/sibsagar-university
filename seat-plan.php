@@ -165,23 +165,69 @@ function fetchDepartments() {
 //     html2pdf(element);
 // }
 
+// function downloadPDF() {
+//     const element = document.getElementById("modalBodyContent");
+
+//     const options = {
+//         margin: 10,
+//         filename: 'document.pdf',
+//         image: { type: 'jpeg', quality: 1 },  // Highest image quality
+//         html2canvas: { scale: 3 },  // Higher scale for better quality
+//         jsPDF: { 
+//             unit: 'mm', 
+//             format: 'a4',  // Use 'a3' or 'legal' if needed
+//             orientation: 'portrait'  // Change to 'landscape' if required
+//         }
+//     };
+
+//     html2pdf().set(options).from(element).save();
+// }
+
 function downloadPDF() {
     const element = document.getElementById("modalBodyContent");
+    
+    if (!element) {
+        console.error("Element with ID 'modalBodyContent' not found.");
+        return;
+    }
 
     const options = {
-        margin: 10,
+        margin: 0, // Remove margins for full-page content
         filename: 'document.pdf',
-        image: { type: 'jpeg', quality: 1 },  // Highest image quality
-        html2canvas: { scale: 3 },  // Higher scale for better quality
-        jsPDF: { 
-            unit: 'mm', 
-            format: 'a4',  // Use 'a3' or 'legal' if needed
-            orientation: 'portrait'  // Change to 'landscape' if required
+        image: { type: 'jpeg', quality: 1 }, // Highest image quality
+        html2canvas: {
+            scale: 3, // Higher scale for better rendering without reducing content size
+            useCORS: true, // To handle cross-origin images
+            logging: false, // Reduce console clutter
+        },
+        jsPDF: {
+            unit: 'mm',
+            format: 'letter', // Letter size format
+            orientation: 'portrait' // Keeping Portrait layout
         }
     };
-
-    html2pdf().set(options).from(element).save();
+    
+    // Apply custom styles to enhance rendering
+    element.style.backgroundColor = "#ffffff";
+    
+    html2pdf()
+        .set(options)
+        .from(element)
+        .toPdf()
+        .get('pdf')
+        .then(function (pdf) {
+            let totalPages = pdf.internal.getNumberOfPages();
+            pdf.setFontSize(10); // Set text size to 10 pixels correctly
+            for (let i = 1; i <= totalPages; i++) {
+                pdf.setPage(i);
+                pdf.text(`Page ${i} of ${totalPages}`, 10, pdf.internal.pageSize.height - 10);
+            }
+            console.log("PDF Generated Successfully");
+        })
+        .save();
 }
+
+
 
 </script>
 

@@ -1,4 +1,38 @@
 <?php
+class StudentSorter
+{
+    // Merge sort function
+    public function mergeSort($array, $order = 'DESC')
+    {
+        if (count($array) <= 1) {
+            return $array;
+        }
+
+        $mid = count($array) / 2;
+        $left = array_slice($array, 0, $mid);
+        $right = array_slice($array, $mid);
+
+        return $this->merge($this->mergeSort($left, $order), $this->mergeSort($right, $order), $order);
+    }
+
+    // Merge function
+    private function merge($left, $right, $order)
+    {
+        $sorted = [];
+        while (count($left) > 0 && count($right) > 0) {
+            if (($order === 'ASC' && $left[0]['total'] < $right[0]['total']) ||
+                ($order === 'DESC' && $left[0]['total'] > $right[0]['total'])) {
+                $sorted[] = array_shift($left);
+            } else {
+                $sorted[] = array_shift($right);
+            }
+        }
+
+        return array_merge($sorted, $left, $right);
+    }
+}
+
+
 class Database
 {
     protected $conn;
@@ -99,42 +133,14 @@ class Student extends Database
     }
 
 
-     public function getTotalStudentsByCriteria($department, $semester, $course)
-      {
-          $sql = 'SELECT COUNT(*) as total FROM student WHERE department = ? AND semester = ? AND course = ?';
-          $stmt = $this->db->prepare($sql);
-          $stmt->execute([$department, $semester, $course]);
-          $result = $stmt->fetch(PDO::FETCH_ASSOC);
-          return ($result && isset($result['total'])) ? (int) $result['total'] : 0;
-      }
-     
-    /*
-    public function getTotalStudentsByCriteria($department, $semester, $course, $order = 'ASC')
+    public function getTotalStudentsByCriteria($department, $semester, $course)
     {
-        // Ensure order is either ASC or DESC, default to 'ASC'
-        $validOrders = ['ASC', 'DESC'];
-        if (!in_array(strtoupper($order), $validOrders)) {
-            $order = 'ASC';  // default to ascending order if the input is invalid
-        }
-
-        // SQL query to get total students based on the criteria with ordering by total students count
-        $sql = 'SELECT department, semester, course, COUNT(*) as total 
-            FROM student 
-            WHERE department = ? AND semester = ? AND course = ?
-            GROUP BY department, semester, course
-            ORDER BY total ' . strtoupper($order);
-
-        // Prepare and execute the query
+        $sql = 'SELECT COUNT(*) as total FROM student WHERE department = ? AND semester = ? AND course = ?';
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$department, $semester, $course]);
-
-        // Fetch the result and return the total number of students
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        // Check if the result contains a valid 'total' key and return it
         return ($result && isset($result['total'])) ? (int) $result['total'] : 0;
-    }
-    */
+    }    
 }
 ?>
 <?php
@@ -188,7 +194,6 @@ class BenchSeatPlan extends SeatPlan
             $department = htmlspecialchars($info['department']);
             $course = htmlspecialchars($info['course']);
             $semester = htmlspecialchars($info['semester']);
-
             // Fetch students based on criteria
             $students = $studentObj->getStudentsByCriteria($department, $semester, $course);
 
@@ -389,44 +394,105 @@ class BenchSeatPlan extends SeatPlan
             ];
         }, $allRooms);
         // print_r($seat_capacities);
-        $studentGroups = [];  // Renamed from $mergedStudents
+       // $studentGroups = [];  // Renamed from $mergedStudents
 
-        foreach ($this->tableData as $info) {
-            $department = htmlspecialchars($info['department']);
-            $course = htmlspecialchars($info['course']);
-            $semester = htmlspecialchars($info['semester']);
+// Initialize StudentProcessor correctly
+// $processor = new StudentProcessor($this->db, $this->tableData);
+// $result = $processor->processStudentGroups();
+        // echo $result;
+        // debug 0.1
 
-            $students = $studentObj->getStudentsByCriteria($department, $semester, $course);
-            $studentGroups[$department][$course][$semester] = $students;  // Updated variable name
+        // foreach ($this->tableData as $info) {
+        //     $department = htmlspecialchars($info['department']);
+        //     $course = htmlspecialchars($info['course']);
+        //     $semester = htmlspecialchars($info['semester']);
+
+        //     $students = $studentObj->getStudentsByCriteria($department, $semester, $course);
+        //     $totalStudents = $studentObj->getTotalStudentsByCriteria($department, $semester, $course);
+        //     $studentGroups[$department][$course][$semester] = $students;  // Updated variable name
+        //     echo "Total Students: " . $totalStudents;
+        // }
+
+// Instantiate Student and Sorting Classes
+$studentObj = new Student();
+$sorter = new StudentSorter();
+
+$studentGroups = [];
+$tableDataSorted = [];
+
+// Fetch student data and prepare for sorting
+foreach ($this->tableData as $info) {
+    $department = htmlspecialchars($info['department']);
+    $course = htmlspecialchars($info['course']);
+    $semester = htmlspecialchars($info['semester']);
+
+    $students = $studentObj->getStudentsByCriteria($department, $semester, $course);
+    $totalStudents = $studentObj->getTotalStudentsByCriteria($department, $semester, $course);
+
+    // Store student group data for sorting
+    $tableDataSorted[] = [
+        'department' => $department,
+        'course' => $course,
+        'semester' => $semester,
+        'total' => $totalStudents,
+        'students' => $students // Include student list
+    ];
+}
+
+// Sort student groups by total students (Descending)
+$tableDataSorted = $sorter->mergeSort($tableDataSorted, 'DESC');
+// Sort student groups by total students in ascending order
+// $tableDataSorted = $sorter->mergeSort($tableDataSorted, 'ASC');
+
+
+// Merge sorted data into `$studentGroups`
+$studentGroups = [];
+
+foreach ($tableDataSorted as $data) {
+    $studentGroups[$data['department']][$data['course']][$data['semester']] = $data['students'];
+    // $students = $studentObj->getStudentsByCriteria($department, $semester, $course);
+}
+
+print_r($studentGroups);
+// Print merged and sorted student data
+foreach ($studentGroups as $department => $courses) {
+    foreach ($courses as $course => $semesters) {
+        foreach ($semesters as $semester => $students) {
+            echo "Department: $department, Course: $course, Semester: $semester, Total Students: " . count($students) . "<br>";
+            // $students = $studentObj->getStudentsByCriteria($department, $semester, $course);
         }
+    }
+}        
 
+        // print_r(mergeStudentsZigzag($studentGroups));
         $mergedStudents = [];
-        $maxCount = max(array_map('count', array_merge(...array_merge(...array_values($studentGroups)))));
+        // $maxCount = max(array_map('count', array_merge(...array_merge(...array_values($studentGroups)))));
 
-        for ($i = 0; $i < $maxCount; $i++) {
-            foreach ($studentGroups as $departmentKey => $departments) {
-                foreach ($departments as $courseKey => $courses) {
-                    foreach ($courses as $semesterKey => $semesterStudents) {
-                        if (isset($semesterStudents[$i])) {
-                            // Unique tracking within department, course, and semester
-                            $key = $departmentKey . '_' . $courseKey . '_' . $semesterKey;
+        // for ($i = 0; $i < $maxCount; $i++) {
+        //     foreach ($studentGroups as $departmentKey => $departments) {
+        //         foreach ($departments as $courseKey => $courses) {
+        //             foreach ($courses as $semesterKey => $semesterStudents) {
+        //                 if (isset($semesterStudents[$i])) {
+        //                     // Unique tracking within department, course, and semester
+        //                     $key = $depart		Bench 1	ASS-UG-SEM-1027	
+// Bench 2		ASS-UG-SEM-1028mentKey . '_' . $courseKey . '_' . $semesterKey;
 
-                            if (!isset($seenStudents[$key])) {
-                                $seenStudents[$key] = [];
-                            }
+        //                     if (!isset($seenStudents[$key])) {
+        //                         $seenStudents[$key] = [];
+        //                     }
 
-                            if (!in_array($semesterStudents[$i], $seenStudents[$key], true)) {
-                                $mergedStudents[] = $semesterStudents[$i];
-                                $seenStudents[$key][] = $semesterStudents[$i];  // Track student within category
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        //                     if (!in_array($semesterStudents[$i], $seenStudents[$key], true)) {
+        //                         $mergedStudents[] = $semesterStudents[$i];
+        //                         $seenStudents[$key][] = $semesterStudents[$i];  // Track student within category
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
 
         // print_r($mergedStudents);
-
+        $mergedStudents = mergeStudentsZigzag($studentGroups);
         $groupedStudents = [];
         $remainingStudents = [];
 
@@ -471,7 +537,8 @@ class BenchSeatPlan extends SeatPlan
         // echo "</pre>";
         // echo "<pre>Remaining Students:\n";
         // echo count($remainingStudents);
-        // echo "</pre>";
+
+        echo "</pre>";
 
 ?>
 <?php
@@ -491,8 +558,9 @@ class BenchSeatPlan extends SeatPlan
         echo '</div>';
 ?>
 <?php
-        list($rooms, $total_seated, $remaining_students) = knnAllocateRooms($seat_capacities, $this->benchSeat, count($remainingStudents));
 
+        list($rooms, $total_seated, $remaining_students) = knnAllocateRooms($seat_capacities, $this->benchSeat, count($remainingStudents));
+        if ($total_groupedStudents != 0) {
         $room_names = array_column($rooms, 'room_name');  // Extract all room names
         $room_counts = array_count_values($room_names);  // Count occurrences of each room name
         $rooms_to_remove = $room_names;
@@ -510,9 +578,9 @@ class BenchSeatPlan extends SeatPlan
         $lastBenchCourse = null;
         $lastBenchSemester = null;
         // print_r($groupedStudents);
+        
         echo '<hr/>';
         echo "<div class='row'>";
-
         // Iterate over flexible rooms
         foreach ($flexible_rooms as $fxroom) {
             $benches_per_row = ceil($fxroom['benches_used'] / $fxroom['bench_order']);
@@ -569,7 +637,9 @@ class BenchSeatPlan extends SeatPlan
         }
 
         echo '</div>';  // Close row div
-        // echo '</div>'; // Close container
+        echo '</div>'; // Close container
+    } 
+        
 
 ?>
 <?php
@@ -592,9 +662,14 @@ class BenchSeatPlan extends SeatPlan
 <?php
         // print_r($remainingStudents);
 
+
+        
+        
+
         $student_count = 0;  // Start from index 0 for array
         $room_number = 1;
         $total_students = count($remainingStudents);
+        echo "<div class='container mt-3'>";
         echo '<hr/>';
         echo "<div class='row'>";
 
@@ -808,7 +883,9 @@ class BenchSeatPlan extends SeatPlan
 
         echo '</div>';  // Close row div
         echo '</div>';
+        echo '</div>';
         return null;
+        
         
     }
 
@@ -877,4 +954,64 @@ function knnAllocateRooms($room_capacities, $bench_seat, $total_students)
     }
 
     return [$allocated_rooms, $total_seated, $remaining_students];
+}
+
+
+
+function mergeStudentsZigzag($studentGroups) {
+    $mergedStudents = [];
+    $seenStudents = [];
+    
+    // Extract department keys
+    $departmentKeys = array_keys($studentGroups);
+    
+    // Process first two departments first
+    $primaryDepartments = array_slice($departmentKeys, 0, 2);
+    $remainingDepartments = array_slice($departmentKeys, 2);
+
+    // Function to process departments in a zigzag manner
+    function processDepartments($departments, &$mergedStudents, &$seenStudents, $studentGroups) {
+        $maxCount = 0;
+
+        // Calculate max student count among these departments
+        foreach ($departments as $dept) {
+            foreach ($studentGroups[$dept] as $course => $semesters) {
+                foreach ($semesters as $semester => $students) {
+                    $maxCount = max($maxCount, count($students));
+                }
+            }
+        }
+
+        // Zigzag merge logic
+        for ($i = 0; $i < $maxCount; $i++) {
+            foreach ($departments as $departmentKey) {
+                if (!isset($studentGroups[$departmentKey])) continue;
+
+                foreach ($studentGroups[$departmentKey] as $courseKey => $courses) {
+                    foreach ($courses as $semesterKey => $semesterStudents) {
+                        if (isset($semesterStudents[$i])) {
+                            $key = $departmentKey . '_' . $courseKey . '_' . $semesterKey;
+
+                            if (!isset($seenStudents[$key])) {
+                                $seenStudents[$key] = [];
+                            }
+
+                            if (!in_array($semesterStudents[$i], $seenStudents[$key], true)) {
+                                $mergedStudents[] = $semesterStudents[$i];
+                                $seenStudents[$key][] = $semesterStudents[$i];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Merge first two departments
+    processDepartments($primaryDepartments, $mergedStudents, $seenStudents, $studentGroups);
+
+    // Merge remaining departments (appended at the end)
+    processDepartments($remainingDepartments, $mergedStudents, $seenStudents, $studentGroups);
+
+    return $mergedStudents;
 }

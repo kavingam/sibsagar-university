@@ -1,3 +1,18 @@
+<?php 
+// if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+//     $data = json_decode(file_get_contents('php://input'), true);
+
+//     if (!$data) {
+//         echo "<p class='text-danger'>Invalid data received!</p>";
+//         exit;
+//     }
+
+//     $startTime = htmlspecialchars($data['startTime']);
+//     $benchSeat = htmlspecialchars($data['benchSeat']);
+//     $tableData = $data['tableData'];
+//     print_r($tableData);
+// }
+?>
 <?php
 include 'generate.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -11,6 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $startTime = htmlspecialchars($data['startTime']);
     $benchSeat = htmlspecialchars($data['benchSeat']);
     $tableData = $data['tableData'];
+    // print_r($tableData);
 
     switch ($benchSeat) {
         case 1:
