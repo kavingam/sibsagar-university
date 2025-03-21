@@ -90,7 +90,7 @@
                                 <th>Department</th>
                                 <th>Course</th>
                                 <th>Semester</th>
-                                <th>Total Student</th>
+                                <th>Total Students</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
