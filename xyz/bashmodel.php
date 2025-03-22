@@ -133,6 +133,32 @@ class Room extends BaseModel {
 
 // ✅ Department CRUD
 class Department extends BaseModel {
+
+    // 🔥 Generate Next Department ID
+    private function generateNextId() {
+        $stmt = $this->conn->query("SELECT MAX(CAST(department_id AS UNSIGNED)) AS max_id FROM departments");
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return ($row['max_id'] !== null) ? $row['max_id'] + 1 : 1;
+    }
+    // 🔍 Check if Department Name Exists
+    private function departmentExists($department_name) {
+        $stmt = $this->conn->prepare("SELECT COUNT(*) FROM departments WHERE department_name = ?");
+        $stmt->execute([$department_name]);
+        return $stmt->fetchColumn() > 0;
+    }
+    // ✅ Create New Department Using JSON
+    public function createNewDepartmentJSON($department_name) {
+        if ($this->departmentExists($department_name)) {
+            return json_encode(["status" => "exists_name", "message" => "Department name already exists."]);
+        }
+
+        $next_id = $this->generateNextId();
+        $stmt = $this->conn->prepare("INSERT INTO departments (department_id, department_name) VALUES (?, ?)");
+        $stmt->execute([$next_id, $department_name]);
+
+        return json_encode(["status" => "success", "message" => "Department created successfully!", "department_id" => $next_id]);
+    }
+    
     public function createDepartment($department_id, $department_name) {
         $sql = "INSERT INTO departments (department_id, department_name) VALUES (:department_id, :department_name)";
         $stmt = $this->conn->prepare($sql);
@@ -154,7 +180,52 @@ class Department extends BaseModel {
             ':department_name' => $department_name
         ]);
     }
+   // ✅ Update Department Name by ID with JSON Method
+    public function updateDepartmentJSON($department_id, $department_name) {
+        try {
+            $stmt = $this->conn->prepare("UPDATE departments SET department_name = ? WHERE department_id = ?");
+            $stmt->execute([$department_name, $department_id]);
 
+            return ["status" => "success", "message" => "Department updated successfully."];
+        } catch (PDOException $e) {
+            return ["status" => "error", "message" => $e->getMessage()];
+        }
+    }
+    // ✅ Delete Department and Reassign IDs
+    public function deleteDepartmentJSON($department_id) {
+        try {
+            $this->conn->beginTransaction(); // Start transaction
+
+            // 🔥 Delete the department
+            $stmt = $this->conn->prepare("DELETE FROM departments WHERE department_id = ?");
+            $stmt->execute([$department_id]);
+
+            // 🔥 Create a temporary table to store remaining departments in sorted order
+            $this->conn->exec("CREATE TEMPORARY TABLE temp_departments AS SELECT department_name FROM departments ORDER BY CAST(department_id AS UNSIGNED) ASC");
+
+            // 🔥 Clear the original table
+            $this->conn->exec("DELETE FROM departments");
+
+            // 🔥 Reinsert data with new sequential IDs
+            $new_id = 1;
+            $stmt = $this->conn->prepare("INSERT INTO departments (department_id, department_name) VALUES (?, ?)");
+            $tempStmt = $this->conn->query("SELECT * FROM temp_departments");
+
+            while ($row = $tempStmt->fetch(PDO::FETCH_ASSOC)) {
+                $stmt->execute([$new_id, $row['department_name']]);
+                $new_id++;
+            }
+
+            // 🔥 Drop the temporary table
+            $this->conn->exec("DROP TEMPORARY TABLE temp_departments");
+
+            $this->conn->commit(); // ✅ Commit transaction
+            return ["status" => "success", "message" => "Department deleted and IDs reassigned."];
+        } catch (PDOException $e) {
+            $this->conn->rollBack(); // ❌ Rollback on error
+            return ["status" => "error", "message" => $e->getMessage()];
+        }
+    }
     public function deleteDepartment($department_id) {
         $sql = "DELETE FROM departments WHERE department_id = :department_id";
         $stmt = $this->conn->prepare($sql);
