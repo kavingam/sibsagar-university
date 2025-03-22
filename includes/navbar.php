@@ -13,15 +13,17 @@ echo 'index.php'; ?>">
                 <a class="nav-link active text-light active" aria-current="page" href="<?php echo BASE_URL;
 echo 'index.php'; ?>">Home</a>
                 <a class="nav-link active text-light active" aria-current="page" href="<?php echo BASE_URL;
-echo 'import.php'; ?>">Import</a>
+echo 'import-students.php'; ?>">Import</a>
                 <a class="nav-link active text-light active" aria-current="page" href="<?php echo BASE_URL;
-echo 'export.php'; ?>">Export</a>
+echo 'export-students.php'; ?>">Export</a>
                 <a class="nav-link active text-light active" aria-current="page" href="<?php echo BASE_URL;
-echo 'room.php'; ?>">Add Room</a>
+echo 'add-room.php'; ?>">Add Room</a>
                 <a class="nav-link active text-light active" aria-current="page" href="<?php echo BASE_URL;
 echo 'view-room.php'; ?>">View Room</a>
+                <a class="nav-link active text-light active" aria-current="page" href="<?php echo BASE_URL;
+echo 'department.php'; ?>">Manage Department</a>
                 <a href="<?php echo BASE_URL;
-echo 'seat-plan.php'; ?>" aria-current="page" class="nav-link active text-light active">Advance Seat Plan</a>
+echo 'advance-seat-plan.php'; ?>" aria-current="page" class="nav-link active text-light active">Advance Seat Plan</a>
 
             </div>
         </div>

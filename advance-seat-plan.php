@@ -19,7 +19,7 @@
                 </select>
             </div>
             <div class="container p-3">
-                <button type="button" class="btn btn-success btn-sm" id="generate">Generate</button>
+                <button type="button" class="btn btn-primary btn-sm" id="generate">Generate</button>
             </div>
         </div>
 
@@ -36,7 +36,7 @@
             $stmt->execute();
             $departments = $stmt->fetchAll(PDO::FETCH_ASSOC);
             ?>
-            <div class="container p-2 border border-end-0">
+            <div class="container p-2 borderx border-end-0">
                 <label>Department:</label>
                 <select name="department[]" class="form-control departmentSelect" onchange="fetchCoursesAndSemesters(this)">
                     <option value="">Select Department</option>
@@ -49,7 +49,7 @@
             </div>
         </div>
         <div class="col-3">
-            <div class="container p-2 border border-start-0 border-end-0">
+            <div class="container p-2 borderx border-start-0 border-end-0">
                 <label>Course:</label>
                 <select name="course[]" class="form-control courseSelect">
                     <option value="">Select Course</option>
@@ -57,7 +57,7 @@
             </div>
         </div>
         <div class="col-3">
-            <div class="container p-2 border border-start-0">
+            <div class="container p-2 borderx border-start-0">
                 <label>Semester:</label>
                 <select name="semester[]" class="form-control semesterSelect">
                     <option value="">Select Semester</option>
@@ -67,7 +67,7 @@
         <div class="col-3">
             <div class="container d-flex justify-content-center align-items-center mt-1">
                 <div class="text-center">
-                    <button type="button" class="btn btn-success btn-sm w-100 mb-2" onclick="addRow()">Add Exam</button>
+                    <button type="button" class="btn btn-primary btn-sm w-100 mb-2" onclick="addRow()">Add Exam</button>
                     <button type="button" class="btn btn-danger btn-sm w-100" onclick="removeRow()">Remove</button>
                 </div>
             </div>
@@ -160,29 +160,6 @@ function fetchDepartments() {
     printWindow.print();
 }
 
-// function downloadPDF() {
-//     const element = document.getElementById("modalBodyContent");
-//     html2pdf(element);
-// }
-
-// function downloadPDF() {
-//     const element = document.getElementById("modalBodyContent");
-
-//     const options = {
-//         margin: 10,
-//         filename: 'document.pdf',
-//         image: { type: 'jpeg', quality: 1 },  // Highest image quality
-//         html2canvas: { scale: 3 },  // Higher scale for better quality
-//         jsPDF: { 
-//             unit: 'mm', 
-//             format: 'a4',  // Use 'a3' or 'legal' if needed
-//             orientation: 'portrait'  // Change to 'landscape' if required
-//         }
-//     };
-
-//     html2pdf().set(options).from(element).save();
-// }
-
 function downloadPDF() {
     const element = document.getElementById("modalBodyContent");
     
@@ -227,54 +204,6 @@ function downloadPDF() {
         .save();
 }
 
-
-
-</script>
-
-<!-- JavaScript -->
-<script>
-/*
-let rowCount = 1;
-
-function addRow() {
-    const departmentSelect = document.querySelector('select[name="department[]"]');
-    const courseSelect = document.querySelector('select[name="course[]"]');
-    const semesterSelect = document.querySelector('select[name="semester[]"]');
-
-    const department = departmentSelect ? departmentSelect.value : "";
-    const departmentText = departmentSelect ? departmentSelect.options[departmentSelect.selectedIndex].text : "";
-
-    const course = courseSelect ? courseSelect.value : "";
-    const courseText = courseSelect ? courseSelect.options[courseSelect.selectedIndex].text : "";
-
-    const semester = semesterSelect ? semesterSelect.value : "";
-    const semesterText = semesterSelect ? semesterSelect.options[semesterSelect.selectedIndex].text : "";
-
-    if (!department || !course || !semester) {
-        alert('Please select all fields!');
-        return;
-    }
-
-    const tableBody = document.getElementById('tableBody');
-    const newRow = document.createElement('tr');
-    newRow.innerHTML = `
-        <td>${rowCount}</td>
-        <td id="${department}">${departmentText}</td>
-        <td id="${course}">${courseText}</td>
-        <td id="${semester}">${semester}</td>
-        <td class="text-center">
-            <button class="btn btn-transparent" style="background: none; border: none;" onclick="deleteRow(this)">
-                <i class="bi bi-trash-fill text-danger" style="font-size: 1.2rem;"></i>
-            </button>
-        </td>
-    `;
-
-    tableBody.appendChild(newRow);
-    rowCount++;
-}
-*/
-
-
 // Function to delete row
 function deleteRow(button) {
     button.closest('tr').remove();
@@ -295,56 +224,14 @@ function deleteRow(button) {
     button.closest('tr').remove();
     rowCount--;
 }
-/*
-v0.0
-document.getElementById('generate').addEventListener('click', function () {
-    const startTime = document.getElementById('startTime').value;
-    const benchSeat = document.getElementById('benchSeat').value;
-    const rows = document.querySelectorAll("#tableBody tr");
 
-    if (!startTime || !benchSeat || rows.length === 0) {
-        alert("Please select Start Time, Bench Seat, and add at least one row.");
-        return;
-    }
-
-    let tableData = [];
-    rows.forEach(row => {
-        // tableData.push({
-        //     department: row.cells[1].textContent,
-        //     course: row.cells[2].textContent,
-        //     semester: row.cells[3].textContent
-        // });
-        // tableData.push({
-        //     department: row.cells[1].querySelector('select')?.value || row.cells[1].innerText.trim(),
-        //     course: row.cells[2].querySelector('select')?.value || row.cells[2].innerText.trim(),
-        //     semester: row.cells[3].querySelector('select')?.value || row.cells[3].innerText.trim()
-        // });
-        tableData.push({
-            department: row.cells[1].getAttribute('id'), // Get ID instead of text
-            course: row.cells[2].getAttribute('id'),
-            semester: row.cells[3].getAttribute('id')
-        });
-    });
-
-    fetch('process.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ startTime, benchSeat, tableData })
-    })
-    .then(response => response.text())
-    .then(data => {
-        document.getElementById('modalBodyContent').innerHTML = data;
-        new bootstrap.Modal(document.getElementById('generatedDataModal')).show();
-    });
-});
-*/
-document.getElementById('generate').addEventListener('click', function () {
+document.getElementById('generate').addEventListener('click', async function () {
     const startTime = document.getElementById('startTime').value.trim();
-    const benchSeat = document.getElementById('benchSeat').value.trim();
+    const benchSeat = parseInt(document.getElementById('benchSeat').value.trim(), 10);
     const rows = document.querySelectorAll("#tableBody tr");
 
-    if (!startTime || !benchSeat || rows.length === 0) {
-        alert("Please select Start Time, Bench Seat, and add at least one row.");
+    if (!startTime || isNaN(benchSeat) || rows.length === 0) {
+        alert("Please select a valid Start Time, Bench Seat (number), and add at least one row.");
         return;
     }
 
@@ -353,10 +240,10 @@ document.getElementById('generate').addEventListener('click', function () {
         let department = row.cells[1].getAttribute('data-department') || row.cells[1].textContent.trim();
         let course = row.cells[2].getAttribute('data-course') || row.cells[2].textContent.trim();
         let semester = row.cells[3].getAttribute('data-semester') || row.cells[3].textContent.trim();
+        let totalStudent = parseInt(row.cells[4].getAttribute('data-totalStudent') || row.cells[4].textContent.trim(), 10);
 
-        // Ensure all values are present before adding to array
-        if (department && course && semester) {
-            tableData.push({ department, course, semester });
+        if (department && course && semester && !isNaN(totalStudent)) {
+            tableData.push({ department, course, semester, totalStudent });
         }
     });
 
@@ -365,25 +252,27 @@ document.getElementById('generate').addEventListener('click', function () {
         return;
     }
 
-    // Send the data using AJAX
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', 'process.php', true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
+    try {
+        const response = await fetch('xyz/dev/nx_var.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ startTime, benchSeat, tableData }),
+        });
 
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4) {
-            if (xhr.status === 200) {
-                document.getElementById('modalBodyContent').innerHTML = xhr.responseText;
-                new bootstrap.Modal(document.getElementById('generatedDataModal')).show();
-            } else {
-                console.error("AJAX Error:", xhr.statusText);
-                alert("An error occurred while processing the request.");
-            }
+        if (!response.ok) {
+            throw new Error(`Server error: ${response.statusText}`);
         }
-    };
 
-    xhr.send(JSON.stringify({ startTime, benchSeat, tableData }));
+        const responseData = await response.text();
+        document.getElementById('modalBodyContent').innerHTML = responseData;
+        new bootstrap.Modal(document.getElementById('generatedDataModal')).show();
+        
+    } catch (error) {
+        console.error("Fetch Error:", error);
+        alert("An error occurred while processing the request. Please try again.");
+    }
 });
+
 
 let rowCount = 1;
 
@@ -411,7 +300,20 @@ function addRow() {
         return;
     }
 
-    // Create an AJAX request
+    // ✅ Prevent duplicate entries
+    const existingRows = document.querySelectorAll("#tableBody tr");
+    for (let row of existingRows) {
+        const existingDepartment = row.cells[1].getAttribute('data-department');
+        const existingCourse = row.cells[2].getAttribute('data-course');
+        const existingSemester = row.cells[3].getAttribute('data-semester');
+
+        if (existingDepartment === department && existingCourse === course && existingSemester === semester) {
+            alert("This combination already exists in the table.");
+            return;
+        }
+    }
+
+    // 🔹 Create an AJAX request to fetch total students
     const xhr = new XMLHttpRequest();
     xhr.open('POST', 'procs/getTotalStudents.php', true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -421,7 +323,7 @@ function addRow() {
             if (xhr.status === 200) {
                 try {
                     const data = JSON.parse(xhr.responseText);
-                    
+
                     if (data.error) {
                         console.error('Error:', data.error);
                         alert('Error fetching student count: ' + data.error);
@@ -430,6 +332,7 @@ function addRow() {
 
                     const totalStudents = data.total ?? 0; // Default to 0 if not provided
 
+                    // ✅ Insert row into the table
                     const tableBody = document.getElementById('tableBody');
                     const newRow = document.createElement('tr');
 
@@ -438,7 +341,7 @@ function addRow() {
                         <td data-department="${department}">${departmentText}</td>
                         <td data-course="${course}">${courseText}</td>
                         <td data-semester="${semester}">${semesterText}</td>
-                        <td class="text-center">${totalStudents}</td>
+                        <td data-totalStudent="${totalStudents}" class="text-center">${totalStudents}</td>
                         <td class="text-center">
                             <button class="btn btn-transparent" style="background: none; border: none;" onclick="deleteRow(this)">
                                 <i class="bi bi-trash-fill text-danger" style="font-size: 1.2rem;"></i>
@@ -459,12 +362,10 @@ function addRow() {
         }
     };
 
-    // Send data
+    // 🔹 Send data to get total students
     const params = `department=${encodeURIComponent(department)}&course=${encodeURIComponent(course)}&semester=${encodeURIComponent(semester)}`;
     xhr.send(params);
 }
-
-
 
 </script>
 
@@ -496,6 +397,7 @@ function fetchCoursesAndSemesters(selectElement) {
         .catch(error => console.error('Error fetching data:', error));
     }
 }
+
 </script>
 
 <?php include 'includes/footer.php'; ?>
