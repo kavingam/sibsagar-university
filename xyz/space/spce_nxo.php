@@ -1,8 +1,12 @@
-<?php 
-include ('../bashmodel.php');
+<?php
+include('../bashmodel.php');
 
-$room = new Room();
-$rooms = $room->getAllRoomsJSONS();
-echo json_encode($rooms);
-
+try {
+    $room = new Room();
+    $rooms = $room->getAllRooms();
+    echo json_encode($rooms);
+} catch (Exception $e) {
+    // Handle errors gracefully
+    echo "Error: " . $e->getMessage();
+}
 ?>

@@ -167,7 +167,7 @@ function fetchRooms() {
 }
 */
 function fetchRooms() {
-    fetch("procs/fetch_rooms.php")
+    fetch("xyz/space/spce_nxo.php")
         .then(response => response.json())
         .then(data => {
             let tableBody = document.getElementById("roomTableBody");
@@ -256,23 +256,44 @@ function updateRoom() {
 
 
 // Delete a room
+// function deleteRoom(roomNo) {
+//     if (confirm(`Are you sure you want to delete Room No: ${roomNo}? This action cannot be undone.`)) {
+//         $.ajax({
+//             url: "procs/delete_room.php",
+//             type: "POST",
+//             data: JSON.stringify({ roomNo }),
+//             contentType: "application/json",
+//             dataType: "json",
+//             success: function (response) {
+//                 alert(response.message);
+//                 if (response.success) {
+//                     fetchRooms();
+//                 }
+//             },
+//             error: function (xhr, status, error) {
+//                 console.error("Error deleting room:", error);
+//             }
+//         });
+//     }
+// }
+
 function deleteRoom(roomNo) {
     if (confirm(`Are you sure you want to delete Room No: ${roomNo}? This action cannot be undone.`)) {
-        $.ajax({
-            url: "procs/delete_room.php",
-            type: "POST",
-            data: JSON.stringify({ roomNo }),
-            contentType: "application/json",
-            dataType: "json",
-            success: function (response) {
-                alert(response.message);
-                if (response.success) {
-                    fetchRooms();
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error("Error deleting room:", error);
+        fetch("xyz/space/spce_nxr.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ roomNo })
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            if (data.success) {
+                fetchRooms(); // Refresh the rooms list
             }
+        })
+        .catch(error => {
+            console.error("❌ Error deleting room:", error);
+            alert("⚠️ An error occurred while deleting the room.");
         });
     }
 }
