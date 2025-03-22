@@ -216,6 +216,7 @@ function fetchRooms() {
         .catch(error => console.error("Error fetching rooms:", error));
 }
 
+
 // Populate the edit modal
 function editRoom(roomNo, roomName, benchOrder, capacity) {
     document.getElementById("editRoomNo").value = roomNo;

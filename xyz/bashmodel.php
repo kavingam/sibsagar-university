@@ -94,6 +94,45 @@ class Student extends BaseModel {
 
 // ✅ Room CRUD
 class Room extends BaseModel {
+
+    public function createRoomJSON($roomNo, $roomName, $benchOrder, $seatCapacity) {
+        // Trim and validate input
+        $roomNo = trim($roomNo);
+        $roomName = trim($roomName);
+
+        if (empty($roomNo) || empty($roomName) || empty($benchOrder) || empty($seatCapacity)) {
+            return ["success" => false, "message" => "All fields are required!"];
+        }
+
+        if (!is_numeric($benchOrder) || !is_numeric($seatCapacity)) {
+            return ["success" => false, "message" => "Bench Order and Seat Capacity must be numbers."];
+        }
+
+        try {
+            // Check if room exists
+            $stmt = $this->conn->prepare("SELECT room_name FROM rooms WHERE room_no = :roomNo");
+            $stmt->execute([":roomNo" => $roomNo]);
+            if ($stmt->fetch(PDO::FETCH_ASSOC)) {
+                return ["success" => false, "message" => "Room No already exists."];
+            }
+
+            // Insert the new room
+            $stmt = $this->conn->prepare(
+                "INSERT INTO rooms (room_no, room_name, bench_order, seat_capacity) 
+                VALUES (:roomNo, :roomName, :benchOrder, :seatCapacity)"
+            );
+            $stmt->execute([
+                ":roomNo" => $roomNo,
+                ":roomName" => $roomName,
+                ":benchOrder" => $benchOrder,
+                ":seatCapacity" => $seatCapacity
+            ]);
+
+            return ["success" => true, "message" => "Room added successfully!"];
+        } catch (PDOException $e) {
+            return ["success" => false, "message" => "Database Error: " . $e->getMessage()];
+        }
+    }
     public function createRoom($room_no, $room_name, $bench_order, $seat_capacity) {
         $sql = "INSERT INTO rooms (room_no, room_name, bench_order, seat_capacity) VALUES (:room_no, :room_name, :bench_order, :seat_capacity)";
         $stmt = $this->conn->prepare($sql);
@@ -108,6 +147,17 @@ class Room extends BaseModel {
     public function getAllRooms() {
         return $this->getAll('rooms');
     }
+    // Fetch all rooms with JSONS
+    public function getAllRoomsJSONS() {
+        try {
+            $stmt = $this->conn->prepare("SELECT * FROM rooms ORDER BY room_no ASC");
+            $stmt->execute();
+            return ["status" => "success", "data" => $stmt->fetchAll(PDO::FETCH_ASSOC)];
+        } catch (PDOException $e) {
+            return ["status" => "error", "message" => $e->getMessage()];
+        }
+    }
+
 
     public function updateRoom($room_no, $room_name, $bench_order, $seat_capacity) {
         $sql = "UPDATE rooms SET room_name = :room_name, bench_order = :bench_order, seat_capacity = :seat_capacity WHERE room_no = :room_no";

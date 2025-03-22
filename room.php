@@ -40,11 +40,12 @@
         </div>
     </div>
     <div class="text-center my-3">
-        <button type="button" id="submitBtn" class="btn btn-primary">Submit</button>
+        <button type="button" id="submitBtn" class="btn btn-primary" onclick="addRoom()">Submit</button>
     </div>
 </div>
 
 <script>
+/*
 $(document).ready(function () {
     $("#submitBtn").click(function () {
         let roomNo = $("#roomNo").val().trim();
@@ -65,7 +66,7 @@ $(document).ready(function () {
         formData.append("seatCapacity", seatCapacity);
 
         $.ajax({
-            url: "procs/import_room.php",
+            url: "xyz/space/spce_nxc.php",
             type: "POST",
             data: formData,
             processData: false,
@@ -85,6 +86,48 @@ $(document).ready(function () {
                 alert("An error occurred while processing your request.");
             }
         });
+    });
+});
+*/
+//  JavaScript Function (AJAX Fetch)
+document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("submitBtn").addEventListener("click", async function () {
+        let roomNo = document.getElementById("roomNo").value.trim();
+        let roomName = document.getElementById("roomName").value.trim();
+        let benchOrder = document.getElementById("bench_order").value;
+        let seatCapacity = document.getElementById("seatCapacity").value.trim();
+
+        // Basic validation
+        if (!roomNo || !roomName || !benchOrder || !seatCapacity) {
+            alert("⚠️ Please fill out all fields.");
+            return;
+        }
+
+        let formData = new FormData();
+        formData.append("roomNo", roomNo);
+        formData.append("roomName", roomName);
+        formData.append("bench_order", benchOrder);
+        formData.append("seatCapacity", seatCapacity);
+
+        try {
+            let response = await fetch("xyz/space/spce_nxc.php", {
+                method: "POST",
+                body: formData
+            });
+
+            let result = await response.json();
+
+            alert(result.message);
+            if (result.success) {
+                document.getElementById("roomNo").value = "";
+                document.getElementById("roomName").value = "";
+                document.getElementById("bench_order").value = "2";
+                document.getElementById("seatCapacity").value = "";
+            }
+        } catch (error) {
+            console.error("❌ Error:", error);
+            alert("⚠️ An error occurred while processing your request.");
+        }
     });
 });
 
