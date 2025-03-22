@@ -30,52 +30,24 @@ This project provides a **Student Seat Allocation System** that efficiently assi
 10. **`validateSeatDistribution()`** – Ensures that seat allocation meets specific rules.
 
 ## 📂 File Structure
-```
-📂 student-seat-allocation/
-│── 📄 index.php                 # Main entry point
-│── 📄 config.php                # Database configuration
-│── 📂 assets/                   # Static assets (CSS, JS, Images)
-│   │── 📄 style.css             # Main stylesheet
-│   │── 📄 script.js             # JavaScript for frontend interactions
-│── 📂 includes/                 # Reusable PHP files
-│   │── 📄 db_connect.php        # Database connection file
-│   │── 📄 functions.php         # Common utility functions
-│── 📂 seat_allocation/          # Core seat allocation logic
-│   │── 📄 seat_allocation.php   # Main seat allocation logic
-│   │── 📄 assign_seats.php      # Processes seat assignments
-│   │── 📄 generate_seating_plan.php  # Generates seating arrangement
-│   │── 📄 seat_distribution.php  # Manages seat distribution
-│   │── 📄 exam_hall_allocation.php # Assigns students to exam halls
-│── 📂 advanced_management/       # Advanced seat allocation features
-│   │── 📄 validate_seat_allocation.php  # Ensures rules are followed
-│   │── 📄 seat_availability.php  # Checks available seats
-│   │── 📄 update_seat_arrangement.php  # Updates seating plan
-│   │── 📄 reserve_seats.php      # Manages reserved seating
-│   │── 📄 export_seating_chart.php  # Exports seating plan as PDF/CSV
-│── 📂 authentication/            # User authentication
-│   │── 📄 login.php              # Admin login page
-│   │── 📄 logout.php             # Logout functionality
-│   │── 📄 register.php           # Admin registration (if required)
-│── 📂 database/                  # Database scripts
-│   │── 📄 schema.sql             # Database structure
-│   │── 📄 seed.sql               # Sample data for testing
-│── 📂 api/                       # API endpoints for AJAX calls
-│   │── 📄 fetch_seats.php        # Fetches seat allocation data
-│   │── 📄 update_allocation.php  # Updates seat assignment dynamically
-│── 📂 docs/                      # Documentation and Guides
-│   │── 📄 README.md              # Project documentation
-│   │── 📄 INSTALLATION.md        # Setup and installation guide
-│── 📂 tests/                     # Testing files (Optional)
-│   │── 📄 test_allocation.php    # Unit tests for seat allocation logic
-│── 📄 .gitignore                 # Ignore unnecessary files in Git
-│── 📄 LICENSE                    # Project license file
-│── 📄 composer.json              # Dependency management (if using Composer)
-│── 📄 package.json               # For JavaScript dependencies (if needed)
-```
+### **Basic Seat Allocation Files**
+- **`seat_allocation.php`** – Main file handling seat allocation logic.
+- **`assign_seats.php`** – Processes and assigns seats to students.
+- **`generate_seating_plan.php`** – Generates a seating arrangement dynamically.
+- **`seat_distribution.php`** – Manages the distribution of available seats.
+- **`exam_hall_allocation.php`** – Allocates students to exam halls.
+
+### **Advanced Seat Management Files**
+- **`validate_seat_allocation.php`** – Ensures seat distribution follows rules.
+- **`seat_availability.php`** – Checks and updates available seats.
+- **`update_seat_arrangement.php`** – Modifies the seating plan when needed.
+- **`reserve_seats.php`** – Handles reserved seating for special cases.
+- **`export_seating_chart.php`** – Exports the seating plan as a PDF or Excel file.
 
 ## 🛠️ Technologies Used
 - **Backend**: PHP (Core PHP, PDO for database interaction)
-- **Frontend**: HTML, CSS, Bootstrap, JavaScript, jQuery
+- **Frontend**: HTML, CSS, Bootstrap 5.3.3, JavaScript, jQuery (latest)
+- **Icons & UI Enhancements**: Font Awesome (latest)
 - **Database**: MySQL
 - **Version Control**: Git & GitHub
 
@@ -105,8 +77,16 @@ This project provides a **Student Seat Allocation System** that efficiently assi
 - Modify `update_seat_arrangement.php` to rearrange seats when needed.
 - Export seating data using `export_seating_chart.php`.
 
+## 🎨 Assets & Plugins
+- **Bootstrap 5.3.3**: Provides a responsive and modern UI.
+- **jQuery (latest)**: Enhances dynamic interactions and AJAX-based updates.
+- **Font Awesome (latest)**: Adds icons for a visually appealing interface.
+- **DataTables.js**: Enhances table functionalities for sorting and filtering.
+- **SweetAlert2**: Provides modern and interactive alert popups.
+
 ## 🤝 Contributing
 Contributions are welcome! Feel free to fork this repository and submit a pull request with improvements.
 
 ## 📝 License
 This project is licensed under the [MIT License](LICENSE).
+
