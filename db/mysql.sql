@@ -1,9 +1,18 @@
+-- create `room version 0.0`
 CREATE TABLE `rooms` (
     `room_no` VARCHAR(50) NOT NULL,
     `room_name` VARCHAR(100) NOT NULL,
     `bench_order` INT NOT NULL,
     `seat_capacity` INT(11) NOT NULL
   ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+-- update `room version 0.1`
+CREATE TABLE `rooms` (
+    `room_no` VARCHAR(50) NOT NULL PRIMARY KEY,  -- Unique Room ID (Primary Key)
+    `room_name` VARCHAR(100) NOT NULL,
+    `bench_order` INT NOT NULL,
+    `seat_capacity` INT(11) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 
   CREATE TABLE `departments` (
     `department_id` varchar(50) NOT NULL,
