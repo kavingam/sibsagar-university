@@ -243,3 +243,4 @@ class DepartmentManager {
 
 // Initialize
 const departmentManager = new DepartmentManager("xyz/dept");
+

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SweetAlert2 Example</title>
+    <link rel="stylesheet" href="../../assets/plugins/package/dist/sweetalert2.min.css">
+
+</head>
+<body>
+
+    <button id="showAlert">Show Alert</button>
+
+    <script src="../../assets/plugins/package/dist/sweetalert2.all.min.js"></script>
+    <script>
+        document.getElementById("showAlert").addEventListener("click", function() {
+            Swal.fire({
+                title: "Success!",
+                text: "This is a SweetAlert2 popup.",
+                icon: "success",
+                confirmButtonText: "OK"
+            });
+        });
+    </script>
+
+</body>
+</html>

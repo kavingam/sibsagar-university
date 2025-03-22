@@ -71,4 +71,7 @@
     fetchRooms();
 });
 </script>
+<script>
+    
+</script>
 <?php include 'includes/footer.php'; ?>

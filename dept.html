@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Department Table</title>
+
+    <!-- Bootstrap & DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+    <!-- jQuery, DataTables, Bootstrap, and SweetAlert JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+
+<div class="container mt-4">
+    <h5>Department Table</h5>
+
+    <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addDepartmentModal">
+        ➕ Add Department
+    </button>
+
+    <div class="border overflow-auto" style="max-height: 500px;">
+        <table id="departmentTable" class="table table-bordered display">
+            <thead class="text-center sticky-top">
+                <tr>
+                    <th>Department ID</th>
+                    <th>Department Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="departmentTableBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add Department Modal -->
+<div class="modal fade" id="addDepartmentModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Department</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="departmentForm">
+                    <input type="text" id="departmentName" class="form-control mb-2" placeholder="Enter Department Name">
+                    <button type="submit" class="btn btn-primary w-100">Add</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Department Modal -->
+<div class="modal fade" id="editDepartmentModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Department</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editDepartmentForm">
+                    <input type="hidden" id="editDepartmentId">
+                    <input type="text" id="editDepartmentName" class="form-control mb-2" placeholder="Edit Department Name">
+                    <button type="submit" class="btn btn-primary w-100">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+class DepartmentManager {
+    constructor(apiUrl) {
+        this.apiUrl = apiUrl;
+        this.table = null;
+        this.init();
+    }
+
+    init() {
+        $(document).ready(() => {
+            this.initializeDataTable();
+            $("#departmentForm").on("submit", (e) => this.addDepartment(e));
+            $("#editDepartmentForm").on("submit", (e) => this.updateDepartment(e));
+        });
+    }
+
+    initializeDataTable() {
+        this.table = $("#departmentTable").DataTable({
+            ajax: `${this.apiUrl}/nxo_dept.php`,
+            columns: [
+                { data: "id" },
+                { data: "name" },
+                {
+                    data: null,
+                    render: (data) => `
+                        <button class="btn btn-warning btn-sm edit-btn" data-id="${data.id}" data-name="${data.name}">✏ Edit</button>
+                        <button class="btn btn-danger btn-sm delete-btn" data-id="${data.id}">🗑 Delete</button>
+                    `
+                }
+            ],
+            drawCallback: () => this.attachEventListeners()
+        });
+    }
+
+    attachEventListeners() {
+        $(".edit-btn").on("click", (e) => this.editDepartment(e));
+        $(".delete-btn").on("click", (e) => this.deleteDepartment($(e.currentTarget).data("id")));
+    }
+
+    addDepartment(event) {
+        event.preventDefault();
+        let departmentName = $("#departmentName").val().trim();
+        if (!departmentName) {
+            Swal.fire("⚠️ Error", "Department name cannot be empty.", "warning");
+            return;
+        }
+
+        $.post(`${this.apiUrl}/nxa_dept.php`, { department_name: departmentName }, (response) => {
+            let data = this.safeJsonParse(response);
+            if (data.status === "success") {
+                Swal.fire("✅ Success", "Department added successfully.", "success");
+                $("#addDepartmentModal").modal("hide");
+                this.table.ajax.reload();
+            } else {
+                Swal.fire("⚠️ Error", data.message, "error");
+            }
+        });
+    }
+
+    editDepartment(event) {
+        let btn = $(event.currentTarget);
+        $("#editDepartmentId").val(btn.data("id"));
+        $("#editDepartmentName").val(btn.data("name"));
+        $("#editDepartmentModal").modal("show");
+    }
+
+    updateDepartment(event) {
+        event.preventDefault();
+        let departmentId = $("#editDepartmentId").val();
+        let departmentName = $("#editDepartmentName").val().trim();
+        if (!departmentName) {
+            Swal.fire("⚠️ Error", "Department name cannot be empty.", "warning");
+            return;
+        }
+
+        $.post(`${this.apiUrl}/edit_department.php`, { department_id: departmentId, department_name: departmentName }, (response) => {
+            let data = this.safeJsonParse(response);
+            if (data.status === "success") {
+                Swal.fire("✅ Success", "Department updated successfully.", "success");
+                $("#editDepartmentModal").modal("hide");
+                this.table.ajax.reload();
+            } else {
+                Swal.fire("⚠️ Error", data.message, "error");
+            }
+        });
+    }
+
+    deleteDepartment(departmentId) {
+        Swal.fire({
+            title: "❌ Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.post(`${this.apiUrl}/nxr_dept.php`, { department_id: departmentId }, (response) => {
+                    let data = this.safeJsonParse(response);
+                    if (data.status === "success") {
+                        Swal.fire("✅ Deleted!", data.message, "success");
+                        this.table.ajax.reload();
+                    } else {
+                        Swal.fire("⚠️ Error", data.message, "error");
+                    }
+                });
+            }
+        });
+    }
+
+    safeJsonParse(text) {
+        try {
+            return JSON.parse(text);
+        } catch (error) {
+            console.error("❌ JSON Parse Error:", error, "Response:", text);
+            Swal.fire("⚠️ Error", "Invalid server response.", "error");
+            return { status: "error", message: "Invalid server response." };
+        }
+    }
+}
+
+// Initialize
+const departmentManager = new DepartmentManager("xyz/dept");
+</script>
+
+</body>
+</html>

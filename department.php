@@ -8,14 +8,14 @@
                     <label for="departmentName" class="form-label">Department Name</label>
                     <input type="text" class="form-control" id="departmentName" required>
                 </div>
-                <button type="submit" class="btn btn-primary">Add Department</button>
+                <button type="submit" class="btn btn-primary"><i class="fal fa-plus text-white fw-bold"></i> Add Department</button>
             </form>
         </div>
         <div class="col-md-6 col-12 mb-3">
-            <h5>Department Table</h5>
-            <div class="border overflow-auto" style="max-height: 500px;">
-            <table class="table table-bordered">
-                <thead class="text-center sticky-top">
+            <h5>Department Details</h5>
+            <div class="overflow-auto table-responsive" style="max-height: 720px;">
+            <table class="table table-striped table-bordered" cellspacing="0" width="100%">
+                <thead class="text-center bg-dark text-white">
                     <tr>
                         <th scope="col">Department ID</th>
                         <th scope="col">Department Name</th>
@@ -46,7 +46,7 @@
                         <label for="editDepartmentName" class="form-label">Department Name</label>
                         <input type="text" class="form-control" id="editDepartmentName" required>
                     </div>
-                    <button type="submit" class="btn btn-primary">Update Department</button>
+                    <button type="submit" class="btn btn-primary"><i class="far fa-pen-square"></i> Update Department</button>
                 </form>
             </div>
         </div>
