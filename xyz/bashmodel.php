@@ -105,7 +105,25 @@ class Room extends BaseModel {
             ':seat_capacity' => $seat_capacity
         ]);
     }
-
+    public function createRoomJSON($room_no, $room_name, $bench_order, $seat_capacity) {
+        try {
+            $sql = "INSERT INTO rooms (room_no, room_name, bench_order, seat_capacity) 
+                    VALUES (:room_no, :room_name, :bench_order, :seat_capacity)";
+            $stmt = $this->conn->prepare($sql);
+            
+            $stmt->execute([
+                ':room_no' => $room_no,
+                ':room_name' => $room_name,
+                ':bench_order' => $bench_order,
+                ':seat_capacity' => $seat_capacity
+            ]);
+    
+            return ["success" => true, "message" => "✅ Room added successfully!"];
+        } catch (PDOException $e) {
+            return ["success" => false, "message" => "⚠️ Error: " . $e->getMessage()];
+        }
+    }
+    
     public function getAllRooms() {
         return $this->getAll('rooms');
     }
@@ -120,16 +138,19 @@ class Room extends BaseModel {
         }
     }
 
-
     public function updateRoom($room_no, $room_name, $bench_order, $seat_capacity) {
-        $sql = "UPDATE rooms SET room_name = :room_name, bench_order = :bench_order, seat_capacity = :seat_capacity WHERE room_no = :room_no";
-        $stmt = $this->conn->prepare($sql);
-        return $stmt->execute([
-            ':room_no' => $room_no,
-            ':room_name' => $room_name,
-            ':bench_order' => $bench_order,
-            ':seat_capacity' => $seat_capacity
-        ]);
+        try {
+            $sql = "UPDATE rooms SET room_name = :room_name, bench_order = :bench_order, seat_capacity = :seat_capacity WHERE room_no = :room_no";
+            $stmt = $this->conn->prepare($sql);
+            return $stmt->execute([
+                ':room_no' => $room_no,
+                ':room_name' => $room_name,
+                ':bench_order' => $bench_order,
+                ':seat_capacity' => $seat_capacity
+            ]);
+        } catch (PDOException $e) {
+            throw new Exception("Database error: " . $e->getMessage());
+        }
     }
 
     public function deleteRoom($room_no) {

@@ -40,55 +40,12 @@
         </div>
     </div>
     <div class="text-center my-3">
-        <button type="button" id="submitBtn" class="btn btn-primary" onclick="addRoom()">Submit</button>
+        <button type="button" id="submitBtn" class="btn btn-primary">Submit</button>
+        <!-- onclick="addRoom() -->
     </div>
 </div>
 
 <script>
-/*
-$(document).ready(function () {
-    $("#submitBtn").click(function () {
-        let roomNo = $("#roomNo").val().trim();
-        let roomName = $("#roomName").val().trim();
-        let bench_order = $("#bench_order").val();
-        let seatCapacity = $("#seatCapacity").val().trim();
-
-        // Basic validation
-        if (!roomNo || !roomName || !bench_order || !seatCapacity) {
-            alert("Please fill out all fields.");
-            return;
-        }
-
-        let formData = new FormData();
-        formData.append("roomNo", roomNo);
-        formData.append("roomName", roomName);
-        formData.append("bench_order", bench_order);
-        formData.append("seatCapacity", seatCapacity);
-
-        $.ajax({
-            url: "xyz/space/spce_nxc.php",
-            type: "POST",
-            data: formData,
-            processData: false,
-            contentType: false,
-            dataType: "json",
-            success: function (response) {
-                alert(response.message);
-                if (response.success) {
-                    $("#roomNo").val("");
-                    $("#roomName").val("");
-                    $("#bench_order").val("2");
-                    $("#seatCapacity").val("");
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error("Error:", error);
-                alert("An error occurred while processing your request.");
-            }
-        });
-    });
-});
-*/
 //  JavaScript Function (AJAX Fetch)
 document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("submitBtn").addEventListener("click", async function () {

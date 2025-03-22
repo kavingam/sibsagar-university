@@ -13,10 +13,8 @@ $roomName = $_POST["roomName"] ?? "";
 $benchOrder = $_POST["bench_order"] ?? "";
 $seatCapacity = $_POST["seatCapacity"] ?? "";
 
-// Create an instance of the Room class
 $room = new Room();
 $response = $room->createRoomJSON($roomNo, $roomName, $benchOrder, $seatCapacity);
-
-// Return JSON response
 echo json_encode($response);
+
 ?>

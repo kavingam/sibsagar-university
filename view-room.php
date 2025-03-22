@@ -67,105 +67,10 @@
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function () {
     fetchRooms();
 });
-/*
-function fetchRooms() {
-    fetch("procs/fetch_rooms.php")
-        .then(response => response.json())
-        .then(data => {
-            let tableBody = document.getElementById("roomTableBody");
-            tableBody.innerHTML = "";
 
-            // Mapping numbers to "1 X N COLUMN" labels
-            const benchOrderLabels = {
-                1: "1 X 1 COLUMN",
-                2: "1 X 2 COLUMN",
-                3: "1 X 3 COLUMN",
-                4: "1 X 4 COLUMN",
-                5: "1 X 5 COLUMN",
-                6: "1 X 6 COLUMN",
-                7: "1 X 7 COLUMN",
-                8: "1 X 8 COLUMN"
-            };
-
-            data.forEach((room, index) => {
-                let benchOrderText = benchOrderLabels[room.bench_order] || "Unknown"; // Default to "Unknown" if not mapped
-                
-                let row = `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${room.room_no}</td>
-                        <td>${room.room_name}</td>
-                        <td>${benchOrderText}</td>
-                        <td>${room.seat_capacity}</td>
-                        <td class="justify-content-center d-flex">
-                            <button class="ms-2 btn" onclick="editRoom('${room.room_no}', '${room.room_name}', '${room.bench_order}', '${room.seat_capacity}')">
-                                <i class="bi bi-pencil-square text-primary"></i>
-                            </button>
-                            <button class="ms-2 btn" onclick="deleteRoom('${room.room_no}')">
-                                <i class="bi bi-trash-fill text-danger"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
-                tableBody.innerHTML += row;
-            });
-        })
-        .catch(error => console.error("Error fetching rooms:", error));
-}
-*/
-/*
-function fetchRooms() {
-    fetch("procs/fetch_rooms.php")
-        .then(response => response.json())
-        .then(data => {
-            let tableBody = document.getElementById("roomTableBody");
-            tableBody.innerHTML = "";
-
-            // Sorting the rooms by room_no in descending order
-            data.sort((a, b) => b.room_no.localeCompare(a.room_no, undefined, { numeric: true }));
-            
-
-            // Mapping numbers to "1 X N COLUMN" labels
-            const benchOrderLabels = {
-                1: "1 X 1 COLUMN",
-                2: "1 X 2 COLUMN",
-                3: "1 X 3 COLUMN",
-                4: "1 X 4 COLUMN",
-                5: "1 X 5 COLUMN",
-                6: "1 X 6 COLUMN",
-                7: "1 X 7 COLUMN",
-                8: "1 X 8 COLUMN"
-            };
-
-            data.forEach((room, index) => {
-                let benchOrderText = benchOrderLabels[room.bench_order] || "Unknown"; // Default to "Unknown" if not mapped
-                
-                let row = `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${room.room_no}</td>
-                        <td>${room.room_name}</td>
-                        <td>${benchOrderText}</td>
-                        <td>${room.seat_capacity}</td>
-                        <td class="justify-content-center d-flex">
-                            <button class="ms-2 btn" onclick="editRoom('${room.room_no}', '${room.room_name}', '${room.bench_order}', '${room.seat_capacity}')">
-                                <i class="bi bi-pencil-square text-primary"></i>
-                            </button>
-                            <button class="ms-2 btn" onclick="deleteRoom('${room.room_no}')">
-                                <i class="bi bi-trash-fill text-danger"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
-                tableBody.innerHTML += row;
-            });
-        })
-        .catch(error => console.error("Error fetching rooms:", error));
-}
-*/
 function fetchRooms() {
     fetch("xyz/space/spce_nxo.php")
         .then(response => response.json())
@@ -215,8 +120,6 @@ function fetchRooms() {
         })
         .catch(error => console.error("Error fetching rooms:", error));
 }
-
-
 // Populate the edit modal
 function editRoom(roomNo, roomName, benchOrder, capacity) {
     document.getElementById("editRoomNo").value = roomNo;
@@ -227,55 +130,41 @@ function editRoom(roomNo, roomName, benchOrder, capacity) {
     var editModal = new bootstrap.Modal(document.getElementById("editModal"));
     editModal.show();
 }
-
 function updateRoom() {
-    let roomNo = $("#editRoomNo").val();
-    let roomName = $("#editRoomName").val();
-    let size = $("#editSize").val();
-    let capacity = $("#editCapacity").val();
+    let roomNo = document.getElementById("editRoomNo").value.trim();
+    let roomName = document.getElementById("editRoomName").value.trim();
+    let benchOrder = document.getElementById("editSize").value.trim();
+    let seatCapacity = document.getElementById("editCapacity").value.trim();
 
-    $.ajax({
-        url: "procs/update_room.php",
-        type: "POST",
-        contentType: "application/json",
-        dataType: "json",
-        data: JSON.stringify({ roomNo, roomName, size, capacity }),
-        success: function (response) {
-            alert(response.message);
-            if (response.success) {
-                location.reload();  // Full page reload
-            }
-        },
-        error: function (xhr, status, error) {
-            console.error("Error updating room:", error);
+    if (!roomNo || !roomName || !benchOrder || !seatCapacity) {
+        alert("Please fill out all fields.");
+        return;
+    }
+
+    let roomData = {
+        roomNo: roomNo,
+        roomName: roomName,
+        benchOrder: benchOrder,
+        seatCapacity: seatCapacity
+    };
+
+    fetch("xyz/space/spce_nxe.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(roomData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message);
+        if (data.success) {
+            location.reload();
         }
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        alert("An error occurred while updating the room.");
     });
 }
-
-
-
-
-// Delete a room
-// function deleteRoom(roomNo) {
-//     if (confirm(`Are you sure you want to delete Room No: ${roomNo}? This action cannot be undone.`)) {
-//         $.ajax({
-//             url: "procs/delete_room.php",
-//             type: "POST",
-//             data: JSON.stringify({ roomNo }),
-//             contentType: "application/json",
-//             dataType: "json",
-//             success: function (response) {
-//                 alert(response.message);
-//                 if (response.success) {
-//                     fetchRooms();
-//                 }
-//             },
-//             error: function (xhr, status, error) {
-//                 console.error("Error deleting room:", error);
-//             }
-//         });
-//     }
-// }
 
 function deleteRoom(roomNo) {
     if (confirm(`Are you sure you want to delete Room No: ${roomNo}? This action cannot be undone.`)) {
@@ -297,7 +186,5 @@ function deleteRoom(roomNo) {
         });
     }
 }
-
 </script>
-
 <?php include 'includes/footer.php'; ?>
