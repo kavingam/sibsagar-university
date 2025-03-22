@@ -52,14 +52,5 @@
         </div>
     </div>
 </div>
-<script>
-    document.getElementById("showAlert").addEventListener("click", function() {
-        Swal.fire({
-            title: "Success!",
-            text: "This is a SweetAlert2 popup.",
-            icon: "success",
-            confirmButtonText: "OK"
-        });
-    });
-</script>
+
 <?php include 'includes/footer.php'; ?>
