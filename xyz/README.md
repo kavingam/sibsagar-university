@@ -32,7 +32,6 @@ This project provides a **Student Seat Allocation System** that efficiently assi
 ## 📂 File Structure
 ```
 
-make README.md file structure code 📂 student-seat-allocation/
 │── 📄 index.php                 # Main entry point
 │── 📄 import-students.php       # 
 │── 📄 export-students.php       # 
@@ -45,8 +44,12 @@ make README.md file structure code 📂 student-seat-allocation/
 │   │── 📂 plugins               # External Resources Bootstarp 5.3.3
 │   │── 📄 README.md             # Describe Internal Structure
 │── 📂 includes/                 # Reusable PHP files
-│   │── 📄 db_connect.php        # Database connection file
-│   │── 📄 functions.php         # Common utility functions
+│   │── 📄 config.php            #
+│   │── 📄 header.php            #
+│   │── 📄 footer.php            #
+│   │── 📄 modal.php             #
+│   │── 📄 navbar.php            #
+│   │── 📄 sidebar.php           #
 │── 📂 seat_allocation/          # Core seat allocation logic
 │   │── 📄 seat_allocation.php   # Main seat allocation logic
 │   │── 📄 assign_seats.php      # Processes seat assignments
@@ -76,8 +79,7 @@ make README.md file structure code 📂 student-seat-allocation/
 │   │── 📄 test_allocation.php    # Unit tests for seat allocation logic
 │── 📄 .gitignore                 # Ignore unnecessary files in Git
 │── 📄 LICENSE                    # Project license file
-│── 📄 composer.json              # Dependency management (if using Composer)
-│── 📄 package.json               # For JavaScript dependencies (if needed)
+
 
 ```
 ### **Basic Seat Allocation Files**
