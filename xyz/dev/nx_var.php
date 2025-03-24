@@ -14,6 +14,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $benchSeat = htmlspecialchars($data['benchSeat']);
     $tableData = $data['tableData'];
 
+    $seatAllocation = new SeatAllocation();
+    
     switch ($benchSeat) {
         case 1:
             echo 'single seat bench';
