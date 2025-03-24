@@ -5,10 +5,11 @@
             <h4 class="text-center text-primary text-uppercase fw-semi-bold">Exam Seat plan</h4>
         </div>
         <div class="col-3">
-            <div class="container p-3">
-                <label for="startTime" class="form-label">Exam Start Time:</label>
-                <input type="time" class="form-control" id="startTime" name="startTime">
+            <div class="time-picker-container p-3">
+                <label for="startTime" class="form-label">Select Start Time</label>
+                <input type="time" class="form-control custom-time" id="startTime" name="startTime">
             </div>
+
             <div class="container p-3">
                 <label for="benchSeat">Select Bench Seat:</label>
                 <select class="form-select" aria-label="Size 3 select example" id="benchSeat">
@@ -19,7 +20,7 @@
                 </select>
             </div>
             <div class="container p-3">
-                <button type="button" class="btn btn-primary btn-sm" id="generate">Generate</button>
+                <button type="button" class="btn btn-primary btn-sm" id="generate"><i class="fas fa-chevron-circle-right"></i> Generate</button>
             </div>
         </div>
 
@@ -67,8 +68,8 @@
         <div class="col-3">
             <div class="container d-flex justify-content-center align-items-center mt-1">
                 <div class="text-center">
-                    <button type="button" class="btn btn-primary btn-sm w-100 mb-2" onclick="addRow()">Add Exam</button>
-                    <button type="button" class="btn btn-danger btn-sm w-100" onclick="removeRow()">Remove</button>
+                    <button type="button" class="btn border btn-sm w-100 mb-2" onclick="addRow()"><i class="fad fa-file-plus"></i> Add Exam</button>
+                    <button type="button" class="btn border btn-sm w-100" onclick="removeRow()"><i class="fad fa-file-times"></i> Remove All</button>
                 </div>
             </div>
         </div>
@@ -119,9 +120,9 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-primary" onclick="downloadPDF()">Download PDF</button>
-                <button class="btn btn-secondary" onclick="printContent()">Print</button>
-                <button class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                <button class="btn btn-primary" onclick="downloadPDF()"><i class="fas fa-file-pdf"></i> Download PDF</button>
+                <button class="btn btn-secondary" onclick="printContent()"><i class="fad fa-print"></i> Print</button>
+                <button class="btn btn-danger" data-bs-dismiss="modal"><i class="fad fa-times"></i> Close</button>
             </div>
         </div>
     </div>
@@ -344,7 +345,7 @@ function addRow() {
                         <td data-totalStudent="${totalStudents}" class="text-center">${totalStudents}</td>
                         <td class="text-center">
                             <button class="btn btn-transparent" style="background: none; border: none;" onclick="deleteRow(this)">
-                                <i class="bi bi-trash-fill text-danger" style="font-size: 1.2rem;"></i>
+                                <i class="fad fa-file-times"></i>
                             </button>
                         </td>
                     `;

@@ -34,10 +34,15 @@ This project provides a **Student Seat Allocation System** that efficiently assi
 
 make README.md file structure code 📂 student-seat-allocation/
 │── 📄 index.php                 # Main entry point
-│── 📄 config.php                # Database configuration
+│── 📄 import-students.php       # 
+│── 📄 export-students.php       # 
+│── 📄 add-room.php              # 
+│── 📄 view-room.php             # 
+│── 📄 department.php            # 
+│── 📄 README.md                 # 
 │── 📂 assets/                   # Static assets (CSS, JS, Images)
-│   │── 📄 style.css             # Main stylesheet
-│   │── 📄 script.js             # JavaScript for frontend interactions
+│   │── 📂 nxz_var               # Javascript (JS) Main Functions
+│   │── 📂 plugins               # External Resources Bootstarp 5.3.3
 │── 📂 includes/                 # Reusable PHP files
 │   │── 📄 db_connect.php        # Database connection file
 │   │── 📄 functions.php         # Common utility functions

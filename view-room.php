@@ -6,9 +6,9 @@
         </div>
         <div class="col-lg-12">
             <div class="container">
-                <div class="overflow-auto" style="max-height: 500px;">
-                <table class="table table-bordered border border-secondary">
-                    <thead class="text-center sticky-top border">
+                <div class="overflow-auto table-responsive">
+                <table class="table table-striped table-bordered" cellspacing="0" width="100%">
+                    <thead class="text-center">
                         <tr>
                             <!-- <th>SNO</th> -->
                             <th>Room No</th>
@@ -59,8 +59,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="updateRoom()">Update</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times-square"></i> Close</button>
+                <button type="button" class="btn btn-primary" onclick="updateRoom()"><i class="fas fa-chevron-square-up"></i> Update</button>
             </div>
         </div>
     </div>
