@@ -43,6 +43,7 @@ make README.md file structure code 📂 student-seat-allocation/
 │── 📂 assets/                   # Static assets (CSS, JS, Images)
 │   │── 📂 nxz_var               # Javascript (JS) Main Functions
 │   │── 📂 plugins               # External Resources Bootstarp 5.3.3
+│   │── 📄 README.md             # Describe Internal Structure
 │── 📂 includes/                 # Reusable PHP files
 │   │── 📄 db_connect.php        # Database connection file
 │   │── 📄 functions.php         # Common utility functions
