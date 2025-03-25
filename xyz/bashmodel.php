@@ -65,9 +65,30 @@ class Student extends BaseModel {
         ]);
     }
 
+    /**
+     * Find students who have the same department, course, and semester.
+     * 
+     * @param string $department
+     * @param string $course
+     * @param int $semester
+     * @return array
+     */
+    public function findSimilarStudents($department, $course, $semester) {
+        $sql = "SELECT * FROM student WHERE department = :department AND course = :course AND semester = :semester";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([
+            ':department' => $department,
+            ':course' => $course,
+            ':semester' => $semester
+        ]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    
     public function getAllStudents() {
         return $this->getAll('student');
     }
+
 
     public function updateStudent($roll_no, $name, $department, $semester, $course) {
         $sql = "UPDATE student SET name = :name, department = :department, semester = :semester, course = :course WHERE roll_no = :roll_no";
