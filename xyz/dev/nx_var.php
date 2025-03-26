@@ -93,6 +93,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     echo "<pre>";
     // print_r($tableData);
+    $stdObj = new SeatAllocation();
+    $totalStudent =  $stdObj->getTotalStudents($tableData);
+    // echo $totalStudent;
+
     $students = new Student();
     $x = [];
     
@@ -121,6 +125,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
+    switch ($benchSeat) {
+        case 1:
+              echo "student seat capacity one";
+            break;
+        case 2:
+              echo "student seat capacity two";
+            break;
+        default:
+             echo "default seat capacity";
+            break;
+    }
+
+
     // foreach ($result['results'][0]['mergedGroupe'] as $group) {
     //     echo "Department: {$group['department']}, Course: {$group['course']}, Total Students: {$group['totalStudent']}\n";
     //     foreach ($group['students'] as $student) {
@@ -129,26 +146,119 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //     echo "\n";
     // }
     
-    foreach ($result['results'] as $res) { 
-        echo "Grouped: {$res['grouped']}, Extract: {$res['extract']}, Remainder: {$res['remainder']}\n";
-    }
+    // foreach ($result['results'] as $res) { 
+    //     echo "Grouped: {$res['grouped']}, Extract: {$res['extract']}, Remainder: {$res['remainder']}\n";
+    // }
     
 
-    foreach ($result['results'] as $res) { // Loop through 'results' array
-        echo "<br>";
-        foreach ($res['mergedGroupe'] as $re) { // Loop through 'mergedGroupe' inside each result
-            foreach ($re['students'] as $student) { // Loop through 'students'
-                echo " - Roll No: {$student['roll_no']}, Name: {$student['name']}\n";
-            }
-        }
-    }
+    // foreach ($result['results'] as $res) { // Loop through 'results' array
+    //     foreach ($res['mergedGroupe'] as $re) { // Loop through 'mergedGroupe' inside each result
+    //         echo $re;
+    //         foreach ($re['students'] as $student) { // Loop through 'students'
+    //             echo " - Roll No: {$student['roll_no']}, Name: {$student['name']}\n";
+    //         }
+    //     }
+    // }
     
 
 
+    $roomObj = new Room();
+    $rooms = $roomObj->getAllRooms();
+    // print_r($rooms);
 
+    $targetCapacity = $totalStudent;
+    $seatsPerBench = $benchSeat;
+
+    echo "<br>Total Examination Students: " . $totalStudent;
+    echo "<br>Seats Per Bench: " . $seatsPerBench;
+
+    $bestRoom = findBestRoom($rooms, $targetCapacity / $seatsPerBench );
+    print_r($bestRoom);
+
+    // print_r($bestRoom);
+    // Example Usage:
+    // $targetCapacity = 50; // User wants a room with ~35 seats
+    // $nearestRoom = findNearestRoom($rooms, $targetCapacity);
+
+    // Print Result
+    // if ($nearestRoom) {
+    //     echo "Nearest Room Found:\n";
+    //     echo "Room No: {$nearestRoom['room_no']}\n";
+    //     echo "Room Name: {$nearestRoom['room_name']}\n";
+    //     echo "Bench Order: {$nearestRoom['bench_order']}\n";
+    //     echo "Seat Capacity: {$nearestRoom['seat_capacity']}\n";
+    // } else {
+    //     echo "No suitable room found.\n";
+    // }
 }
 ?>
 
+<div class="container mt-5">
+    <h2 class="text-center">Room Allocation</h2>
+
+    <?php if (!empty($bestRoom['room'])): ?>
+        <div class="alert alert-success text-center"><?= $bestRoom['adjustment']; ?></div>
+
+        <table class="table table-bordered text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>Room No</th>
+                    <th>Room Name</th>
+                    <th>Bench Columns</th>
+                    <th>Seat Capacity</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($bestRoom['room'] as $room): ?>
+                    <tr>
+                        <td><?= $room['room_no']; ?></td>
+                        <td><?= $room['room_name']; ?></td>
+                        <td><?= $room['bench_order']; ?></td>
+                        <td><?= $room['seat_capacity']; ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+
+        <h4 class="mt-4">Seating Arrangement</h4>
+
+        <?php
+            foreach ($bestRoom['room'] as $room) {
+                echo "<h5 class='mt-3'>{$room['room_name']} - Seating Layout</h5>";
+                echo "<div class='table-responsive'>";
+                echo "<table class='table table-bordered text-center'>";
+                echo "<tbody>";
+
+                $columns = $room['bench_order']; // Number of benches (columns)
+                $rows = ceil($room['seat_capacity'] / ($columns * 1 )); // Adjusted rows
+                $seatNumberX = 1;
+                $seatNumberY = 1;
+
+                for ($r = 0; $r < $rows; $r++) {
+                    echo "<tr>";
+                    for ($c = 0; $c < $columns; $c++) {
+                        if ($seatNumber <= $room['seat_capacity']) {
+                            echo "<td>L Seat " . $seatNumberX . " & R Seat " . ($seatNumberY) . "</td>";
+                            $seatNumberX ++;
+                            $seatNumberY ++;
+                        } else {
+                            echo "<td></td>"; // Empty cell if seats exceed capacity
+                        }
+                    }
+                    echo "</tr>";
+                }
+
+                echo "</tbody>";
+                echo "</table>";
+                echo "</div>";
+            }
+            ?>
+
+
+    <?php else: ?>
+        <div class="alert alert-danger text-center">No suitable room found.</div>
+    <?php endif; ?>
+</div>
 
 
 <?php
@@ -261,3 +371,138 @@ function quickSortDesc($arr)
 ?>
 
 
+<?php 
+// Function to find the nearest room based on seat capacity
+function findNearestRoom($rooms, $targetCapacity) {
+    $nearestRoom = null;
+    $minDifference = PHP_INT_MAX; // Set initial high difference
+
+    foreach ($rooms as $room) {
+        $difference = abs($room['seat_capacity'] - $targetCapacity); // Compute absolute difference
+
+        if ($difference < $minDifference) {
+            $minDifference = $difference;
+            $nearestRoom = $room;
+        }
+    }
+
+    return $nearestRoom;
+}
+
+?>
+
+<?php 
+// Function to find the nearest or adjusted room
+// function findBestRoom($rooms, $targetCapacity) {
+//     $nearestRoom = null;
+//     $alternativeRooms = [];
+//     $minDifference = PHP_INT_MAX; // Start with a high difference
+
+//     foreach ($rooms as $room) {
+//         $difference = abs($room['seat_capacity'] - $targetCapacity);
+
+//         // Exact match
+//         if ($room['seat_capacity'] == $targetCapacity) {
+//             return ['room' => $room, 'adjustment' => 'Exact Fit'];
+//         }
+
+//         // Best nearest match
+//         if ($difference < $minDifference) {
+//             $minDifference = $difference;
+//             $nearestRoom = $room;
+//         }
+
+//         // Store rooms smaller than required (for possible merging)
+//         if ($room['seat_capacity'] < $targetCapacity) {
+//             $alternativeRooms[] = $room;
+//         }
+//     }
+
+//     // If no single room fits, try merging smaller rooms
+//     $mergedRooms = tryMergeRooms($alternativeRooms, $targetCapacity);
+//     if ($mergedRooms) {
+//         return ['room' => $mergedRooms, 'adjustment' => 'Merged Multiple Rooms'];
+//     }
+
+//     return ['room' => $nearestRoom, 'adjustment' => 'Nearest Available Room'];
+// }
+
+function findBestRoom($rooms, $targetCapacity) {
+    // Sort rooms by seat capacity (ascending)
+    usort($rooms, function($a, $b) {
+        return $a['seat_capacity'] - $b['seat_capacity'];
+    });
+
+    $selectedRooms = [];
+    $totalSeats = 0;
+
+    foreach ($rooms as $room) {
+        $selectedRooms[] = $room;
+        $totalSeats += $room['seat_capacity'];
+
+        if ($totalSeats >= $targetCapacity) {
+            return [
+                'room' => $selectedRooms,
+                'adjustment' => (count($selectedRooms) == 1) ? "Single Room Assigned" : "Merged Multiple Rooms"
+            ];
+        }
+    }
+
+    // If no room is suitable, return an error message
+    return [
+        'room' => [],
+        'adjustment' => "No Suitable Room Found (Minimum seat capacity is " . $rooms[0]['seat_capacity'] . ")"
+    ];
+}
+function findBestRoomXY($rooms, $targetCapacity, $seatsPerBench = 2) {
+    $selectedRooms = [];
+    $totalSeats = 0;
+
+    foreach ($rooms as $room) {
+        $benchColumns = $room['bench_order']; // Number of benches
+        $maxSeats = $benchColumns * $seatsPerBench; // Each bench holds N seats
+
+        if ($room['seat_capacity'] >= $targetCapacity) {
+            // If a single room can fit all students, choose it directly
+            return [
+                'room' => [$room],
+                'adjustment' => "Single Room Assigned with $seatsPerBench seats per bench"
+            ];
+        }
+
+        // Add room to selected list if capacity isn't enough
+        $selectedRooms[] = $room;
+        $totalSeats += $room['seat_capacity'];
+
+        // Stop if enough rooms are merged to fit students
+        if ($totalSeats >= $targetCapacity) {
+            return [
+                'room' => $selectedRooms,
+                'adjustment' => "Merged Multiple Rooms with $seatsPerBench seats per bench"
+            ];
+        }
+    }
+
+    // If no rooms can fit the students, return an error
+    return [
+        'room' => [],
+        'adjustment' => "No Suitable Room Found"
+    ];
+}
+// Function to try merging smaller rooms to fit capacity
+function tryMergeRooms($rooms, $targetCapacity) {
+    $merged = [];
+    $totalSeats = 0;
+
+    foreach ($rooms as $room) {
+        $merged[] = $room;
+        $totalSeats += $room['seat_capacity'];
+
+        if ($totalSeats >= $targetCapacity) {
+            return $merged;
+        }
+    }
+
+    return null; // No suitable merge found
+}
+?>
