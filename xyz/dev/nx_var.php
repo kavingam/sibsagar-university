@@ -91,44 +91,62 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         return $b['totalStudent'] <=> $a['totalStudent'];
     });
 
-    // echo "<pre>";
+    echo "<pre>";
     // print_r($tableData);
-
     $students = new Student();
-    $x = $students->findSimilarStudents(1, 1, 1);
-    echo "Similar Students: \n";
-    print_r($x);
-
-    $result = processArray($tableData);
-
-    echo '<h4>Step-by-Step Subtraction Process:</h4>';
-    if (!empty($result['steps'])) {
-        echo '<pre>' . print_r($result['steps'], true) . '</pre>';
-    } else {
-        echo '<p>No valid subtraction steps performed.</p>';
-    }
+    $x = [];
     
-    echo '<h4>Subtracted Index & Remainder:</h4>';
-    if (!empty($result['results'])) {
-        echo '<pre>' . print_r($result['results'], true) . '</pre>';
+    foreach ($tableData as $data) {
+        $similarStudents = $students->findSimilarStudents(
+            $data['department'], 
+            $data['semester'], 
+            $data['course'], 
+            $data['totalStudent'] // Ensure total students are passed as range
+        );
+    
+        // Store results
+        $x[] = [
+            'department' => $data['department'],
+            'semester' => $data['semester'],
+            'course' => $data['course'],
+            'totalStudent' => $data['totalStudent'],
+            'students' => $similarStudents // Store retrieved students
+        ];
     }
+
+    echo "Similar Students: \n";
+    $assignSeats = new AssignSeatsStudent($x);
+    $result = processArray($x, $assignSeats);
+    print_r($result);
+
+
+
+    
+
 }
 ?>
 
-<?php
-// Quick Sort Function (Descending Order) for totalStudent
-function quickSortDesc($arr)
-{
-    if (count($arr) < 2) {
-        return $arr;
-    }
-    $pivot = $arr[0];
-    $left = array_filter(array_slice($arr, 1), fn($x) => $x['totalStudent'] > $pivot['totalStudent']);
-    $right = array_filter(array_slice($arr, 1), fn($x) => $x['totalStudent'] <= $pivot['totalStudent']);
-    return array_merge(quickSortDesc($left), [$pivot], quickSortDesc($right));
-}
 
-// Subtraction Algorithm with Re-Sorting
+
+<?php
+
+// Quick Sort Function (Descending Order) for totalStudent
+// function quickSortDesc($arr)
+// {
+//     if (count($arr) < 2) {
+//         return $arr;
+//     }
+//     $pivot = $arr[0];
+//     $left = array_filter(array_slice($arr, 1), fn($x) => $x['totalStudent'] > $pivot['totalStudent']);
+//     $right = array_filter(array_slice($arr, 1), fn($x) => $x['totalStudent'] <= $pivot['totalStudent']);
+//     return array_merge(quickSortDesc($left), [$pivot], quickSortDesc($right));
+// }
+?>
+
+
+
+
+<?php
 function processArray($arr)
 {
     $steps = [];
@@ -138,35 +156,85 @@ function processArray($arr)
     $arr = quickSortDesc($arr);
 
     while (count($arr) > 1) {
-        // Perform subtraction: First index - Second index
+        // Get the first two elements
         $firstValue = $arr[0]['totalStudent'];
         $secondValue = $arr[1]['totalStudent'];
-        $newValue = $firstValue - $secondValue;
+        $remainderValue = $firstValue - $secondValue;
+        $groupedValue = $secondValue * 2; // Double the second value
 
         // Store the step
-        $steps[] = "{$firstValue} - {$secondValue} = $newValue";
+        $steps[] = "{$firstValue} - {$secondValue} = $remainderValue";
 
-        // Store second value and remainder
+
+        // Merge grouped part with arr[1] for proper structure
+        $mergedGroup = mergeArrays([$arr[0]], [$arr[1]]);
+
+        // Store the result
         $results[] = [
-            'subtracted' => $arr[1],
-            'remainder' => $newValue
+            'mergedGroupe' => $mergedGroup, // Merged grouped data
+            'grouped' => $groupedValue,
+            'extract' => $secondValue,
+            'remainder' => $remainderValue
         ];
 
         // Remove first element
         array_shift($arr);
 
-        // If remainder is greater than zero, replace second element
-        if ($newValue > 0) {
-            $arr[0]['totalStudent'] = $newValue;  // Update first element with remainder
+        // If remainder is greater than zero, update second element
+        if ($remainderValue > 0) {
+            $arr[0]['totalStudent'] = $remainderValue;  // Update first element with remainder
         } else {
             // If remainder is 0, remove second element as well
             array_shift($arr);
         }
 
-        // Resort array in descending order
+        // Resort array in descending order after modification
         $arr = quickSortDesc($arr);
     }
 
     return ['steps' => $steps, 'results' => $results];
 }
+
+// Function to merge two arrays
+function mergeArrays($array1, $array2)
+{
+    return array_merge($array1, $array2); // Merge two arrays
+}
+
+function splitArray($arr, $range)
+{
+    if (!is_array($arr)) {
+        return ['grouped' => [], 'remainder' => []]; // Return empty if input is invalid
+    }
+
+    // Ensure we're working with a proper list of students
+    $grouped = array_slice($arr, 0, $range, true);  // Extract first $range students
+    $remainder = array_slice($arr, $range, null, true);  // Extract remaining students
+
+    return ['grouped' => $grouped, 'remainder' => $remainder];
+}
+
+// Function to sort an array in descending order by 'totalStudent'
+function quickSortDesc($arr)
+{
+    if (count($arr) < 2) {
+        return $arr;
+    }
+
+    $pivot = $arr[0];
+    $left = [];
+    $right = [];
+
+    for ($i = 1; $i < count($arr); $i++) {
+        if ($arr[$i]['totalStudent'] >= $pivot['totalStudent']) {
+            $left[] = $arr[$i];
+        } else {
+            $right[] = $arr[$i];
+        }
+    }
+
+    return array_merge(quickSortDesc($left), [$pivot], quickSortDesc($right));
+}
 ?>
+
+
