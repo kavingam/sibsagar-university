@@ -6,20 +6,20 @@
         </div>
         <div class="col-lg-12">
             <div class="container">
-                <div class="overflow-auto table-responsive">
-                <table class="table table-striped table-bordered" cellspacing="0" width="100%">
-                    <thead class="text-center">
-                        <tr>
-                            <!-- <th>SNO</th> -->
-                            <th>Room No</th>
-                            <th>Room Name</th>
-                            <th>Bench Order</th>
-                            <th>Capacity</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="roomTableBody"></tbody>
-                </table>
+                <div class="overflow-auto table-responsive" style="max-height: 720px;">
+                    <table class="table table-striped table-bordered" cellspacing="0" width="100%">
+                        <thead class="text-center">
+                            <tr>
+                                <!-- <th>SNO</th> -->
+                                <th>Room No</th>
+                                <th>Room Name</th>
+                                <th>Bench Order</th>
+                                <th>Capacity</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="roomTableBody"></tbody>
+                    </table>
                 </div>
             </div>
         </div>

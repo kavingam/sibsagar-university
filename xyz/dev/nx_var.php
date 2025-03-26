@@ -117,11 +117,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo "Similar Students: \n";
     $assignSeats = new AssignSeatsStudent($x);
     $result = processArray($x, $assignSeats);
-    print_r($result);
+    // print_r($result);
 
 
 
+    // foreach ($result['results'][0]['mergedGroupe'] as $group) {
+    //     echo "Department: {$group['department']}, Course: {$group['course']}, Total Students: {$group['totalStudent']}\n";
+    //     foreach ($group['students'] as $student) {
+    //         echo " - Roll No: {$student['roll_no']}, Name: {$student['name']}\n";
+    //     }
+    //     echo "\n";
+    // }
     
+    foreach ($result['results'] as $res) { 
+        echo "Grouped: {$res['grouped']}, Extract: {$res['extract']}, Remainder: {$res['remainder']}\n";
+    }
+    
+
+    foreach ($result['results'] as $res) { // Loop through 'results' array
+        echo "<br>";
+        foreach ($res['mergedGroupe'] as $re) { // Loop through 'mergedGroupe' inside each result
+            foreach ($re['students'] as $student) { // Loop through 'students'
+                echo " - Roll No: {$student['roll_no']}, Name: {$student['name']}\n";
+            }
+        }
+    }
+    
+
+
 
 }
 ?>
