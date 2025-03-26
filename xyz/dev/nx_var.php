@@ -124,20 +124,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // print_r($result);
 
 
-
-    switch ($benchSeat) {
-        case 1:
-              echo "student seat capacity one";
-            break;
-        case 2:
-              echo "student seat capacity two";
-            break;
-        default:
-             echo "default seat capacity";
-            break;
-    }
-
-
     // foreach ($result['results'][0]['mergedGroupe'] as $group) {
     //     echo "Department: {$group['department']}, Course: {$group['course']}, Total Students: {$group['totalStudent']}\n";
     //     foreach ($group['students'] as $student) {
@@ -172,8 +158,101 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo "<br>Total Examination Students: " . $totalStudent;
     echo "<br>Seats Per Bench: " . $seatsPerBench;
 
-    $bestRoom = findBestRoom($rooms, $targetCapacity / $seatsPerBench );
+    $bestRoom = findBestRoom($rooms, ceil($targetCapacity / $seatsPerBench)); // Use ceil() to round up
+    // $bestRoom = findBestRoom($rooms, $targetCapacity);
+    // $tableObj = new distributeSeat();
     print_r($bestRoom);
+
+    switch ($seatsPerBench) {
+        case 1:
+            echo "Student seat capacity: One per bench";
+?>
+
+<div class="container mt-5">
+    <h2 class="text-center">Room Allocation</h2>
+
+    <?php if (!empty($bestRoom['room'])): ?>
+        <div class="alert alert-success text-center"><?= htmlspecialchars($bestRoom['adjustment']); ?></div>
+
+        <?= generateRoomTable($bestRoom['room']); ?>
+
+        <h4 class="mt-4">Seating Arrangement</h4>
+
+        <?php foreach ($bestRoom['room'] as $room): ?>
+            <h5 class="mt-3"><?= htmlspecialchars($room['room_name']); ?> - Seating Layout</h5>
+            <div class="table-responsive">
+                <?= generateSeatingArrangement($room, $seatsPerBench); ?>
+            </div>
+        <?php endforeach; ?>
+
+    <?php else: ?>
+        <div class="alert alert-danger text-center">No suitable room found.</div>
+    <?php endif; ?>
+</div>
+
+<?php
+            break;
+        case 2:
+            echo "Student seat capacity: Two per bench";
+?>
+
+<div class="container mt-5">
+    <h2 class="text-center">Room Allocation</h2>
+
+    <?php if (!empty($bestRoom['room'])): ?>
+        <div class="alert alert-success text-center"><?= htmlspecialchars($bestRoom['adjustment'] ?? ''); ?></div>
+
+        <?= generateRoomTable($bestRoom['room']); ?>
+
+        <h4 class="mt-4">Seating Arrangement</h4>
+
+        <?php foreach ($bestRoom['room'] as $room): ?>
+            <h5 class="mt-3"><?= htmlspecialchars($room['room_name'] ?? 'Unknown Room'); ?> - Seating Layout</h5>
+            <div class="table-responsive">
+                <?= generateSeatingArrangement($room, $result['results'] ?? [], $seatsPerBench); ?>
+            </div>
+        <?php endforeach; ?>
+
+    <?php else: ?>
+        <div class="alert alert-danger text-center">No suitable room found.</div>
+    <?php endif; ?>
+</div>
+
+<?php
+                    
+            break;
+        default:
+            echo "Default seat capacity applied";
+?>
+
+<div class="container mt-5">
+    <h2 class="text-center">Room Allocation</h2>
+
+    <?php if (!empty($bestRoom['room'])): ?>
+        <div class="alert alert-success text-center"><?= htmlspecialchars($bestRoom['adjustment']); ?></div>
+
+        <?= generateRoomTable($bestRoom['room']); ?>
+
+        <h4 class="mt-4">Seating Arrangement</h4>
+
+        <?php foreach ($bestRoom['room'] as $room): ?>
+            <h5 class="mt-3"><?= htmlspecialchars($room['room_name']); ?> - Seating Layout</h5>
+            <div class="table-responsive">
+                <?= generateSeatingArrangement($room, $seatsPerBench); ?>
+            </div>
+        <?php endforeach; ?>
+
+    <?php else: ?>
+        <div class="alert alert-danger text-center">No suitable room found.</div>
+    <?php endif; ?>
+</div>
+
+<?php            
+            // $tableObj->showTable($bestRoom); // Call function for other cases as well
+            break;
+    }
+
+    
 
     // print_r($bestRoom);
     // Example Usage:
@@ -193,72 +272,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-<div class="container mt-5">
-    <h2 class="text-center">Room Allocation</h2>
-
-    <?php if (!empty($bestRoom['room'])): ?>
-        <div class="alert alert-success text-center"><?= $bestRoom['adjustment']; ?></div>
-
-        <table class="table table-bordered text-center">
-            <thead class="table-dark">
-                <tr>
-                    <th>Room No</th>
-                    <th>Room Name</th>
-                    <th>Bench Columns</th>
-                    <th>Seat Capacity</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($bestRoom['room'] as $room): ?>
-                    <tr>
-                        <td><?= $room['room_no']; ?></td>
-                        <td><?= $room['room_name']; ?></td>
-                        <td><?= $room['bench_order']; ?></td>
-                        <td><?= $room['seat_capacity']; ?></td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-
-        <h4 class="mt-4">Seating Arrangement</h4>
-
-        <?php
-            foreach ($bestRoom['room'] as $room) {
-                echo "<h5 class='mt-3'>{$room['room_name']} - Seating Layout</h5>";
-                echo "<div class='table-responsive'>";
-                echo "<table class='table table-bordered text-center'>";
-                echo "<tbody>";
-
-                $columns = $room['bench_order']; // Number of benches (columns)
-                $rows = ceil($room['seat_capacity'] / ($columns * 1 )); // Adjusted rows
-                $seatNumberX = 1;
-                $seatNumberY = 1;
-
-                for ($r = 0; $r < $rows; $r++) {
-                    echo "<tr>";
-                    for ($c = 0; $c < $columns; $c++) {
-                        if ($seatNumber <= $room['seat_capacity']) {
-                            echo "<td>L Seat " . $seatNumberX . " & R Seat " . ($seatNumberY) . "</td>";
-                            $seatNumberX ++;
-                            $seatNumberY ++;
-                        } else {
-                            echo "<td></td>"; // Empty cell if seats exceed capacity
-                        }
-                    }
-                    echo "</tr>";
-                }
-
-                echo "</tbody>";
-                echo "</table>";
-                echo "</div>";
-            }
-            ?>
 
 
-    <?php else: ?>
-        <div class="alert alert-danger text-center">No suitable room found.</div>
-    <?php endif; ?>
-</div>
 
 
 <?php
@@ -504,5 +519,134 @@ function tryMergeRooms($rooms, $targetCapacity) {
     }
 
     return null; // No suitable merge found
+}
+?>
+
+<?php
+// Function to generate room details table
+function generateRoomTable($rooms) {
+    ob_start();
+?>
+    <table class="table table-bordered text-center">
+        <thead class="table-dark">
+            <tr>
+                <th>Room No</th>
+                <th>Room Name</th>
+                <th>Bench Columns</th>
+                <th>Seat Capacity</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($rooms as $room): ?>
+                <tr>
+                    <td><?= htmlspecialchars($room['room_no']); ?></td>
+                    <td><?= htmlspecialchars($room['room_name']); ?></td>
+                    <td><?= htmlspecialchars($room['bench_order']); ?></td>
+                    <td><?= htmlspecialchars($room['seat_capacity']); ?></td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+<?php
+    return ob_get_clean();
+}
+
+// Function to generate seating arrangement
+function generateSeatingArrangementBak($room, $results,$seatsPerBench) {
+    ob_start();
+    // print_r($results);
+?>
+<table class="table table-bordered text-center">
+    <tbody>
+        <?php
+        $columns = $room['bench_order']; // Number of benches (columns)
+        $rows = ceil($room['seat_capacity'] / $columns); // Ensure all benches are allotted
+        $seatNumber = 1;
+
+        for ($r = 0; $r < $rows; $r++) {
+            echo "<tr>";
+            for ($c = 0; $c < $columns; $c++) {
+                if ($seatNumber <= $room['seat_capacity'] *2) {
+                    $seats = [];
+
+                    // Assign seats per bench
+                    for ($s = 0; $s < $seatsPerBench; $s++) {
+                        if ($seatNumber <= $room['seat_capacity'] *2) {
+                            $seats[] = "Seat " . $seatNumber;
+                            $seatNumber++;
+                        }
+                    }
+
+                    // Display seats in a single bench (column)
+                    echo "<td>" . implode(" & ", $seats) . "</td>";
+                } else {
+                    echo "<td></td>"; // Empty cell if no more seats left
+                }
+            }
+            echo "</tr>";
+        }
+        ?>
+    </tbody>
+</table>
+
+<?php
+    return ob_get_clean();
+}
+
+function generateSeatingArrangement($room, $results, $seatsPerBench) {
+    ob_start();
+
+    // Extract student list from results
+    $students = [];
+    if (!empty($results)) {
+        foreach ($results as $group) {
+            if (!empty($group['mergedGroupe'])) {
+                foreach ($group['mergedGroupe'] as $merged) {
+                    if (!empty($merged['students'])) {
+                        foreach ($merged['students'] as $student) {
+                            $students[] = $student['roll_no'] ?? 'N/A'; // Store roll numbers
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    $columns = $room['bench_order'] ?? 1; // Number of benches (columns)
+    $rows = ceil(($room['seat_capacity'] ?? 1) / $columns); // Ensure all benches are allotted
+    $seatIndex = 0; // Track student index
+
+    ?>
+    <table class="table table-bordered text-center">
+        <tbody>
+            <?php
+            for ($r = 0; $r < $rows; $r++) {
+                echo "<tr>";
+                for ($c = 0; $c < $columns; $c++) {
+                    if ($seatIndex < count($students)) {
+                        $seats = [];
+
+                        // Assign students per bench
+                        for ($s = 0; $s < $seatsPerBench; $s++) {
+                            if ($seatIndex < count($students)) {
+                                $seats[] = htmlspecialchars($students[$seatIndex]); // Assign roll number safely
+                                $seatIndex++;
+                            }
+                        }
+
+                        // Display assigned students for a single bench
+                        echo "<td>" . implode(" & ", $seats) . "</td>";
+                    } else {
+                        echo "<td></td>"; // Empty cell if no more students left
+                    }
+                }
+                echo "</tr>";
+            }
+            ?>
+        </tbody>
+    </table>
+    <?php
+    
+    return ob_get_clean();
 }
 ?>

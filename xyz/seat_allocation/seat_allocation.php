@@ -76,4 +76,5 @@ class SeatAllocation extends BaseModel {
         echo "<strong>Total Unique Departments:</strong> " . $totalDepartments . "<br>";
     }
 }
+
 ?>
