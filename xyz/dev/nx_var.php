@@ -1,10 +1,7 @@
 <?php
 require_once '../bashmodel.php';
 require_once '../seat_allocation/seat_allocation.php';
-
-use SleekDB\Store;
-include 'sleekdb_conf.php';
-$departmentsStore = new Store("process", $dataDir, $configuration);
+require_once 'sleekdb.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);
@@ -61,32 +58,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //print_r($tableData); // Department Details With Desending to Assending Order
     echo "<br>";
     // print_r($fetchingSimilarity); // Selected Data Fetching And Retrive Details
-    // echo "<br>";
-    // print_r($fetchingSimilarity);
-    // $departmentsStore = new Store("process", $dataDir, $configuration);
-    try {
-        // $departmentsStore->insertMany($fetchingSimilarity);
-        // ✅ Check if department already exists (ignoring `students` subarray)
-        foreach ($fetchingSimilarity as $dept) {
-        $existingData = $departmentsStore->findBy([
-            ["department", "=", $dept["department"]],
-            ["semester", "=", $dept["semester"]],
-            ["course", "=", $dept["course"]]
-        ]);
+    
 
-        if (empty($existingData)) {
-            // ✅ Insert only if no matching department exists
-            $departmentsStore->insertMany($dept);
-            echo "✅ Department {$dept['department']} inserted successfully!<br>";
-        } else {
-            echo "⚠️ Department {$dept['department']} already exists. Skipping...<br>";
-        }
-    }
-        // echo "Connection successful!";
+
+
+    try {
+        $departmentsStore = new DepartmentStore();
+        echo "✅ Connection Successful!<br>";
+    
+        $departmentsStore = new AdvancedDepartmentStore(new DepartmentStore($departmentsStore));
+        $departmentsStore->bulkInsert($fetchingSimilarity);
+
+        
+    
+        $getTotalDepartment = $departmentsStore->findAll();
+        $index = count($getTotalDepartment);
+        do {
+        
+            
+    
+            if (0 == $index) {
+                    echo "department not available\n";
+                break;
+            } else if (0 != $index && 1 <= $index) {
+                    echo "Total Department -".count($getTotalDepartment)."\n";
+                break;
+            }
+            
+            
+            $index--; 
+        } while (true);
+        
+        
     } catch (Exception $e) {
         echo "Error: " . $e->getMessage();
-    }
-    
+    } 
+
 }
 ?>
 
