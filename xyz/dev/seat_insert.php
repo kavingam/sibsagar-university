@@ -1,72 +1,79 @@
 <?php
-require_once 'sleekdbx.php';
-// Sample departments (unmerged)
-$departments = [
-    [
-        "department" => 1,
-        "semester" => 1,
-        "course" => 1,
-        "totalStudent" => 4,
-        "students" => [
-            ["roll_no" => "ASS-UG-SEM01", "name" => "AA-01"],
-            ["roll_no" => "ASS-UG-SEM02", "name" => "AA-02"],
-            ["roll_no" => "ASS-UG-SEM03", "name" => "AA-03"],
-            ["roll_no" => "ASS-UG-SEM04", "name" => "AA-04"]
-        ]
-    ],
-    [
-        "department" => 1,
-        "semester" => 2,
-        "course" => 1,
-        "totalStudent" => 3,
-        "students" => [
-            ["roll_no" => "CS-UG-SEM03", "name" => "CS-01"],
-            ["roll_no" => "CS-UG-SEM04", "name" => "CS-02"],
-            ["roll_no" => "CS-UG-SEM05", "name" => "CS-03"]
-        ]
+
+function mergeDepartments($firstDump, $secondDump) {
+    // Ensure both departments exist
+    if (!$firstDump || !$secondDump) {
+        return [];
+    }
+
+    // Slice students from the first department based on the second department's total students
+    $requiredStudents = array_slice($firstDump["students"], 0, $secondDump["totalStudent"]);
+
+    // Remaining students from the first department
+    $remainingStudents = array_slice($firstDump["students"], $secondDump["totalStudent"]);
+
+    // Store merged data
+    $mergedDepartments = [];
+
+    // First department (remaining students)
+    if (!empty($remainingStudents)) {
+        $mergedDepartments[] = [
+            "department"   => $firstDump["department"],
+            "semester"     => $firstDump["semester"],
+            "course"       => $firstDump["course"],
+            "totalStudent" => count($remainingStudents), 
+            "students"     => $remainingStudents
+        ];
+    }
+
+    // Second department remains unchanged
+    $mergedDepartments[] = [
+        "department"   => $secondDump["department"],
+        "semester"     => $secondDump["semester"],
+        "course"       => $secondDump["course"],
+        "totalStudent" => count($secondDump["students"]), // Keep its original count
+        "students"     => $secondDump["students"] // Keep original students
+    ];
+
+    return $mergedDepartments;
+}
+
+
+
+// Sample Input Data
+$firstDump = [
+    "department" => 1,
+    "semester" => 1,
+    "course" => 1,
+    "totalStudent" => 6,
+    "students" => [
+        ["roll_no" => "ASS-UG-SEM01", "name" => "AA-01"],
+        ["roll_no" => "ASS-UG-SEM02", "name" => "AA-02"],
+        ["roll_no" => "ASS-UG-SEM03", "name" => "AA-03"],
+        ["roll_no" => "ASS-UG-SEM04", "name" => "AA-04"],
+        ["roll_no" => "ASS-UG-SEM05", "name" => "AA-05"],
+        ["roll_no" => "ASS-UG-SEM06", "name" => "AA-06"]
     ]
 ];
 
-// ✅ Merge departments by "department, semester, course"
-$firstDept = $departments[0];
-$secondDept = $departments[1];
-
-// Extract required students from first department
-$requiredStudents = array_slice($firstDept["students"], 0, $secondDept["totalStudent"]);
-
-print_r($requiredStudents);
-// Initialize merged department array
-$mergedDepartments = [];
-
-// Function to generate unique department-semester-course key
-function getDeptKey($dept) {
-    return $dept["department"] . "-" . $dept["semester"] . "-" . $dept["course"];
-}
-
-// Store first department
-$key1 = getDeptKey($firstDept);
-$mergedDepartments[$key1] = [
-    "department"   => $firstDept["department"],
-    "semester"     => $firstDept["semester"],
-    "course"       => $firstDept["course"],
-    "totalStudent" => count($firstDept["students"]), // Keep original count
-    "students"     => $firstDept["students"]        // Keep original students
+$secondDump = [
+    "department" => 1,
+    "semester" => 2,
+    "course" => 1,
+    "totalStudent" => 3,
+    "students" => [
+        ["roll_no" => "CS-UG-SEM03", "name" => "CS-01"],
+        ["roll_no" => "CS-UG-SEM04", "name" => "CS-02"],
+        ["roll_no" => "CS-UG-SEM05", "name" => "CS-03"]
+    ]
 ];
 
-// Store second department with merged students
-$key2 = getDeptKey($secondDept);
-$mergedDepartments[$key2] = [
-    "department"   => $secondDept["department"],
-    "semester"     => $secondDept["semester"],
-    "course"       => $secondDept["course"],
-    "totalStudent" => count($requiredStudents) + count($secondDept["students"]), // Add students count
-    "students"     => array_merge($requiredStudents, $secondDept["students"])   // Merge students properly
-];
+// Call the function
+$mergedDepartments = mergeDepartments($firstDump, $secondDump);
 
-// Convert associative array to indexed array
-$mergedDepartments = array_values($mergedDepartments);
+// Output Result
+echo "<pre>";
+print_r($mergedDepartments);
+echo "</pre>";
 
-$seatAllocationListStore = new CreateSeatAllocation();
-
-// $seatAllocationListStore->bulkInsert($mergedDepartments);
 ?>

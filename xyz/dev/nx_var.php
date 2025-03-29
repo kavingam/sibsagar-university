@@ -1,6 +1,8 @@
 <?php
 $bashmodelPath = __DIR__ . '/../bashmodel.php';
 $seatAllocationPath = __DIR__ . '/../seat_allocation/seat_allocation.php';
+$sleekdbPath = __DIR__ . '/sleekdb.php';
+$sleekdbxPath = __DIR__ . '/sleekdbx.php';
 
 if (!file_exists($bashmodelPath)) {
     die("Error: bashmodel.php not found at: $bashmodelPath");
@@ -12,6 +14,15 @@ if (!file_exists($seatAllocationPath)) {
 }
 require_once $seatAllocationPath;
 
+if (!file_exists($sleekdbPath)) {
+    die("Error: sleekdb.php not found at: $sleekdbPath");
+}
+require_once $sleekdbPath;
+
+if (!file_exists($sleekdbxPath)) {
+    die("Error: sleekdbx.php not found at: $sleekdbPathx");
+}
+require_once $sleekdbxPath;
 
 
 
@@ -68,100 +79,84 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // echo "<br>";
     // print_r($fetchingSimilarity); 
 
+try {
+    // Initialize the necessary objects
+    $departmentsStore = new DepartmentStore();
+    $departmentsStore = new AdvancedDepartmentStore($departmentsStore);
+    $seatAllocationListStore = new CreateSeatAllocation();
 
-
-
-    try {
-        $departmentsStore = new DepartmentStore();
-        $seatAllocationListStore = new CreateSeatAllocation();
-
-        echo "✅ Connection Successful!<br>";
+    echo "✅ Connection Successful!<br>";
     
-        $departmentsStore = new AdvancedDepartmentStore(new DepartmentStore($departmentsStore));
-        $seatAllocationListStore = new SeatAllocationList();
+    // Clear cache
+    $departmentsStore->deleteCache();
 
-        $departmentsStore->deleteCache();
-        $departmentsStore->bulkInsert($fetchingSimilarity);
+    // Bulk insert department data
+    $departmentsStore->bulkInsert($fetchingSimilarity);
 
-        $getTotalDepartment = $departmentsStore->findAll();
-        
+    // Retrieve all departments
+    $getTotalDepartment = $departmentsStore->findAll();
+    $index = count($getTotalDepartment);
 
-        $index = count($getTotalDepartment);
+    for ($i = 0; $i < $index; $i++) {
+        echo 'Run - ' . $i . '<br>';
 
-        for ($i = 0; $i < $index; $i++) {
+        // Refresh department list
+        $getTotalDepartmentx = $departmentsStore->findAll();
 
-            echo 'run - '.$i.'<br>';
+        // Sort departments in descending order based on total students
+        usort($getTotalDepartmentx, function ($a, $b) {
+            return $b['totalStudent'] - $a['totalStudent'];
+        });
 
-            $getTotalDepartmentx = $departmentsStore->findAll();
-            if (count($getTotalDepartmentx) == 1) {
-                break;
-            }
-            usort($getTotalDepartmentx, function ($a, $b) {
-                return $b['totalStudent'] - $a['totalStudent']; // Descending order
-            });
-    
-            $firstDump = $getTotalDepartmentx[0]; 
-            $secondDump = $getTotalDepartmentx[1];
-    
-            /* Merging department start*/
+        $firstDump = $getTotalDepartmentx[0];
+        $secondDump = $getTotalDepartmentx[1];
 
-            $varAllSeat = [];
-            function getDeptKey($dept) {
-                return $dept["department"] . "-" . $dept["semester"] . "-" . $dept["course"];
-            }
-
-           // Store first department
-            $key1 = getDeptKey($firstDept);
-            $mergedDepartments[$key1] = [
-                "department"   => $firstDept["department"],
-                "semester"     => $firstDept["semester"],
-                "course"       => $firstDept["course"],
-                "totalStudent" => count($firstDept["students"]), // Keep original count
-                "students"     => $firstDept["students"]        // Keep original students
-            ];
-
-            // Store second department with merged students
-            $key2 = getDeptKey($secondDept);
-            $mergedDepartments[$key2] = [
-                "department"   => $secondDept["department"],
-                "semester"     => $secondDept["semester"],
-                "course"       => $secondDept["course"],
-                "totalStudent" => count($requiredStudents) + count($secondDept["students"]), // Add students count
-                "students"     => array_merge($requiredStudents, $secondDept["students"])   // Merge students properly
-            ];
-            
-            /* Merging department end*/
-
-            $stdToDump = min(count($secondDump["students"]), count($firstDump["students"])); // return removeable value
-            $stdToVar = array_slice($firstDump["students"],$stdToDump);
-    
-            $varRemainder = [
-                [
-                    "department" => $firstDump["department"],
-                    "semester" => $firstDump["semester"],
-                    "course" => $firstDump["course"],
-                    "totalStudent" => count($stdToVar),
-                    "students" => $stdToVar
-                ]
-            ];
-            
-            echo '<pre>';
-    
-            if (isset($firstDump["_id"]) && isset($secondDump["_id"])) {
-              // Delete both records by _id
-                $deleted1 = $departmentsStore->deleteById($firstDump["_id"]);
-                $deleted2 = $departmentsStore->deleteById($secondDump["_id"]);
-
-                echo "successfully delete <br>";
-                $departmentsStore->bulkInsert($varRemainder);
-            }
+        // Ensure there are at least two departments
+        if (count($getTotalDepartmentx) < 2) {
+            // $mergedDepartments = mergeDepartments($firstDump, $secondDump);
+            // $seatAllocationListStore->bulkInsert($mergedDepartments);
+            break;
         }
 
+
+        $mergedDepartments = mergeDepartments($firstDump, $secondDump);
+        $seatAllocationListStore->bulkInsert($mergedDepartments);
+        echo '<pre>';
+        print_r($mergedDepartments);
+        // Merging department start
+
+        // Determine removable students
+        $stdToDump = min(count($secondDump["students"]), count($firstDump["students"]));
+        $stdToVar = array_slice($firstDump["students"], $stdToDump);
+
+        // Prepare remaining students list
+        $varRemainder = [
+            [
+                "department"   => $firstDump["department"],
+                "semester"     => $firstDump["semester"],
+                "course"       => $firstDump["course"],
+                "totalStudent" => count($stdToVar),
+                "students"     => $stdToVar
+            ]
+        ];
         
-        
-    } catch (Exception $e) {
-        echo "Error: " . $e->getMessage();
-    } 
+        echo '<pre>';
+
+        if (isset($firstDump["_id"]) && isset($secondDump["_id"])) {
+            // Delete both records by _id
+            $deleted1 = $departmentsStore->deleteById($firstDump["_id"]);
+            $deleted2 = $departmentsStore->deleteById($secondDump["_id"]);
+
+            echo "✅ Successfully deleted departments <br>";
+
+            // Insert merged and remaining students into the store
+            $departmentsStore->bulkInsert($varRemainder);
+        }
+    }
+
+} catch (Exception $e) {
+    echo "❌ Error: " . $e->getMessage();
+}
 
 }
 ?>
@@ -192,3 +187,45 @@ function findNearestRoom($rooms, $targetCapacity) {
         'adjustment' => "No Suitable Room Found (Minimum seat capacity is " . $rooms[0]['seat_capacity'] . ")"
     ];
 }?>
+
+
+<?php
+function mergeDepartments($firstDump, $secondDump) {
+    // Ensure both departments exist
+    if (!$firstDump || !$secondDump) {
+        return [];
+    }
+
+    // Slice students from the first department based on the second department's total students
+    $requiredStudents = array_slice($firstDump["students"], 0, $secondDump["totalStudent"]);
+
+    // Remaining students from the first department
+    $remainingStudents = array_slice($firstDump["students"], $secondDump["totalStudent"]);
+
+    // Store merged data
+    $mergedDepartments = [];
+
+    // First department (remaining students)
+    if (!empty($remainingStudents)) {
+        $mergedDepartments[] = [
+            "department"   => $firstDump["department"],
+            "semester"     => $firstDump["semester"],
+            "course"       => $firstDump["course"],
+            "totalStudent" => count($remainingStudents), 
+            "students"     => $remainingStudents
+        ];
+    }
+
+    // Second department remains unchanged
+    $mergedDepartments[] = [
+        "department"   => $secondDump["department"],
+        "semester"     => $secondDump["semester"],
+        "course"       => $secondDump["course"],
+        "totalStudent" => count($secondDump["students"]), // Keep its original count
+        "students"     => $secondDump["students"] // Keep original students
+    ];
+
+    return $mergedDepartments;
+}
+
+?>
