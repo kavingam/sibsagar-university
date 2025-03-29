@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo "<br>";
     // print_r($fetchingSimilarity); // Selected Data Fetching And Retrive Details
     
-
+    
 
 
     try {
@@ -67,15 +67,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo "✅ Connection Successful!<br>";
     
         $departmentsStore = new AdvancedDepartmentStore(new DepartmentStore($departmentsStore));
-        $departmentsStore->bulkInsert($fetchingSimilarity);
-
-        
+        // $departmentsStore->bulkInsert($fetchingSimilarity);
     
         $getTotalDepartment = $departmentsStore->findAll();
+        usort($getTotalDepartment, function ($a, $b) {
+            return $b['totalStudent'] - $a['totalStudent']; // Descending order
+        });
+
+        $firstDump = $getTotalDepartment[0]; 
+        $secondDump = $getTotalDepartment[1];
+
+        $stdToDump = min(count($secondDump["students"]), count($firstDump["students"])); // return removeable value
+        $stdToVar = array_slice($firstDump["students"],$stdToDump);
+
+        print_r(count($stdToVar));
+        echo '<pre>';
+        // print_r($getTotalDepartment);
+    
+        if (isset($firstDump["_id"]) && isset($secondDump["_id"])) {
+            // echo "✅ First Record - _id: " . $firstDump["_id"] . "<br>";
+            // echo "✅ Second Record - _id: " . $secondDump["_id"] . "<br>";
+        
+            // Delete both records by _id
+            // $deleted1 = $departmentsStore->deleteById($firstDump["_id"]);
+            // $deleted2 = $departmentsStore->deleteById($secondDump["_id"]);
+        
+            // // Clear cache after deletion
+            // $departmentsStore->deleteCache(); 
+        
+            // // Print status
+            // echo ($deleted1 ? "✅ First record deleted successfully!<br>" : "⚠️ First record not found or not deleted.<br>");
+            // echo ($deleted2 ? "✅ Second record deleted successfully!<br>" : "⚠️ Second record not found or not deleted.<br>");
+        } else {
+            echo "❌ _id not found in records.<br>";
+        }
+        
+
         $index = count($getTotalDepartment);
         do {
         
             
+
     
             if (0 == $index) {
                     echo "department not available\n";

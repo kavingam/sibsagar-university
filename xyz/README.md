@@ -136,6 +136,11 @@ This project provides a **Student Seat Allocation System** that efficiently assi
 - **DataTables.js**: Enhances table functionalities for sorting and filtering.
 - **SweetAlert2**: Provides modern and interactive alert popups.
 
+## Permission
+```
+sudo chmod -R 775 /var/www/sibsagar-university/xyz/dev/database
+sudo chmod -R 777 /var/www/sibsagar-university/xyz/dev/database
+```
 ## 🤝 Contributing
 Contributions are welcome! Feel free to fork this repository and submit a pull request with improvements.
 

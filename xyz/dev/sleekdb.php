@@ -28,6 +28,14 @@ class DepartmentStore {
     public function insert($data) {
         return $this->store->insert($data);
     }
+    // ✅ Insert multiple departments at once
+    public function insertMany($departments) {
+        return $this->store->insertMany($departments);
+    }
+
+    public function deleteById($id) {
+        return $this->store->deleteBy([["_id", "=", $id]]);
+    }
 
     // Delete all records
     public function deleteAll() {
