@@ -1,5 +1,19 @@
 <?php
-require_once __DIR__ . '../bashmodel.php';
+$bashmodelPath = __DIR__ . '/../bashmodel.php';
+$seatAllocationPath = __DIR__ . '/../seat_allocation/seat_allocation.php';
+
+if (!file_exists($bashmodelPath)) {
+    die("Error: bashmodel.php not found at: $bashmodelPath");
+}
+require_once $bashmodelPath;
+
+if (!file_exists($seatAllocationPath)) {
+    die("Error: seat_allocation.php not found at: $seatAllocationPath");
+}
+require_once $seatAllocationPath;
+
+
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);
@@ -12,71 +26,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $benchSeat = htmlspecialchars($data['benchSeat']);
     $tableData = $data['tableData'];
 
-   
-    
-
     usort($tableData, function ($a, $b) {
         return $b['totalStudent'] <=> $a['totalStudent'];
     });
 
+    $stdObj = new SeatAllocation();
+    $totalStudent =  $stdObj->getTotalStudents($tableData);
 
-    // $stdObj = new Student();
-
-
-}
-
-// $stdObj = new Student();
-    // $stdObj->getAllStudents() ;
-
-/*
-
-    // $stdObj = new SeatAllocation();
-    // $totalStudent =  $stdObj->getTotalStudents($tableData);
-
-
-
-    // $students = new Student();
-    // $fetchingSimilarity = [];
+    $students = new Student();
+    $fetchingSimilarity = [];
     
-    // foreach ($tableData as $data) {
-    //     $similarStudents = $students->findSimilarStudents(
-    //         $data['department'], 
-    //         $data['semester'], 
-    //         $data['course'], 
-    //         $data['totalStudent'] // Ensure total students are passed as range
-    //     );
+    foreach ($tableData as $data) {
+        $similarStudents = $students->findSimilarStudents(
+            $data['department'], 
+            $data['semester'], 
+            $data['course'], 
+            $data['totalStudent'] // Ensure total students are passed as range
+        );
     
-    //     // Store results
-    //     $fetchingSimilarity[] = [
-    //         'department' => $data['department'],
-    //         'semester' => $data['semester'],
-    //         'course' => $data['course'],
-    //         'totalStudent' => $data['totalStudent'],
-    //         'students' => $similarStudents // Store retrieved students
-    //     ];
-    // }
+        // Store results
+        $fetchingSimilarity[] = [
+            'department' => $data['department'],
+            'semester' => $data['semester'],
+            'course' => $data['course'],
+            'totalStudent' => $data['totalStudent'],
+            'students' => $similarStudents // Store retrieved students
+        ];
+    }
 
-    // $roomObj = new Room();
-    // $rooms = $roomObj->getAllRooms();
+    $roomObj = new Room();
+    $rooms = $roomObj->getAllRooms();
 
-    // $seatAllocate = findNearestRoom($rooms, ceil($totalStudent / $benchSeat));
+    $seatAllocate = findNearestRoom($rooms, ceil($totalStudent / $benchSeat));
     
 
-    // echo "<br>Total Examinations Students : ".$totalStudent;
-    // echo "<br>Seats Per Bench: " . $benchSeat ."<br>";
+    echo "<br>Total Examinations Students : ".$totalStudent;
+    echo "<br>Seats Per Bench: " . $benchSeat ."<br>";
     
-    // // echo "<pre>";
-    // //print_r($tableData); // Department Details With Desending to Assending Order
+    // echo "<pre>";
+    // print_r($tableData);
     // echo "<br>";
-    // print_r($fetchingSimilarity); // Selected Data Fetching And Retrive Details
+    // print_r($fetchingSimilarity); 
 
-    // $departmentsStore->deleteCache();
 
-/*
 
 
     try {
         $departmentsStore = new DepartmentStore();
+        $seatAllocationListStore = new CreateSeatAllocation();
+
         echo "✅ Connection Successful!<br>";
     
         $departmentsStore = new AdvancedDepartmentStore(new DepartmentStore($departmentsStore));
@@ -105,6 +103,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $firstDump = $getTotalDepartmentx[0]; 
             $secondDump = $getTotalDepartmentx[1];
     
+            /* Merging department start*/
+
+            $varAllSeat = [];
+            function getDeptKey($dept) {
+                return $dept["department"] . "-" . $dept["semester"] . "-" . $dept["course"];
+            }
+
+           // Store first department
+            $key1 = getDeptKey($firstDept);
+            $mergedDepartments[$key1] = [
+                "department"   => $firstDept["department"],
+                "semester"     => $firstDept["semester"],
+                "course"       => $firstDept["course"],
+                "totalStudent" => count($firstDept["students"]), // Keep original count
+                "students"     => $firstDept["students"]        // Keep original students
+            ];
+
+            // Store second department with merged students
+            $key2 = getDeptKey($secondDept);
+            $mergedDepartments[$key2] = [
+                "department"   => $secondDept["department"],
+                "semester"     => $secondDept["semester"],
+                "course"       => $secondDept["course"],
+                "totalStudent" => count($requiredStudents) + count($secondDept["students"]), // Add students count
+                "students"     => array_merge($requiredStudents, $secondDept["students"])   // Merge students properly
+            ];
+            
+            /* Merging department end*/
+
             $stdToDump = min(count($secondDump["students"]), count($firstDump["students"])); // return removeable value
             $stdToVar = array_slice($firstDump["students"],$stdToDump);
     
@@ -117,7 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     "students" => $stdToVar
                 ]
             ];
-    
+            
             echo '<pre>';
     
             if (isset($firstDump["_id"]) && isset($secondDump["_id"])) {
@@ -135,8 +162,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } catch (Exception $e) {
         echo "Error: " . $e->getMessage();
     } 
-*/
-// }
+
+}
 ?>
 
 

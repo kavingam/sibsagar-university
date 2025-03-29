@@ -6,20 +6,23 @@ $departments = [
         "department" => 1,
         "semester" => 1,
         "course" => 1,
-        "totalStudent" => 2,
+        "totalStudent" => 4,
         "students" => [
             ["roll_no" => "ASS-UG-SEM01", "name" => "AA-01"],
             ["roll_no" => "ASS-UG-SEM02", "name" => "AA-02"],
+            ["roll_no" => "ASS-UG-SEM03", "name" => "AA-03"],
+            ["roll_no" => "ASS-UG-SEM04", "name" => "AA-04"]
         ]
     ],
     [
         "department" => 1,
         "semester" => 2,
         "course" => 1,
-        "totalStudent" => 2,
+        "totalStudent" => 3,
         "students" => [
-            ["roll_no" => "ASS-UG-SEM03", "name" => "AA-03"],
-            ["roll_no" => "ASS-UG-SEM04", "name" => "AA-04"],
+            ["roll_no" => "CS-UG-SEM03", "name" => "CS-01"],
+            ["roll_no" => "CS-UG-SEM04", "name" => "CS-02"],
+            ["roll_no" => "CS-UG-SEM05", "name" => "CS-03"]
         ]
     ]
 ];
@@ -31,6 +34,7 @@ $secondDept = $departments[1];
 // Extract required students from first department
 $requiredStudents = array_slice($firstDept["students"], 0, $secondDept["totalStudent"]);
 
+print_r($requiredStudents);
 // Initialize merged department array
 $mergedDepartments = [];
 
@@ -64,5 +68,5 @@ $mergedDepartments = array_values($mergedDepartments);
 
 $seatAllocationListStore = new CreateSeatAllocation();
 
-$seatAllocationListStore->bulkInsert($mergedDepartments);
+// $seatAllocationListStore->bulkInsert($mergedDepartments);
 ?>
