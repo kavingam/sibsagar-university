@@ -1,8 +1,5 @@
 <?php
-require_once '../bashmodel.php';
-require_once '../seat_allocation/seat_allocation.php';
-require_once 'sleekdb.php';
-require_once 'sleekdbx.php';
+require_once __DIR__ . '../bashmodel.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);
@@ -11,118 +8,72 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo "<p class='text-danger'>Invalid data received!</p>";
         exit;
     }
-
     $startTime = htmlspecialchars($data['startTime']);
     $benchSeat = htmlspecialchars($data['benchSeat']);
     $tableData = $data['tableData'];
+
+   
+    
 
     usort($tableData, function ($a, $b) {
         return $b['totalStudent'] <=> $a['totalStudent'];
     });
 
 
-    $stdObj = new SeatAllocation();
-    $totalStudent =  $stdObj->getTotalStudents($tableData);
+    // $stdObj = new Student();
 
 
-    $students = new Student();
-    $fetchingSimilarity = [];
+}
+
+// $stdObj = new Student();
+    // $stdObj->getAllStudents() ;
+
+/*
+
+    // $stdObj = new SeatAllocation();
+    // $totalStudent =  $stdObj->getTotalStudents($tableData);
+
+
+
+    // $students = new Student();
+    // $fetchingSimilarity = [];
     
-    foreach ($tableData as $data) {
-        $similarStudents = $students->findSimilarStudents(
-            $data['department'], 
-            $data['semester'], 
-            $data['course'], 
-            $data['totalStudent'] // Ensure total students are passed as range
-        );
+    // foreach ($tableData as $data) {
+    //     $similarStudents = $students->findSimilarStudents(
+    //         $data['department'], 
+    //         $data['semester'], 
+    //         $data['course'], 
+    //         $data['totalStudent'] // Ensure total students are passed as range
+    //     );
     
-        // Store results
-        $fetchingSimilarity[] = [
-            'department' => $data['department'],
-            'semester' => $data['semester'],
-            'course' => $data['course'],
-            'totalStudent' => $data['totalStudent'],
-            'students' => $similarStudents // Store retrieved students
-        ];
-    }
+    //     // Store results
+    //     $fetchingSimilarity[] = [
+    //         'department' => $data['department'],
+    //         'semester' => $data['semester'],
+    //         'course' => $data['course'],
+    //         'totalStudent' => $data['totalStudent'],
+    //         'students' => $similarStudents // Store retrieved students
+    //     ];
+    // }
 
-    $roomObj = new Room();
-    $rooms = $roomObj->getAllRooms();
+    // $roomObj = new Room();
+    // $rooms = $roomObj->getAllRooms();
 
-    $seatAllocate = findNearestRoom($rooms, ceil($totalStudent / $benchSeat));
+    // $seatAllocate = findNearestRoom($rooms, ceil($totalStudent / $benchSeat));
     
 
-    echo "<br>Total Examinations Students : ".$totalStudent;
-    echo "<br>Seats Per Bench: " . $benchSeat ."<br>";
+    // echo "<br>Total Examinations Students : ".$totalStudent;
+    // echo "<br>Seats Per Bench: " . $benchSeat ."<br>";
     
-    // echo "<pre>";
-    //print_r($tableData); // Department Details With Desending to Assending Order
-    echo "<br>";
+    // // echo "<pre>";
+    // //print_r($tableData); // Department Details With Desending to Assending Order
+    // echo "<br>";
     // print_r($fetchingSimilarity); // Selected Data Fetching And Retrive Details
-    
-    $dept = [
-        [
-            "department" => 1,
-            "semester" => 1,
-            "course" => 1,
-            "totalStudent" => 10,
-            "students" => array_map(function ($i) {
-                return [
-                    "roll_no" => "ASS-UG-SEM-10" . str_pad($i, 2, "0", STR_PAD_LEFT),
-                    "name" => "AA-" . str_pad($i, 2, "0", STR_PAD_LEFT),
-                    "department" => 1,
-                    "semester" => 1,
-                    "course" => 1
-                ];
-            }, range(1, 10))
-        ],
-        [
-            "department" => 3,
-            "semester" => 1,
-            "course" => 1,
-            "totalStudent" => 8,
-            "students" => array_map(function ($i) {
-                return [
-                    "roll_no" => "CSE-SEM-10" . str_pad($i, 2, "0", STR_PAD_LEFT),
-                    "name" => "AA-" . str_pad($i, 2, "0", STR_PAD_LEFT),
-                    "department" => 3,
-                    "semester" => 1,
-                    "course" => 1
-                ];
-            }, range(1, 8))
-        ]
-    ];
-    
-    $x = $dept[0];
-    $y = $dept[1];
-    $groupSeatList = array_slice($x["students"], 0, $y["totalStudent"]);
-    echo '<pre>';    
-    // print_r($groupSeatList);
-    $filtersGroupSeatList = [
-        [
-            [
-                "department" => $x["department"],
-                "semester" => $x["semester"],
-                "course" => $x["course"],
-                "totalStudent" => count($groupSeatList), // Updated count
-                "students" => $groupSeatList
-            ],
-            [
-                "department" => $y["department"],
-                "semester" => $y["semester"],
-                "course" => $y["course"],
-                "totalStudent" => count($groupSeatList), // Updated count
-                "students" => $groupSeatList
-            ],
-        ]
-    ];
-    print_r($filtersGroupSeatList);
-    $seatAllocationListStore = new SeatAllocationList();
 
     // $departmentsStore->deleteCache();
 
-
 /*
+
 
     try {
         $departmentsStore = new DepartmentStore();
@@ -185,7 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo "Error: " . $e->getMessage();
     } 
 */
-}
+// }
 ?>
 
 
