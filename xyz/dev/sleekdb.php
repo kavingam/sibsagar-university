@@ -41,6 +41,7 @@ class DepartmentStore {
     public function deleteAll() {
         return $this->store->deleteBy(["_id", "!=", 0]);
     }
+
     // ✅ Encapsulation: Method to check if a department exists
     public function departmentExists($dept) {
         return $this->store->findBy([
@@ -59,6 +60,23 @@ class DepartmentStore {
             echo "⚠️ Department {$dept['department']} already exists. Skipping...<br>";
         }
     }
+
+    public function deleteCache() {
+        $cacheDir = $this->store->getStorePath() . "/cache"; // Get the cache directory
+    
+        if (is_dir($cacheDir)) {
+            $files = glob("$cacheDir/*"); // Get all cache files
+            foreach ($files as $file) {
+                if (is_file($file)) {
+                    unlink($file); // Delete each cache file
+                }
+            }
+            echo "✅ Cache cleared successfully!<br>";
+        } else {
+            echo "⚠️ Cache directory not found!<br>";
+        }
+    }
+    
 
 }
 

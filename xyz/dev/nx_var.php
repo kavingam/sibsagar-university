@@ -2,6 +2,7 @@
 require_once '../bashmodel.php';
 require_once '../seat_allocation/seat_allocation.php';
 require_once 'sleekdb.php';
+require_once 'sleekdbx.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);
@@ -59,73 +60,131 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo "<br>";
     // print_r($fetchingSimilarity); // Selected Data Fetching And Retrive Details
     
+    $dept = [
+        [
+            "department" => 1,
+            "semester" => 1,
+            "course" => 1,
+            "totalStudent" => 10,
+            "students" => array_map(function ($i) {
+                return [
+                    "roll_no" => "ASS-UG-SEM-10" . str_pad($i, 2, "0", STR_PAD_LEFT),
+                    "name" => "AA-" . str_pad($i, 2, "0", STR_PAD_LEFT),
+                    "department" => 1,
+                    "semester" => 1,
+                    "course" => 1
+                ];
+            }, range(1, 10))
+        ],
+        [
+            "department" => 3,
+            "semester" => 1,
+            "course" => 1,
+            "totalStudent" => 8,
+            "students" => array_map(function ($i) {
+                return [
+                    "roll_no" => "CSE-SEM-10" . str_pad($i, 2, "0", STR_PAD_LEFT),
+                    "name" => "AA-" . str_pad($i, 2, "0", STR_PAD_LEFT),
+                    "department" => 3,
+                    "semester" => 1,
+                    "course" => 1
+                ];
+            }, range(1, 8))
+        ]
+    ];
     
+    $x = $dept[0];
+    $y = $dept[1];
+    $groupSeatList = array_slice($x["students"], 0, $y["totalStudent"]);
+    echo '<pre>';    
+    // print_r($groupSeatList);
+    $filtersGroupSeatList = [
+        [
+            [
+                "department" => $x["department"],
+                "semester" => $x["semester"],
+                "course" => $x["course"],
+                "totalStudent" => count($groupSeatList), // Updated count
+                "students" => $groupSeatList
+            ],
+            [
+                "department" => $y["department"],
+                "semester" => $y["semester"],
+                "course" => $y["course"],
+                "totalStudent" => count($groupSeatList), // Updated count
+                "students" => $groupSeatList
+            ],
+        ]
+    ];
+    print_r($filtersGroupSeatList);
+    $seatAllocationListStore = new SeatAllocationList();
 
+    // $departmentsStore->deleteCache();
+
+
+/*
 
     try {
         $departmentsStore = new DepartmentStore();
         echo "✅ Connection Successful!<br>";
     
         $departmentsStore = new AdvancedDepartmentStore(new DepartmentStore($departmentsStore));
-        // $departmentsStore->bulkInsert($fetchingSimilarity);
-    
+        $seatAllocationListStore = new SeatAllocationList();
+
+        $departmentsStore->deleteCache();
+        $departmentsStore->bulkInsert($fetchingSimilarity);
+
         $getTotalDepartment = $departmentsStore->findAll();
-        usort($getTotalDepartment, function ($a, $b) {
-            return $b['totalStudent'] - $a['totalStudent']; // Descending order
-        });
-
-        $firstDump = $getTotalDepartment[0]; 
-        $secondDump = $getTotalDepartment[1];
-
-        $stdToDump = min(count($secondDump["students"]), count($firstDump["students"])); // return removeable value
-        $stdToVar = array_slice($firstDump["students"],$stdToDump);
-
-        print_r(count($stdToVar));
-        echo '<pre>';
-        // print_r($getTotalDepartment);
-    
-        if (isset($firstDump["_id"]) && isset($secondDump["_id"])) {
-            // echo "✅ First Record - _id: " . $firstDump["_id"] . "<br>";
-            // echo "✅ Second Record - _id: " . $secondDump["_id"] . "<br>";
-        
-            // Delete both records by _id
-            // $deleted1 = $departmentsStore->deleteById($firstDump["_id"]);
-            // $deleted2 = $departmentsStore->deleteById($secondDump["_id"]);
-        
-            // // Clear cache after deletion
-            // $departmentsStore->deleteCache(); 
-        
-            // // Print status
-            // echo ($deleted1 ? "✅ First record deleted successfully!<br>" : "⚠️ First record not found or not deleted.<br>");
-            // echo ($deleted2 ? "✅ Second record deleted successfully!<br>" : "⚠️ Second record not found or not deleted.<br>");
-        } else {
-            echo "❌ _id not found in records.<br>";
-        }
         
 
         $index = count($getTotalDepartment);
-        do {
-        
-            
 
-    
-            if (0 == $index) {
-                    echo "department not available\n";
-                break;
-            } else if (0 != $index && 1 <= $index) {
-                    echo "Total Department -".count($getTotalDepartment)."\n";
+        for ($i = 0; $i < $index; $i++) {
+
+            echo 'run - '.$i.'<br>';
+
+            $getTotalDepartmentx = $departmentsStore->findAll();
+            if (count($getTotalDepartmentx) == 1) {
                 break;
             }
-            
-            
-            $index--; 
-        } while (true);
+            usort($getTotalDepartmentx, function ($a, $b) {
+                return $b['totalStudent'] - $a['totalStudent']; // Descending order
+            });
+    
+            $firstDump = $getTotalDepartmentx[0]; 
+            $secondDump = $getTotalDepartmentx[1];
+    
+            $stdToDump = min(count($secondDump["students"]), count($firstDump["students"])); // return removeable value
+            $stdToVar = array_slice($firstDump["students"],$stdToDump);
+    
+            $varRemainder = [
+                [
+                    "department" => $firstDump["department"],
+                    "semester" => $firstDump["semester"],
+                    "course" => $firstDump["course"],
+                    "totalStudent" => count($stdToVar),
+                    "students" => $stdToVar
+                ]
+            ];
+    
+            echo '<pre>';
+    
+            if (isset($firstDump["_id"]) && isset($secondDump["_id"])) {
+              // Delete both records by _id
+                $deleted1 = $departmentsStore->deleteById($firstDump["_id"]);
+                $deleted2 = $departmentsStore->deleteById($secondDump["_id"]);
+
+                echo "successfully delete <br>";
+                $departmentsStore->bulkInsert($varRemainder);
+            }
+        }
+
         
         
     } catch (Exception $e) {
         echo "Error: " . $e->getMessage();
     } 
-
+*/
 }
 ?>
 
