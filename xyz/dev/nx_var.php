@@ -83,6 +83,8 @@ try {
 
         // Refresh department list
         $getTotalDepartmentx = $departmentsStore->findAll();
+
+
         // Ensure there are at least two departments
         if (count($getTotalDepartmentx) < 2) {
             break;
@@ -92,6 +94,12 @@ try {
             return $b['totalStudent'] - $a['totalStudent'];
         });
 
+        $finalArray = buildFinalArray($getTotalDepartmentx);
+        
+        // Print the final array
+        echo '<pre>';
+        // print_r($finalArray);
+
         $firstDump = $getTotalDepartmentx[0];
         $secondDump = $getTotalDepartmentx[1];
 
@@ -99,10 +107,7 @@ try {
 
 
         echo '<pre>';
-        // $mergedDepartments = mergeDepartments($firstDump, $secondDump);
-        // $seatAllocationListStore->bulkInsert($mergedDepartments);
-        // print_r($mergedDepartments);
-        // Merging department start
+        $seatAllocationListStore->bulkInsert($finalArray);
 
         // Determine removable students
         $stdToDump = min(count($secondDump["students"]), count($firstDump["students"]));
@@ -142,8 +147,8 @@ try {
 ?>
 <?php 
 // Show Remainder Layout 
-$getRemainderStudents = $departmentsStore->findAll();
-remainderLayout($getRemainderStudents);
+// $getRemainderStudents = $departmentsStore->findAll();
+// remainderLayout($getRemainderStudents);
 
 ?>
 
@@ -184,17 +189,28 @@ function getDeptKey($dept) {
 
 // Function to slice the student data from the first department based on the total students in the second department
 function getDeptStudentSlice($firstDept, $secondDept) {
-    return array_slice($firstDept["student"], 0, $secondDept["totalStudent"]);
+    return array_slice($firstDept["students"], 0, $secondDept["totalStudent"]);
 }
 
-// Function to build department information
+// Function to build department information for each student
 function buildDeptArray($dept, $studentSlice = null) {
+    // For each student, include department, semester, and course information
+    $students = array_map(function($student) use ($dept) {
+        return [
+            "roll_no" => $student["roll_no"],
+            "name" => $student["name"],
+            "department" => $dept["department"],
+            "semester" => $dept["semester"],
+            "course" => $dept["course"]
+        ];
+    }, $studentSlice ?? $dept["students"]);
+
     return [
         "department" => $dept["department"],
         "semester" => $dept["semester"],
         "course" => $dept["course"],
         "totalStudent" => $dept["totalStudent"],
-        "student" => $studentSlice ?? $dept["student"]
+        "students" => $students
     ];
 }
 
@@ -209,13 +225,12 @@ function buildFinalArray($departments) {
     $varBiggestDeptSlice = getDeptStudentSlice($firstDept, $secondDept);
     
     // Build the final array for the first department
-    $firstKey = getDeptKey($firstDept);
-    $finalArray[$firstKey] = buildDeptArray($firstDept, $varBiggestDeptSlice);
+    $finalArray[] = buildDeptArray($firstDept, $varBiggestDeptSlice);
     
     // Build the final array for the second department
-    $secondKey = getDeptKey($secondDept);
-    $finalArray[$secondKey] = buildDeptArray($secondDept);
+    $finalArray[] = buildDeptArray($secondDept);
     
     return $finalArray;
 }
+
 ?>
