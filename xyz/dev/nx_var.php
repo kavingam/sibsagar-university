@@ -3,34 +3,9 @@ $bashmodelPath = __DIR__ . '/../bashmodel.php';
 $seatAllocationPath = __DIR__ . '/../seat_allocation/seat_allocation.php';
 $sleekdbPath = __DIR__ . '/sleekdb.php';
 $sleekdbxPath = __DIR__ . '/sleekdbx.php';
-
 $layout_path = __DIR__ . '/layout/xyz_layout.php';
 
-if (!file_exists($bashmodelPath)) {
-    die("Error: bashmodel.php not found at: $bashmodelPath");
-}
-require_once $bashmodelPath;
-
-if (!file_exists($seatAllocationPath)) {
-    die("Error: seat_allocation.php not found at: $seatAllocationPath");
-}
-require_once $seatAllocationPath;
-
-if (!file_exists($sleekdbPath)) {
-    die("Error: sleekdb.php not found at: $sleekdbPath");
-}
-require_once $sleekdbPath;
-
-if (!file_exists($sleekdbxPath)) {
-    die("Error: sleekdbx.php not found at: $sleekdbPathx");
-}
-require_once $sleekdbxPath;
-
-if(!file_exists($layout_path)) {
-    die("Error: layout_xyz.php not found at: $layout_path");
-}
-require_once $layout_path;
-
+require __DIR__ . '/debugs.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);
@@ -154,7 +129,7 @@ try {
 
             echo "✅ Successfully deleted departments <br>";
             // Insert merged and remaining students into the store
-            $departmentsStore->bulkInsert($varRemainder);
+            // $departmentsStore->bulkInsert($varRemainder);
 
         }
     }
@@ -199,44 +174,48 @@ function findNearestRoom($rooms, $targetCapacity) {
 }?>
 
 
+
+
 <?php 
-function mergeDepartments($firstDump, $secondDump) {
-    // Ensure both departments exist
-    if (!$firstDump || !$secondDump) {
-        return [];
-    }
-
-    // Slice students from the first department based on the second department's total students
-    // $requiredStudents = array_slice($firstDump["students"], 0, $secondDump["totalStudent"]);
-
-    return $secondDump;
-
-    // // Store merged data
-    // $mergedDepartments = [];
-
-    // // First department (remaining students)
-    // if (!empty($remainingStudents)) {
-    //     $mergedDepartments[] = [
-    //         "department"   => $firstDump["department"],
-    //         "semester"     => $firstDump["semester"],
-    //         "course"       => $firstDump["course"],
-    //         "totalStudent" => count($remainingStudents), 
-    //         "students"     => $remainingStudents
-    //     ];
-    // }
-
-    // // Second department remains unchanged
-    // $mergedDepartments[] = [
-    //     "department"   => $secondDump["department"],
-    //     "semester"     => $secondDump["semester"],
-    //     "course"       => $secondDump["course"],
-    //     "totalStudent" => count($secondDump["students"]), // Keep its original count
-    //     "students"     => $secondDump["students"] // Keep original students
-    // ];
-
-    // return $mergedDepartments;
-
-    
+// Function to generate the department key
+function getDeptKey($dept) {
+    return $dept["department"] . "-" . $dept["semester"] . "-" . $dept["course"];
 }
 
+// Function to slice the student data from the first department based on the total students in the second department
+function getDeptStudentSlice($firstDept, $secondDept) {
+    return array_slice($firstDept["student"], 0, $secondDept["totalStudent"]);
+}
+
+// Function to build department information
+function buildDeptArray($dept, $studentSlice = null) {
+    return [
+        "department" => $dept["department"],
+        "semester" => $dept["semester"],
+        "course" => $dept["course"],
+        "totalStudent" => $dept["totalStudent"],
+        "student" => $studentSlice ?? $dept["student"]
+    ];
+}
+
+// Create the final array with department keys and data
+function buildFinalArray($departments) {
+    $finalArray = [];
+    
+    $firstDept = $departments[0];
+    $secondDept = $departments[1];
+    
+    // Get the student slice for the first department
+    $varBiggestDeptSlice = getDeptStudentSlice($firstDept, $secondDept);
+    
+    // Build the final array for the first department
+    $firstKey = getDeptKey($firstDept);
+    $finalArray[$firstKey] = buildDeptArray($firstDept, $varBiggestDeptSlice);
+    
+    // Build the final array for the second department
+    $secondKey = getDeptKey($secondDept);
+    $finalArray[$secondKey] = buildDeptArray($secondDept);
+    
+    return $finalArray;
+}
 ?>
