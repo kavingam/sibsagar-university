@@ -1,4 +1,72 @@
 <?php
+// Function to generate the department key
+function getDeptKey($dept) {
+    return $dept["department"] . "-" . $dept["semester"] . "-" . $dept["course"];
+}
+
+// Function to slice the student data from the first department based on the total students in the second department
+function getDeptStudentSlice($firstDept, $secondDept) {
+    return array_slice($firstDept["students"], 0, $secondDept["totalStudent"]);
+}
+
+// Function to build department information for each student
+function buildDeptArray($dept, $studentSlice = null) {
+    // For each student, include department, semester, and course information
+    $students = array_map(function($student) use ($dept) {
+        return [
+            "roll_no" => $student["roll_no"],
+            "name" => $student["name"],
+            "department" => $dept["department"],
+            "semester" => $dept["semester"],
+            "course" => $dept["course"]
+        ];
+    }, $studentSlice ?? $dept["students"]);
+
+    return [
+        "department" => $dept["department"],
+        "semester" => $dept["semester"],
+        "course" => $dept["course"],
+        "totalStudent" => $dept["totalStudent"],
+        "students" => $students
+    ];
+}
+
+// Create the final array with department keys and data
+function buildFinalArray($departments) {
+    $finalArray = [];
+    
+    $firstDept = $departments[0];
+    $secondDept = $departments[1];
+    
+    // Get the student slice for the first department
+    $varBiggestDeptSlice = getDeptStudentSlice($firstDept, $secondDept);
+    
+    // Build the final array for the first department
+    $finalArray[] = buildDeptArray($firstDept, $varBiggestDeptSlice);
+    
+    // Build the final array for the second department
+    $finalArray[] = buildDeptArray($secondDept);
+    
+    return $finalArray;
+}
+function buildFinalArrayX($firstDept, $secondDept) {
+    $finalArray = [];
+    
+    // Get the student slice for the first department
+    $varBiggestDeptSlice = getDeptStudentSlice($firstDept, $secondDept);
+    
+    // Build the final array for the first department
+    $finalArray[] = buildDeptArray($firstDept, $varBiggestDeptSlice);
+    
+    // Build the final array for the second department
+    $finalArray[] = buildDeptArray($secondDept);
+    
+    return $finalArray;
+}
+
+
+?>
+<?php
 $bashmodelPath = __DIR__ . '/../bashmodel.php';
 $seatAllocationPath = __DIR__ . '/../seat_allocation/seat_allocation.php';
 $sleekdbPath = __DIR__ . '/sleekdb.php';
@@ -6,6 +74,8 @@ $sleekdbxPath = __DIR__ . '/sleekdbx.php';
 $layout_path = __DIR__ . '/layout/xyz_layout.php';
 
 require __DIR__ . '/debugs.php';
+
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);
@@ -49,26 +119,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $roomObj = new Room();
     $rooms = $roomObj->getAllRooms();
 
-    $seatAllocate = findNearestRoom($rooms, ceil($totalStudent / $benchSeat));
+    // $seatAllocate = findNearestRoom($rooms, ceil($totalStudent / $benchSeat));
     
 
-    echo "<br>Total Examinations Students : ".$totalStudent;
-    echo "<br>Seats Per Bench: " . $benchSeat ."<br>";
+    echo "<br>Total Examinations Students : ".$totalStudent."</br>";
+    echo "<br>Seats Per Bench: " . $benchSeat ."</br>";
     
-    // echo "<pre>";
+
+    $seatAllocationListStore = new CreateSeatAllocation();
+
+    $seatAlloc = new  CreateSeatAllocation();
+    $total = $seatAlloc->findTotal(); // This will return and print the total count
+    
+    echo '<h1>'.$total.'</h1>';
+
+    echo '<pre>';
+    for ($i = 0; $i < count($fetchingSimilarity); $i += 2) {
+        // Check if there is a pair
+        if (isset($fetchingSimilarity[$i + 1])) {
+            // echo "Pair: " . $fetchingSimilarity[$i] . " and " . $fetchingSimilarity[$i + 1] . "\n";
+            $finalArray = buildFinalArrayX($fetchingSimilarity[$i],$fetchingSimilarity[$i+1]);
+            $seatAllocationListStore->bulkInsert($finalArray);
+            // print_r($finalArray);
+        } else {
+            // echo "Last element: " . $fetchingSimilarity[$i] . "\n";  // If the array has an odd number of elements
+            // print_r($fetchingSimilarity[$i]);
+            // $finalArray = buildFinalArray($fetchingSimilarity[$i]);
+            // $seatAllocationListStore->bulkInsert($finalArray);
+
+        }
+    }
+
+    // Now you can call the function
+    // $finalArray = buildFinalArray($fetchingSimilarity);
+    // print_r($finalArray);
     // print_r($tableData);
-    // echo "<br>";
+    
     // print_r($fetchingSimilarity); 
+    // print_r($seatAllocate);
 
 try {
     // Initialize the necessary objects
     $departmentsStore = new DepartmentStore();
     $departmentsStore = new AdvancedDepartmentStore($departmentsStore);
-    $seatAllocationListStore = new CreateSeatAllocation();
-
-    echo "✅ Connection Successful!<br>";
-    
-    // Clear cache
+    // $seatAllocationListStore = new CreateSeatAllocation();
+ 
     $departmentsStore->deleteCache();
 
     // Bulk insert department data
@@ -79,7 +174,7 @@ try {
     $index = count($getTotalDepartment);
 
     for ($i = 0; $i < $index; $i++) {
-        echo 'Run - ' . $i . '<br>';
+        echo '<br>Run - ' . $i . '</br>';
 
         // Refresh department list
         $getTotalDepartmentx = $departmentsStore->findAll();
@@ -94,19 +189,10 @@ try {
             return $b['totalStudent'] - $a['totalStudent'];
         });
 
-        // $finalArray = buildFinalArray($getTotalDepartmentx);
-        // Print the final array
         echo '<pre>';
-        print_r($finalArray);
         
         $firstDump = $getTotalDepartmentx[0];
         $secondDump = $getTotalDepartmentx[1];
-
-
-
-
-        echo '<pre>';
-        // $seatAllocationListStore->bulkInsert($finalArray);
 
         // Determine removable students
         $stdToDump = min(count($secondDump["students"]), count($firstDump["students"]));
@@ -131,11 +217,14 @@ try {
             $deleted1 = $departmentsStore->deleteById($firstDump["_id"]);
             $deleted2 = $departmentsStore->deleteById($secondDump["_id"]);
 
-            echo "✅ Successfully deleted departments <br>";
+            // echo "✅ Successfully deleted departments <br>";
             // Insert merged and remaining students into the store
             // $departmentsStore->bulkInsert($varRemainder);
 
         }
+        
+
+        echo '</pre>';
     }
 
 } catch (Exception $e) {
@@ -144,12 +233,7 @@ try {
 
 }
 ?>
-<?php 
-// Show Remainder Layout 
-// $getRemainderStudents = $departmentsStore->findAll();
-// remainderLayout($getRemainderStudents);
 
-?>
 
 <?php
 function findNearestRoom($rooms, $targetCapacity) {
@@ -176,59 +260,3 @@ function findNearestRoom($rooms, $targetCapacity) {
         'adjustment' => "No Suitable Room Found (Minimum seat capacity is " . $rooms[0]['seat_capacity'] . ")"
     ];
 }?>
-
-
-
-<?php 
-// Function to generate the department key
-function getDeptKey($dept) {
-    return $dept["department"] . "-" . $dept["semester"] . "-" . $dept["course"];
-}
-
-// Function to slice the student data from the first department based on the total students in the second department
-function getDeptStudentSlice($firstDept, $secondDept) {
-    return array_slice($firstDept["student"], 0, $secondDept["totalStudent"]);
-}
-
-// Function to build department information for each student
-function buildDeptArray($dept, $studentSlice = null) {
-    // For each student, include department, semester, and course information
-    $students = array_map(function($student) use ($dept) {
-        return [
-            "roll_no" => $student["roll_no"],
-            "name" => $student["name"],
-            "department" => $dept["department"],
-            "semester" => $dept["semester"],
-            "course" => $dept["course"]
-        ];
-    }, $studentSlice ?? $dept["student"]);
-
-    return [
-        "department" => $dept["department"],
-        "semester" => $dept["semester"],
-        "course" => $dept["course"],
-        "totalStudent" => $dept["totalStudent"],
-        "students" => $students
-    ];
-}
-
-// Create the final array with department keys and data
-function buildFinalArray($departments) {
-    $finalArray = [];
-    
-    $firstDept = $departments[0];
-    $secondDept = $departments[1];
-    
-    // Get the student slice for the first department
-    $varBiggestDeptSlice = getDeptStudentSlice($firstDept, $secondDept);
-    
-    // Build the final array for the first department
-    $finalArray[] = buildDeptArray($firstDept, $varBiggestDeptSlice);
-    
-    // Build the final array for the second department
-    $finalArray[] = buildDeptArray($secondDept);
-    
-    return $finalArray;
-}
-
-?>

@@ -11,37 +11,20 @@ class SeatAllocationList {
 
     public function __construct() {
         $config = require "config.php";
+        // Initialize the store with debug output
+        echo "Initializing SleekDB Store...<br>";
         $this->store = new Store("seatAllocationList", $config["dataDir"], $config["storeConfig"]);
-    }    
-    public function departmentExists($dept) {
-        return $this->store->findBy([
-            ["department", "=", $dept["department"]],
-            ["semester", "=", $dept["semester"]],
-            ["course", "=", $dept["course"]]
-        ]);
     }
 
-    public function insertDepartment($dept) {
-        if (empty($this->departmentExists($dept))) {
-            $this->store->insert($dept); // Uncomment to insert into DB
-            echo "✅ Successfully seat allocation  {$dept['department']} inserted successfully!<br>";
-        } else {
-            echo "⚠️ Failure seat allocation {$dept['department']} already exists. Skipping...<br>";
-        }
-    }
+    // Function to find total number of records
     public function findTotal() {
         $totalCount = $this->store->count();
         echo "Total number of departments: {$totalCount}<br>";
         return $totalCount;
     }
 
-    // New Function: Delete All Data
-    public function deleteAllData() {
-        $this->store->truncate(); // Deletes all records in the store
-        echo "⚠️ All seat allocations have been deleted!<br>";
-    }
     // Function to delete all records one by one
-    public function deleteAllDataX() {
+    public function deleteAllData() {
         // Debugging: Check if the store is properly initialized and contains data
         echo "Attempting to delete all data from the store...<br>";
         $totalCount = $this->store->count();
@@ -60,15 +43,14 @@ class SeatAllocationList {
             echo "✅ No data to delete. Store is empty.<br>";
         }
     }
-
 }
 
-class CreateSeatAllocation extends SeatAllocationList  {
-    public function bulkInsert($deptList) {
-        foreach ($deptList as $dept) {
-            $this->insertDepartment($dept);
-        }
-    }
-}
+// Example of using the functions
+$seatAlloc = new SeatAllocationList();
 
+// Find the total count of departments
+$seatAlloc->findTotal();
+
+// Attempt to delete all records
+$seatAlloc->deleteAllData(); // This will delete all records if any exist
 ?>
