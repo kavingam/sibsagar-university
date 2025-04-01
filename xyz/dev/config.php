@@ -3,7 +3,7 @@
 return [
     "dataDir" => __DIR__ . "/database", // Database storage directory
     "storeConfig" => [
-        "auto_cache" => true,
+        "auto_cache" => false,
         "cache_lifetime" => null,
         "timeout" => false,
         "primary_key" => "_id",

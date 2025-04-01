@@ -94,12 +94,11 @@ try {
             return $b['totalStudent'] - $a['totalStudent'];
         });
 
-        $finalArray = buildFinalArray($getTotalDepartmentx);
-        
+        // $finalArray = buildFinalArray($getTotalDepartmentx);
         // Print the final array
         echo '<pre>';
-        // print_r($finalArray);
-
+        print_r($finalArray);
+        
         $firstDump = $getTotalDepartmentx[0];
         $secondDump = $getTotalDepartmentx[1];
 
@@ -107,7 +106,7 @@ try {
 
 
         echo '<pre>';
-        $seatAllocationListStore->bulkInsert($finalArray);
+        // $seatAllocationListStore->bulkInsert($finalArray);
 
         // Determine removable students
         $stdToDump = min(count($secondDump["students"]), count($firstDump["students"]));
@@ -180,7 +179,6 @@ function findNearestRoom($rooms, $targetCapacity) {
 
 
 
-
 <?php 
 // Function to generate the department key
 function getDeptKey($dept) {
@@ -189,7 +187,7 @@ function getDeptKey($dept) {
 
 // Function to slice the student data from the first department based on the total students in the second department
 function getDeptStudentSlice($firstDept, $secondDept) {
-    return array_slice($firstDept["students"], 0, $secondDept["totalStudent"]);
+    return array_slice($firstDept["student"], 0, $secondDept["totalStudent"]);
 }
 
 // Function to build department information for each student
@@ -203,7 +201,7 @@ function buildDeptArray($dept, $studentSlice = null) {
             "semester" => $dept["semester"],
             "course" => $dept["course"]
         ];
-    }, $studentSlice ?? $dept["students"]);
+    }, $studentSlice ?? $dept["student"]);
 
     return [
         "department" => $dept["department"],
