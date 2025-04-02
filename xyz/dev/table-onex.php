@@ -219,41 +219,108 @@ echo '</pre>';
                 
                 // Create rows for each bench row
                 $studentIndex = 0; // Track the student index for the current room
+                // for ($r = 0; $r < $numRows; $r++) {
+                //     echo '<tr>';
+                //     for ($b = 0; $b < $room['bench_order']; $b++) {
+                //         // Calculate seat number
+                //         $seatNumber = $r * $room['bench_order'] + $b + 1;
+                //         if ($seatNumber <= $room['seat_capacity']) {
+                //             // Array to hold students for the seat (2 students per seat)
+                //             $studentsForSeat = [];
+                            
+                //             // Assign two students to the seat if possible
+                //             for ($i = 0; $i < 2; $i++) {
+                //                 if ($studentIndex < count($studentsInRoom)) {
+                //                     $studentsForSeat[] = $studentsInRoom[$studentIndex];
+                //                     $studentIndex++;
+                //                 }
+                //             }
+
+                //             // Display seat with assigned students
+                //             echo '<td>';
+                //             echo 'Seat ' . $seatNumber . ':<br>';
+                //             foreach ($studentsForSeat as $student) {
+                //                 // Get department color from the $departmentColors array
+                //                 $departmentColor = isset($departmentColors[$student['department']]) ? $departmentColors[$student['department']] : 'lightgray';
+
+                //                 // Display each student inline with department color and 2px gap
+                //                 echo '<span style="background-color: ' . $departmentColor . '; margin-right: 2px; padding: 2px;">';
+                //                 echo htmlspecialchars($student['roll_no']) . '</span>';
+                //             }
+                //             echo '</td>';
+                //         } else {
+                //             echo '<td></td>'; // Empty cell if the seat number exceeds seat capacity
+                //         }
+                //     }
+                //     echo '</tr>';
+                // }
+
+
+                // echo '<table border="1">';
+
                 for ($r = 0; $r < $numRows; $r++) {
                     echo '<tr>';
+                
+                    // Determine row order: Even rows (L -> R), Odd rows (R -> L)
+                    $isLeftToRight = ($r % 2 == 0);
+                    $rowSeats = [];
+                
                     for ($b = 0; $b < $room['bench_order']; $b++) {
                         // Calculate seat number
                         $seatNumber = $r * $room['bench_order'] + $b + 1;
+                
                         if ($seatNumber <= $room['seat_capacity']) {
-                            // Array to hold students for the seat (2 students per seat)
+                            // Assign students for the seat (2 per seat)
                             $studentsForSeat = [];
-                            
-                            // Assign two students to the seat if possible
+                
                             for ($i = 0; $i < 2; $i++) {
                                 if ($studentIndex < count($studentsInRoom)) {
                                     $studentsForSeat[] = $studentsInRoom[$studentIndex];
                                     $studentIndex++;
                                 }
                             }
-
-                            // Display seat with assigned students
-                            echo '<td>';
-                            echo 'Seat ' . $seatNumber . ':<br>';
-                            foreach ($studentsForSeat as $student) {
-                                // Get department color from the $departmentColors array
-                                $departmentColor = isset($departmentColors[$student['department']]) ? $departmentColors[$student['department']] : 'lightgray';
-
-                                // Display each student inline with department color and 2px gap
-                                echo '<span style="background-color: ' . $departmentColor . '; margin-right: 2px; padding: 2px;">';
-                                echo htmlspecialchars($student['roll_no']) . '</span>';
+                
+                            // Swap students for odd rows (Zigzag effect)
+                            if (!$isLeftToRight) {
+                                $studentsForSeat = array_reverse($studentsForSeat);
                             }
-                            echo '</td>';
+                
+                            // Store seat info in array
+                            $rowSeats[] = [
+                                'seatNumber' => $seatNumber,
+                                'students' => $studentsForSeat
+                            ];
                         } else {
-                            echo '<td></td>'; // Empty cell if the seat number exceeds seat capacity
+                            $rowSeats[] = null; // Empty seat
                         }
                     }
+                
+                    // Print row seats
+                    foreach ($rowSeats as $seat) {
+                        echo '<td>';
+                        if ($seat !== null) {
+                            echo 'Seat ' . $seat['seatNumber'] . ':<br>';
+                            foreach ($seat['students'] as $index => $student) {
+                                $position = ($index == 0) ? 'L' : 'R'; // Left or Right seat
+                
+                                // Get department color
+                                $departmentColor = isset($departmentColors[$student['department']]) ? 
+                                    $departmentColors[$student['department']] : 'lightgray';
+                
+                                // Display student with color and position
+                                echo '<span style="background-color: ' . $departmentColor . '; 
+                                    margin-right: 2px; padding: 2px; display: inline-block;">';
+                                echo $position . ': ' . htmlspecialchars($student['roll_no']) . '</span>';
+                            }
+                        }
+                        echo '</td>';
+                    }
+                
                     echo '</tr>';
                 }
+                
+                // echo '</table>';
+                                
 
                 echo '</tbody>';
                 echo '</table>';

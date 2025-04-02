@@ -141,10 +141,14 @@ function buildFinalArrayX($firstDept, $secondDept) {
     //         unlink($file);
     //     }
     // }
+    //  check the files ownership
+    // ls -l /var/www/sibsagar-university/xyz/dev/database/test_connection/data/
+    // sudo chown -R www-data:www-data /var/www/sibsagar-university/xyz/dev/database/test_connection/data/
+
     function deleteJsonFiles($directory) {
         // Ensure the directory exists
         if (!is_dir($directory)) {
-            die("Error: Directory '$directory' does not exist.\n");
+            die("Error: Directory '$directory' does not exist.<br>");
         }
     
         // Get all JSON files in the directory
@@ -152,16 +156,16 @@ function buildFinalArrayX($firstDept, $secondDept) {
     
         // Check if there are any JSON files
         if (empty($files)) {
-            echo "No JSON files found in '$directory'.\n";
+            echo "No JSON files found in '$directory'.<br>";
             return;
         }
     
         // Delete each JSON file
         foreach ($files as $file) {
             if (unlink($file)) {
-                echo "Deleted: $file\n";
+                echo "Deleted: $file<br>";
             } else {
-                echo "Failed to delete: $file\n";
+                echo "Failed to delete: $file<br>";
             }
         }
     }
@@ -175,12 +179,14 @@ $sleekdbxPath = __DIR__ . '/sleekdbx.php';
 $filePath = __DIR__ . '/rooms.json'; // Define the file path
 require __DIR__ . '/debugs.php';
 
-$RemoveJsonPathxx = '/database/departments/data';
-$RemoveJsonPathxy = '/database/seatAllocationList/data';
+$RemoveJsonPathxx = __DIR__ . '/database/departments/data/';
+$RemoveJsonPathxy =  __DIR__ . '/database/seatAllocationList/data/';
 $TestingJsonPathyx = __DIR__ . '/database/test_connection/data/';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    deleteJsonFiles($TestingJsonPathyx);
+    // deleteJsonFiles($TestingJsonPathyx);
+    deleteJsonFiles($RemoveJsonPathxx);
+    deleteJsonFiles($RemoveJsonPathxy);    
 
     $data = json_decode(file_get_contents('php://input'), true);
 
@@ -223,6 +229,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $roomObj = new Room();
     $rooms = $roomObj->getAllRooms();
 
+
+    // echo '<pre>';
+    // print_r($seatAllocate);    
+
+    echo "<br>Total Examinations Students : ".$totalStudent."</br>";
+    echo "<br>Seats Per Bench: " . $benchSeat ."</br>";
+    
+
+    $seatAllocationListStore = new CreateSeatAllocation();
+
+    $seatAlloc = new  CreateSeatAllocation();
+    $total = $seatAlloc->findTotal(); // This will return and print the total count
+
+    echo '<h1>'.$total.'</h1>';
+
+    $studentSeatCounts = []; // Array to store computed values
+
+    for ($i = 0; $i < count($fetchingSimilarity); $i += 2) {
+        // Check if there is a valid pair
+        if (isset($fetchingSimilarity[$i + 1])) {
+            $studentSeatCounts[] = $fetchingSimilarity[$i + 1]['totalStudent'] * 2;
+        } else {
+            // Store the remainder when only one element is left
+            $studentSeatCounts[] = $fetchingSimilarity[$i]['totalStudent'];
+        }
+    }
+    
+    // Output
+    echo '<pre>';
+    // print_r($studentSeatCounts);
+    // Calculate total students
+    $totalStudents = array_sum($studentSeatCounts);
+
+    // Output
+    // print_r($studentSeatCounts);
+    // echo "Total Students: x " . $totalStudents;
+    
     $seatAllocate = findNearestRoom($rooms, ceil($totalStudent / $benchSeat));
     // Convert the array to JSON format with proper formatting
     $jsonData = json_encode($seatAllocate, JSON_PRETTY_PRINT);
@@ -238,30 +281,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo "Data successfully saved to rooms.json";
     }
 
-    // echo '<pre>';
-    // print_r($seatAllocate);    
-
-    echo "<br>Total Examinations Students : ".$totalStudent."</br>";
-    echo "<br>Seats Per Bench: " . $benchSeat ."</br>";
-    
-
-    $seatAllocationListStore = new CreateSeatAllocation();
-
-    $seatAlloc = new  CreateSeatAllocation();
-    $total = $seatAlloc->findTotal(); // This will return and print the total count
-    
-    echo '<h1>'.$total.'</h1>';
-
-    // echo '<pre>';
     // print_r($fetchingSimilarity);
     
     for ($i = 0; $i < count($fetchingSimilarity); $i += 2) {
         // Check if there is a pair
         if (isset($fetchingSimilarity[$i + 1])) {
-            // echo "Pair: " . $fetchingSimilarity[$i] . " and " . $fetchingSimilarity[$i + 1] . "\n";
+            // echo "Pair: " . $fetchingSimilarity[$i] . " and " . $fetchingSimilarity[$i + 1] . "<br>";
             $finalArray = buildFinalArrayX($fetchingSimilarity[$i],$fetchingSimilarity[$i+1]);
             $seatAllocationListStore->bulkInsert($finalArray);
-            // print_r($finalArray);
+            // print_r($fetchingSimilarity[$i+1]);
         } else {
             // echo "Last element: " . $fetchingSimilarity[$i] . "\n";  // If the array has an odd number of elements
             // print_r($fetchingSimilarity[$i]);
