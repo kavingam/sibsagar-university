@@ -201,6 +201,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo '<h1>'.$total.'</h1>';
 
     // echo '<pre>';
+    // print_r($fetchingSimilarity);
+    
     for ($i = 0; $i < count($fetchingSimilarity); $i += 2) {
         // Check if there is a pair
         if (isset($fetchingSimilarity[$i + 1])) {
