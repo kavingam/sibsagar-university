@@ -17,6 +17,12 @@
             "room_name": "PG-1",
             "bench_order": 2,
             "seat_capacity": 24
+        },
+        {
+            "room_no": "14",
+            "room_name": "PG-2",
+            "bench_order": 2,
+            "seat_capacity": 24
         }
     ],
     "adjustment": "Merged Multiple Rooms"
