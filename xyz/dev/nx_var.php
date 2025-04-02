@@ -71,7 +71,7 @@ $bashmodelPath = __DIR__ . '/../bashmodel.php';
 $seatAllocationPath = __DIR__ . '/../seat_allocation/seat_allocation.php';
 $sleekdbPath = __DIR__ . '/sleekdb.php';
 $sleekdbxPath = __DIR__ . '/sleekdbx.php';
-$layout_path = __DIR__ . '/layout/xyz_layout.php';
+// $layout_path = __DIR__ . '/layout/xyz_layout.php';
 
 require __DIR__ . '/debugs.php';
 
@@ -133,7 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     echo '<h1>'.$total.'</h1>';
 
-    echo '<pre>';
+    // echo '<pre>';
     for ($i = 0; $i < count($fetchingSimilarity); $i += 2) {
         // Check if there is a pair
         if (isset($fetchingSimilarity[$i + 1])) {
@@ -183,7 +183,7 @@ try {
             return $b['totalStudent'] - $a['totalStudent'];
         });
 
-        echo '<pre>';
+        // echo '<pre>';
         
         $firstDump = $getTotalDepartmentx[0];
         $secondDump = $getTotalDepartmentx[1];
@@ -203,7 +203,7 @@ try {
             ]
         ];
         
-        echo '<pre>';
+        // echo '<pre>';
 
         if (isset($firstDump["_id"]) && isset($secondDump["_id"])) {
 
@@ -215,7 +215,7 @@ try {
         }
         
 
-        echo '</pre>';
+        // echo '</pre>';
     }
 
 } catch (Exception $e) {
@@ -251,3 +251,9 @@ function findNearestRoom($rooms, $targetCapacity) {
         'adjustment' => "No Suitable Room Found (Minimum seat capacity is " . $rooms[0]['seat_capacity'] . ")"
     ];
 }?>
+
+<?php 
+
+require_once __DIR__ . '/layout/multiLayout.php'; 
+
+?>

@@ -1,29 +1,7 @@
 <?php
-/*
-$directory = new RecursiveDirectoryIterator('jsons');
-$iterator = new RecursiveIteratorIterator($directory);
-$allStudentData = [];
+$directory = __DIR__ . '/database/seatAllocationList/data/';
 
-
-// Loop through each file in the directory (and its subdirectories)
-foreach ($iterator as $fileInfo) {
-    if ($fileInfo->isFile() && $fileInfo->getExtension() === 'json') {
-        $filename = $fileInfo->getPathname();
-        $jsonString = file_get_contents($filename);
-        $studentData = json_decode($jsonString, true);
-        if ($studentData !== null) {
-            $allStudentData[] = $studentData;
-        } else {
-            echo "Error decoding JSON from file: $filename\n";
-        }
-    }
-}
-*/
-$directory = "database/seatAllocationList/data/"; // Define the base directory
-$iterator = new RecursiveIteratorIterator(
-    new RecursiveDirectoryIterator($directory),
-    RecursiveIteratorIterator::LEAVES_ONLY
-);
+$iterator = new FilesystemIterator($directory, FilesystemIterator::SKIP_DOTS);
 
 $allStudentData = []; // Array to store all student data
 
@@ -32,6 +10,7 @@ foreach ($iterator as $fileInfo) {
         $filename = $fileInfo->getPathname();
         $jsonString = file_get_contents($filename);
         $studentData = json_decode($jsonString, true);
+        
         if ($studentData !== null) {
             $allStudentData[] = $studentData;
         } else {
@@ -88,6 +67,13 @@ foreach ($allStudentData as $index => $dept1) {
         ];
     }
 }
+
+// Output the merged groups
+echo '<pre>';
+// print_r($mergedGroups);
+echo '</pre>';
+
+
 ?>
 
 
@@ -99,15 +85,96 @@ $jsonString = file_get_contents('rooms.json');
 // Decode the JSON string to a PHP array
 $dataArray = json_decode($jsonString, true);
 
+// Print the array in a readable format
+echo '<pre>';
+// print_r($dataArray);
+echo '</pre>';
 
 ?>
 
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seating Arrangement</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+</head>
+
+
+<!-- <body>
+    <div class="container p-3"> -->
+        <?php
+        // if (isset($dataArray['room']) && isset($mergedGroups)) {
+        //     echo '<div class="row g-4">';
+        //     foreach ($dataArray['room'] as $room) {
+        //         // Calculate the number of rows
+        //         $numRows = ceil($room['seat_capacity'] / $room['bench_order']);
+        //         $studentIndex = 0; // To track which student from mergedGroups is assigned to the seat
+                
+        //         // Output the room details
+        //         echo '<div class="col-12">';
+        //         echo '<h5>Room No: ' . htmlspecialchars($room['room_no']) . ' - ' . htmlspecialchars($room['room_name']) . '</h5>';
+        //         echo '<table class="table table-bordered">';
+        //         echo '<thead>';
+        //         echo '<tr>';
+                
+        //         // Create bench order columns
+        //         for ($i = 1; $i <= $room['bench_order']; $i++) {
+        //             echo '<th>Bench ' . $i . '</th>';
+        //         }
+                
+        //         echo '</tr>';
+        //         echo '</thead>';
+        //         echo '<tbody>';
+                
+        //         // Create rows for each bench row
+        //         for ($r = 0; $r < $numRows; $r++) {
+        //             echo '<tr>';
+        //             for ($b = 0; $b < $room['bench_order']; $b++) {
+        //                 // Calculate seat number
+        //                 $seatNumber = $r * $room['bench_order'] + $b + 1;
+        //                 if ($seatNumber <= $room['seat_capacity']) {
+        //                     // If there are students left in the mergedGroups, assign them to seats
+        //                     $studentsForSeat = []; // Array to hold two students per seat
+                            
+        //                     // Assign two students to the seat if possible
+        //                     for ($i = 0; $i < 2; $i++) {
+        //                         if ($studentIndex < count($mergedGroups[0]['students'])) {
+        //                             $studentsForSeat[] = $mergedGroups[0]['students'][$studentIndex];
+        //                             $studentIndex++;
+        //                         }
+        //                     }
+
+        //                     // Display seat with assigned students
+        //                     echo '<td>';
+        //                     echo 'Seat ' . $seatNumber . ':<br>';
+        //                     foreach ($studentsForSeat as $student) {
+        //                         echo htmlspecialchars($student['roll_no']) . '<br>';
+        //                     }
+        //                     echo '</td>';
+        //                 } else {
+        //                     echo '<td></td>'; // Empty cell if the seat number exceeds seat capacity
+        //                 }
+        //             }
+        //             echo '</tr>';
+        //         }
+
+        //         echo '</tbody>';
+        //         echo '</table>';
+        //         echo '</div>';
+        //     }
+        //     echo '</div>';
+        // }
+        ?>
+    <!-- </div>    
+</body> -->
 
 
 
 
-
+<body>
     <div class="container p-3">
         <?php
         // Define department colors (you can adjust these as needed)
@@ -196,6 +263,9 @@ $dataArray = json_decode($jsonString, true);
         }
         ?>
     </div>    
+</body>
 
+
+</html>
 
 

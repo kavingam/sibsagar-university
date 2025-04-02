@@ -19,8 +19,8 @@ if (!file_exists($sleekdbxPath)) {
 }
 require_once $sleekdbxPath;
 
-if(!file_exists($layout_path)) {
-    die("Error: layout_xyz.php not found at: $layout_path");
-}
-require_once $layout_path;
+// if(!file_exists($layout_path)) {
+//     die("Error: layout_xyz.php not found at: $layout_path");
+// }
+// require_once $layout_path;
 ?>

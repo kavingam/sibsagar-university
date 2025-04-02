@@ -1,0 +1,17 @@
+{
+    "room": [
+        {
+            "room_no": "08",
+            "room_name": "NS-9 A",
+            "bench_order": 3,
+            "seat_capacity": 50
+        },
+        {
+            "room_no": "09",
+            "room_name": "NS-9 C",
+            "bench_order": 2,
+            "seat_capacity": 50
+        }
+    ],
+    "adjustment": "Merged Multiple Rooms"
+}
