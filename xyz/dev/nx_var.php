@@ -1,4 +1,5 @@
 <?php
+/*
 // Function to generate the department key
 function getDeptKey($dept) {
     return $dept["department"] . "-" . $dept["semester"] . "-" . $dept["course"];
@@ -64,6 +65,72 @@ function buildFinalArrayX($firstDept, $secondDept) {
     return $finalArray;
 }
 
+*/
+
+function getDeptKey($dept) {
+    return $dept["department"] . "-" . $dept["semester"] . "-" . $dept["course"];
+}
+
+// Function to slice the student data from the first department based on the total students in the second department
+function getDeptStudentSlice($firstDept, $secondDept) {
+    return array_slice($firstDept["students"], 0, $secondDept["totalStudent"]);
+}
+
+// Function to build department information for each student
+function buildDeptArray($dept, $studentSlice = null, $overrideTotal = null) {
+    // For each student, include department, semester, and course information
+    $students = array_map(function($student) use ($dept) {
+        return [
+            "roll_no" => $student["roll_no"],
+            "name" => $student["name"],
+            "department" => $dept["department"],
+            "semester" => $dept["semester"],
+            "course" => $dept["course"]
+        ];
+    }, $studentSlice ?? $dept["students"]);
+
+    return [
+        "department" => $dept["department"],
+        "semester" => $dept["semester"],
+        "course" => $dept["course"],
+        "totalStudent" => $overrideTotal ?? $dept["totalStudent"], // Override totalStudent if provided
+        "students" => $students
+    ];
+}
+
+// Create the final array with department keys and data
+function buildFinalArray($departments) {
+    $finalArray = [];
+    
+    $firstDept = $departments[0];
+    $secondDept = $departments[1];
+    
+    // Get the student slice for the first department
+    $varBiggestDeptSlice = getDeptStudentSlice($firstDept, $secondDept);
+    
+    // Build the final array for the first department, overriding totalStudent with secondDept's totalStudent
+    $finalArray[] = buildDeptArray($firstDept, $varBiggestDeptSlice, $secondDept["totalStudent"]);
+    
+    // Build the final array for the second department with its own totalStudent
+    $finalArray[] = buildDeptArray($secondDept);
+    
+    return $finalArray;
+}
+
+function buildFinalArrayX($firstDept, $secondDept) {
+    $finalArray = [];
+    
+    // Get the student slice for the first department
+    $varBiggestDeptSlice = getDeptStudentSlice($firstDept, $secondDept);
+    
+    // Build the final array for the first department, overriding totalStudent with secondDept's totalStudent
+    $finalArray[] = buildDeptArray($firstDept, $varBiggestDeptSlice, $secondDept["totalStudent"]);
+    
+    // Build the final array for the second department with its own totalStudent
+    $finalArray[] = buildDeptArray($secondDept);
+    
+    return $finalArray;
+}
 
 ?>
 <?php
