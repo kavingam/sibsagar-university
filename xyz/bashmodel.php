@@ -1,5 +1,11 @@
 <?php
-require_once 'Database.php';
+$databasePath = __DIR__ . '/Database.php';
+
+if (!file_exists($databasePath)) {
+    die("Error: Database.php not found at: $databasePath");
+}
+require_once $databasePath;
+
 
 class BaseModel {
     protected $conn;
@@ -305,6 +311,16 @@ class Department extends BaseModel {
         return $this->getCount('departments');
     }
 }
+
+// ✅ Usage Example
+// $student = new Student();
+// $students = $student->getAllStudents();
+// $studentCount = $student->getStudentCount();
+// // echo $studentCount;
+// echo "<h2>Students ({$studentCount})</h2>";
+// foreach ($students as $s) {
+//     echo "Roll No: {$s['roll_no']}, Name: {$s['name']}, Department: {$s['department']}<br>";
+// }
 /*
 // ✅ Usage Example
 $student = new Student();

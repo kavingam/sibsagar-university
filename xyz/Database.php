@@ -7,7 +7,12 @@
  * ✅ Code Reusability – You can access the database from anywhere with just:
  */
 
-require_once 'config.php'; // Include the config file
+ require_once __DIR__ . '/config.php';
+
+if (!defined('DB_HOST')) {
+    die("Error: DB_HOST is not defined. Check config.php!");
+}
+// require_once 'config.php'; // Include the config file
 
 class Database   // 
 {
@@ -41,12 +46,12 @@ class Database   //
 
 // Usage
 // $db = Database::getInstance()->getConnection();
-// Test Connection
+// // Test Connection
 // try {
-    // $db = Database::getInstance()->getConnection();
-    // if ($db) {
-        // echo "✅ Database connection successful!";
-    // }
+//     $db = Database::getInstance()->getConnection();
+//     if ($db) {
+//         echo "✅ Database connection successful!";
+//     }
 // } catch (Exception $e) {
-    // echo "❌ Connection failed: " . $e->getMessage();
+//     echo "❌ Connection failed: " . $e->getMessage();
 // }

@@ -161,15 +161,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 try {
     // Initialize the necessary objects
     $departmentsStore = new DepartmentStore();
-    $departmentsStore = new AdvancedDepartmentStore($departmentsStore);
-    // $seatAllocationListStore = new CreateSeatAllocation();
- 
+    $departmentsStore = new AdvancedDepartmentStore($departmentsStore); 
     $departmentsStore->deleteCache();
-
-    // Bulk insert department data
     $departmentsStore->bulkInsert($fetchingSimilarity);
-
-    // Retrieve all departments
     $getTotalDepartment = $departmentsStore->findAll();
     $index = count($getTotalDepartment);
 
@@ -213,13 +207,10 @@ try {
 
         if (isset($firstDump["_id"]) && isset($secondDump["_id"])) {
 
-            // Delete both records by _id
             $deleted1 = $departmentsStore->deleteById($firstDump["_id"]);
             $deleted2 = $departmentsStore->deleteById($secondDump["_id"]);
-
             // echo "✅ Successfully deleted departments <br>";
-            // Insert merged and remaining students into the store
-            // $departmentsStore->bulkInsert($varRemainder);
+            $departmentsStore->bulkInsert($varRemainder);
 
         }
         

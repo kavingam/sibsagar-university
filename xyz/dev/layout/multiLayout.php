@@ -1,0 +1,88 @@
+<div class="container p-3">
+        <?php
+        // Define department colors (you can adjust these as needed)
+        $departmentColors = [
+            1 => 'lightblue',   // Department 1 (example: blue)
+            2 => 'lightgreen',  // Department 2 (example: green)
+            3 => 'lightcoral',  // Department 3 (example: coral)
+            // Add more departments and their colors as needed
+        ];
+
+        if (isset($dataArray['room']) && isset($mergedGroups)) {
+            echo '<div class="row g-4">';
+            
+            // Loop through rooms and assign students from mergedGroups to each room
+            foreach ($dataArray['room'] as $roomIndex => $room) {
+                // Ensure the room corresponds to the right merged group (if there are enough merged groups)
+                if (isset($mergedGroups[$roomIndex])) {
+                    $studentsInRoom = $mergedGroups[$roomIndex]['students']; // Get the students for the current room
+                } else {
+                    // If there are more rooms than merged groups, you can either skip or handle accordingly
+                    $studentsInRoom = [];
+                }
+
+                // Calculate the number of rows
+                $numRows = ceil($room['seat_capacity'] / $room['bench_order']);
+                
+                // Output the room details
+                echo '<div class="col-12">';
+                echo '<h5>Room No: ' . htmlspecialchars($room['room_no']) . ' - ' . htmlspecialchars($room['room_name']) . '</h5>';
+                echo '<table class="table table-bordered">';
+                echo '<thead>';
+                echo '<tr>';
+                
+                // Create bench order columns
+                for ($i = 1; $i <= $room['bench_order']; $i++) {
+                    echo '<th>Bench ' . $i . '</th>';
+                }
+                
+                echo '</tr>';
+                echo '</thead>';
+                echo '<tbody>';
+                
+                // Create rows for each bench row
+                $studentIndex = 0; // Track the student index for the current room
+                for ($r = 0; $r < $numRows; $r++) {
+                    echo '<tr>';
+                    for ($b = 0; $b < $room['bench_order']; $b++) {
+                        // Calculate seat number
+                        $seatNumber = $r * $room['bench_order'] + $b + 1;
+                        if ($seatNumber <= $room['seat_capacity']) {
+                            // Array to hold students for the seat (2 students per seat)
+                            $studentsForSeat = [];
+                            
+                            // Assign two students to the seat if possible
+                            for ($i = 0; $i < 2; $i++) {
+                                if ($studentIndex < count($studentsInRoom)) {
+                                    $studentsForSeat[] = $studentsInRoom[$studentIndex];
+                                    $studentIndex++;
+                                }
+                            }
+
+                            // Display seat with assigned students
+                            echo '<td>';
+                            echo 'Seat ' . $seatNumber . ':<br>';
+                            foreach ($studentsForSeat as $student) {
+                                // Get department color from the $departmentColors array
+                                $departmentColor = isset($departmentColors[$student['department']]) ? $departmentColors[$student['department']] : 'lightgray';
+
+                                // Display each student inline with department color and 2px gap
+                                echo '<span style="background-color: ' . $departmentColor . '; margin-right: 2px; padding: 2px;">';
+                                echo htmlspecialchars($student['roll_no']) . '</span>';
+                            }
+                            echo '</td>';
+                        } else {
+                            echo '<td></td>'; // Empty cell if the seat number exceeds seat capacity
+                        }
+                    }
+                    echo '</tr>';
+                }
+
+                echo '</tbody>';
+                echo '</table>';
+                echo '</div>';
+            }
+            echo '</div>';
+        }
+        ?>
+    </div>    

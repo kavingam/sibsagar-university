@@ -1,0 +1,106 @@
+{
+    "department": 4,
+    "semester": 1,
+    "course": 1,
+    "totalStudent": 14,
+    "students": [
+        {
+            "roll_no": "HIS-UG-SEM-1001",
+            "name": "AD-01",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "HIS-UG-SEM-1002",
+            "name": "AD-02",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "HIS-UG-SEM-1003",
+            "name": "AD-03",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "HIS-UG-SEM-1004",
+            "name": "AD-04",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "HIS-UG-SEM-1005",
+            "name": "AD-05",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "HIS-UG-SEM-1006",
+            "name": "AD-06",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "HIS-UG-SEM-1007",
+            "name": "AD-07",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "HIS-UG-SEM-1008",
+            "name": "AD-08",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "HIS-UG-SEM-1009",
+            "name": "AD-09",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "HIS-UG-SEM-1010",
+            "name": "AD-10",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "HIS-UG-SEM-1011",
+            "name": "AD-11",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "HIS-UG-SEM-1012",
+            "name": "AD-12",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "HIS-UG-SEM-1013",
+            "name": "AD-13",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "HIS-UG-SEM-1014",
+            "name": "AD-14",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        }
+    ]
+}

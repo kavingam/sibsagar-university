@@ -1,0 +1,106 @@
+{
+    "department": 3,
+    "semester": 1,
+    "course": 1,
+    "totalStudent": 14,
+    "students": [
+        {
+            "roll_no": "ENG-UG-SEM-1001",
+            "name": "AC-01",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "ENG-UG-SEM-1002",
+            "name": "AC-02",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "ENG-UG-SEM-1003",
+            "name": "AC-03",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "ENG-UG-SEM-1004",
+            "name": "AC-04",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "ENG-UG-SEM-1005",
+            "name": "AC-05",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "ENG-UG-SEM-1006",
+            "name": "AC-06",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "ENG-UG-SEM-1007",
+            "name": "AC-07",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "ENG-UG-SEM-1008",
+            "name": "AC-08",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "ENG-UG-SEM-1009",
+            "name": "AC-09",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "ENG-UG-SEM-1010",
+            "name": "AC-10",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "ENG-UG-SEM-1011",
+            "name": "AC-11",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "ENG-UG-SEM-1012",
+            "name": "AC-12",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "ENG-UG-SEM-1013",
+            "name": "AC-13",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "ENG-UG-SEM-1014",
+            "name": "AC-14",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        }
+    ]
+}

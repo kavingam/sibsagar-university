@@ -1,0 +1,218 @@
+{
+    "department": 2,
+    "semester": 1,
+    "course": 1,
+    "totalStudent": 30,
+    "students": [
+        {
+            "roll_no": "CS-UG-SEM-1001",
+            "name": "AB-01",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "CS-UG-SEM-1002",
+            "name": "AB-02",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "CS-UG-SEM-1003",
+            "name": "AB-03",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "CS-UG-SEM-1004",
+            "name": "AB-04",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "CS-UG-SEM-1005",
+            "name": "AB-05",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "CS-UG-SEM-1006",
+            "name": "AB-06",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "CS-UG-SEM-1007",
+            "name": "AB-07",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "CS-UG-SEM-1008",
+            "name": "AB-08",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "CS-UG-SEM-1009",
+            "name": "AB-09",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "CS-UG-SEM-1010",
+            "name": "AB-10",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "CS-UG-SEM-1011",
+            "name": "AB-11",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "CS-UG-SEM-1012",
+            "name": "AB-12",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "CS-UG-SEM-1013",
+            "name": "AB-13",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "CS-UG-SEM-1014",
+            "name": "AB-14",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "CS-UG-SEM-1015",
+            "name": "AB-15",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "CS-UG-SEM-1016",
+            "name": "AB-16",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "CS-UG-SEM-1017",
+            "name": "AB-17",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "CS-UG-SEM-1018",
+            "name": "AB-18",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "CS-UG-SEM-1019",
+            "name": "AB-19",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "CS-UG-SEM-1020",
+            "name": "AB-20",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "CS-UG-SEM-1021",
+            "name": "AB-21",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "CS-UG-SEM-1022",
+            "name": "AB-22",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "CS-UG-SEM-1023",
+            "name": "AB-23",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "CS-UG-SEM-1024",
+            "name": "AB-24",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "CS-UG-SEM-1025",
+            "name": "AB-25",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "CS-UG-SEM-1026",
+            "name": "AB-26",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "CS-UG-SEM-1027",
+            "name": "AB-27",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "CS-UG-SEM-1028",
+            "name": "AB-28",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "CS-UG-SEM-1029",
+            "name": "AB-29",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        },
+        {
+            "roll_no": "CS-UG-SEM-1030",
+            "name": "AB-30",
+            "department": 1,
+            "semester": 1,
+            "course": 1
+        }
+    ]
+}
