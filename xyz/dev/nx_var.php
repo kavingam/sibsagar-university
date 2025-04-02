@@ -138,8 +138,7 @@ $bashmodelPath = __DIR__ . '/../bashmodel.php';
 $seatAllocationPath = __DIR__ . '/../seat_allocation/seat_allocation.php';
 $sleekdbPath = __DIR__ . '/sleekdb.php';
 $sleekdbxPath = __DIR__ . '/sleekdbx.php';
-// $layout_path = __DIR__ . '/layout/xyz_layout.php';
-
+$filePath = __DIR__ . '/rooms.json'; // Define the file path
 require __DIR__ . '/debugs.php';
 
 
@@ -186,8 +185,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $roomObj = new Room();
     $rooms = $roomObj->getAllRooms();
 
-    // $seatAllocate = findNearestRoom($rooms, ceil($totalStudent / $benchSeat));
-    
+    $seatAllocate = findNearestRoom($rooms, ceil($totalStudent / $benchSeat));
+    // Convert the array to JSON format with proper formatting
+    $jsonData = json_encode($seatAllocate, JSON_PRETTY_PRINT);
+
+    if ($jsonData === false) {
+        die("JSON encoding error: " . json_last_error_msg()); // JSON encoding error
+    }
+
+    // Try to write to the file
+    if (file_put_contents($filePath, $jsonData) === false) {
+        die("Error: Unable to write to file $filePath. Check file permissions.");
+    } else {
+        echo "Data successfully saved to rooms.json";
+    }
+
+    // echo '<pre>';
+    // print_r($seatAllocate);    
 
     echo "<br>Total Examinations Students : ".$totalStudent."</br>";
     echo "<br>Seats Per Bench: " . $benchSeat ."</br>";
