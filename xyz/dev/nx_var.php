@@ -133,6 +133,40 @@ function buildFinalArrayX($firstDept, $secondDept) {
 }
 
 ?>
+
+<?php 
+
+    // function deleteJsonFiles($directory) { // No reference needed
+    //     foreach (glob($directory . "*.json") as $file) {
+    //         unlink($file);
+    //     }
+    // }
+    function deleteJsonFiles($directory) {
+        // Ensure the directory exists
+        if (!is_dir($directory)) {
+            die("Error: Directory '$directory' does not exist.\n");
+        }
+    
+        // Get all JSON files in the directory
+        $files = glob($directory . "*.json");
+    
+        // Check if there are any JSON files
+        if (empty($files)) {
+            echo "No JSON files found in '$directory'.\n";
+            return;
+        }
+    
+        // Delete each JSON file
+        foreach ($files as $file) {
+            if (unlink($file)) {
+                echo "Deleted: $file\n";
+            } else {
+                echo "Failed to delete: $file\n";
+            }
+        }
+    }
+    
+?>
 <?php
 $bashmodelPath = __DIR__ . '/../bashmodel.php';
 $seatAllocationPath = __DIR__ . '/../seat_allocation/seat_allocation.php';
@@ -141,9 +175,13 @@ $sleekdbxPath = __DIR__ . '/sleekdbx.php';
 $filePath = __DIR__ . '/rooms.json'; // Define the file path
 require __DIR__ . '/debugs.php';
 
-
+$RemoveJsonPathxx = '/database/departments/data';
+$RemoveJsonPathxy = '/database/seatAllocationList/data';
+$TestingJsonPathyx = __DIR__ . '/database/test_connection/data/';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    deleteJsonFiles($TestingJsonPathyx);
+
     $data = json_decode(file_get_contents('php://input'), true);
 
     if (!$data) {
