@@ -263,7 +263,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $seatAllocations[] = findNearestRoomS($rooms, $targetCapacity);
     }
     
-    echo '<pre>';
+    // echo '<pre>';
     // print_r($seatAllocations);
     
     if ($jsonData === false) {
@@ -293,13 +293,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // Now you can call the function
-    // $finalArray = buildFinalArray($fetchingSimilarity);
-    // print_r($finalArray);
-    // print_r($tableData);
-    
-    // print_r($fetchingSimilarity); 
-    // print_r($seatAllocate);
+
+
 
 try {
     // Initialize the necessary objects
@@ -368,7 +363,6 @@ try {
 }
 ?>
 
-
 <?php
 function findNearestRoomS($rooms, $targetCapacity) {
     // Sort rooms by seat_capacity ascending
@@ -423,7 +417,7 @@ function findNearestRoomM($rooms, $targetCapacity) {
 }
 
 
-// function findNearestRoom($rooms, $targetCapacity) {
+// function findNearestRoomBak($rooms, $targetCapacity) {
 //     usort($rooms, function($a, $b) {
 //         return $a['seat_capacity'] - $b['seat_capacity'];
 //     });
@@ -450,6 +444,7 @@ function findNearestRoomM($rooms, $targetCapacity) {
 
 
 require_once __DIR__ . '/layout/multiLayout.php'; 
+require_once __DIR__ . '/layout/multiLayout.php';
 
 ?>
 
