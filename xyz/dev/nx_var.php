@@ -229,10 +229,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $roomObj = new Room();
     $rooms = $roomObj->getAllRooms();
 
-
-    // echo '<pre>';
-    // print_r($seatAllocate);    
-
     // echo "<br>Total Examinations Students : ".$totalStudent."</br>";
     // echo "<br>Seats Per Bench: " . $benchSeat ."</br>";
     
@@ -256,20 +252,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
     
-    // Output
-    // echo '<pre>';
-    // print_r($studentSeatCounts);
-    // Calculate total students
-    $totalStudents = array_sum($studentSeatCounts);
-
-    // Output
-    // print_r($studentSeatCounts);
-    // echo "Total Students: x " . $totalStudents;
-    
-    $seatAllocate = findNearestRoom($rooms, ceil($totalStudent / $benchSeat));
-    // Convert the array to JSON format with proper formatting
+    $seatAllocate = findNearestRoomS($rooms, ceil($totalStudent / $benchSeat));
+    // // Convert the array to JSON format with proper formatting
     $jsonData = json_encode($seatAllocate, JSON_PRETTY_PRINT);
 
+    $seatAllocations = [];
+
+    foreach ($studentSeatCounts as $totalStudent) {
+        $targetCapacity = ceil($totalStudent / $benchSeat);
+        $seatAllocations[] = findNearestRoomS($rooms, $targetCapacity);
+    }
+    
+    echo '<pre>';
+    // print_r($seatAllocations);
+    
     if ($jsonData === false) {
         die("JSON encoding error: " . json_last_error_msg()); // JSON encoding error
     }
@@ -280,8 +276,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         // echo "Data successfully saved to rooms.json";
     }
-
-    // print_r($fetchingSimilarity);
     
     for ($i = 0; $i < count($fetchingSimilarity); $i += 2) {
         // Check if there is a pair
@@ -376,7 +370,32 @@ try {
 
 
 <?php
-function findNearestRoom($rooms, $targetCapacity) {
+function findNearestRoomS($rooms, $targetCapacity) {
+    // Sort rooms by seat_capacity ascending
+    usort($rooms, function($a, $b) {
+        return $a['seat_capacity'] - $b['seat_capacity'];
+    });
+
+    // Try to find the first room that meets or exceeds the targetCapacity
+    foreach ($rooms as $room) {
+        if ($room['seat_capacity'] >= $targetCapacity) {
+            return [
+                'room' => [$room],
+                'adjustment' => "Single Room Assigned"
+            ];
+        }
+    }
+
+    // If no room meets the requirement, return the room with highest capacity (last one)
+    $fallbackRoom = end($rooms);
+    return [
+        'room' => [$fallbackRoom],
+        'adjustment' => "Single Room Assigned"
+    ];
+}
+
+function findNearestRoomM($rooms, $targetCapacity) {
+    // Sort rooms in ascending order of seat_capacity
     usort($rooms, function($a, $b) {
         return $a['seat_capacity'] - $b['seat_capacity'];
     });
@@ -391,17 +410,44 @@ function findNearestRoom($rooms, $targetCapacity) {
         if ($totalSeats >= $targetCapacity) {
             return [
                 'room' => $selectedRooms,
-                'adjustment' => (count($selectedRooms) == 1) ? "Single Room Assigned" : "Merged Multiple Rooms"
+                'adjustment' => (count($selectedRooms) === 1) ? "Single Room Assigned" : "Merged Multiple Rooms"
             ];
         }
     }
-    return [
-        'room' => [],
-        'adjustment' => "No Suitable Room Found (Minimum seat capacity is " . $rooms[0]['seat_capacity'] . ")"
-    ];
-}?>
 
-<?php 
+    // If target not reached, return selected rooms anyway (best effort)
+    return [
+        'room' => $selectedRooms,
+        'adjustment' => "Assigned with Less Capacity (Only " . $totalSeats . " seats available)"
+    ];
+}
+
+
+// function findNearestRoom($rooms, $targetCapacity) {
+//     usort($rooms, function($a, $b) {
+//         return $a['seat_capacity'] - $b['seat_capacity'];
+//     });
+
+//     $selectedRooms = [];
+//     $totalSeats = 0;
+
+//     foreach ($rooms as $room) {
+//         $selectedRooms[] = $room;
+//     }
+//         $totalSeats += $room['seat_capacity'];
+
+//         if ($totalSeats >= $targetCapacity) {
+//             return [
+//                 'room' => $selectedRooms,
+//                 'adjustment' => (count($selectedRooms) == 1) ? "Single Room Assigned" : "Merged Multiple Rooms"
+//             ];
+//         }
+//     }
+//     return [
+//         'room' => [],
+//         'adjustment' => "No Suitable Room Found (Minimum seat capacity is " . $rooms[0]['seat_capacity'] . ")"
+//     ];
+
 
 require_once __DIR__ . '/layout/multiLayout.php'; 
 

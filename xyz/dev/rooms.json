@@ -1,10 +1,10 @@
 {
     "room": [
         {
-            "room_no": "08",
-            "room_name": "NS-9 A",
-            "bench_order": 2,
-            "seat_capacity": 16
+            "room_no": "07",
+            "room_name": "NS-8",
+            "bench_order": 5,
+            "seat_capacity": 60
         }
     ],
     "adjustment": "Single Room Assigned"
