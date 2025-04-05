@@ -24,14 +24,14 @@ class SeatAllocationList {
     public function insertDepartment($dept) {
         if (empty($this->departmentExists($dept))) {
             $this->store->insert($dept); // Uncomment to insert into DB
-            echo "✅ Successfully seat allocation  {$dept['department']} inserted successfully!<br>";
+            // echo "✅ Successfully seat allocation  {$dept['department']} inserted successfully!<br>";
         } else {
-            echo "⚠️ Failure seat allocation {$dept['department']} already exists. Skipping...<br>";
+            // echo "⚠️ Failure seat allocation {$dept['department']} already exists. Skipping...<br>";
         }
     }
     public function findTotal() {
         $totalCount = $this->store->count();
-        echo "Total number of departments: {$totalCount}<br>";
+        // echo "Total number of departments: {$totalCount}<br>";
         return $totalCount;
     }
 
@@ -55,9 +55,9 @@ class SeatAllocationList {
                 $this->store->delete($record); // Delete each record
             }
             
-            echo "⚠️ All seat allocations have been deleted!<br>";
+            // echo "⚠️ All seat allocations have been deleted!<br>";
         } else {
-            echo "✅ No data to delete. Store is empty.<br>";
+            // echo "✅ No data to delete. Store is empty.<br>";
         }
     }
 

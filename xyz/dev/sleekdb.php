@@ -55,9 +55,9 @@ class DepartmentStore {
     public function insertDepartment($dept) {
         if (empty($this->departmentExists($dept))) {
             $this->store->insert($dept); // Uncomment to insert into DB
-            echo "✅ Department {$dept['department']} inserted successfully!<br>";
+            // echo "✅ Department {$dept['department']} inserted successfully!<br>";
         } else {
-            echo "⚠️ Department {$dept['department']} already exists. Skipping...<br>";
+            // echo "⚠️ Department {$dept['department']} already exists. Skipping...<br>";
         }
     }
 
@@ -71,9 +71,9 @@ class DepartmentStore {
                     unlink($file); // Delete each cache file
                 }
             }
-            echo "✅ Cache cleared successfully!<br>";
+            // echo "✅ Cache cleared successfully!<br>";
         } else {
-            echo "⚠️ Cache directory not found!<br>";
+            // echo "⚠️ Cache directory not found!<br>";
         }
     }
     

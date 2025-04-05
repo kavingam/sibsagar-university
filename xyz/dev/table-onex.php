@@ -3,6 +3,8 @@ $directory = __DIR__ . '/database/seatAllocationList/data/';
 
 $iterator = new FilesystemIterator($directory, FilesystemIterator::SKIP_DOTS);
 
+
+
 $allStudentData = []; // Array to store all student data
 
 foreach ($iterator as $fileInfo) {
@@ -330,7 +332,125 @@ echo '</pre>';
         }
         ?>
     </div>    
+
+<?php
+
+// Define the directory path
+$jsonDirectoryPath = __DIR__ . '/database/departments/data/';
+
+// Check if the directory exists
+if (!is_dir($jsonDirectoryPath)) {
+    die("Error: Directory not found.");
+}
+
+// Scan the directory for files
+$jsonFiles = glob($jsonDirectoryPath . '*.json');
+
+$allJsonData = []; // Array to store data from all JSON files
+
+// Loop through each JSON file
+foreach ($jsonFiles as $jsonFile) {
+    $jsonContent = file_get_contents($jsonFile);
+    $decodedData = json_decode($jsonContent, true);
+
+    // Check if decoding was successful
+    if ($decodedData !== null) {
+        $allJsonData[] = $decodedData;
+    } else {
+        echo "Error decoding JSON from file: $jsonFile\n";
+    }
+}
+
+// Print all JSON data
+echo '<pre>';
+// print_r($allJsonData);
+echo '</pre>';
+?>
+
+
+<?php
+// Define the directory path
+$jsonDirectoryPath = __DIR__ . '/database/departments/data/';
+
+// Check if the directory exists
+if (!is_dir($jsonDirectoryPath)) {
+    die("Error: Directory not found.");
+}
+
+// Scan the directory for JSON files
+$jsonFiles = glob($jsonDirectoryPath . '/*.json');
+
+$allStudents = []; // Array to store all students
+
+// Loop through each JSON file
+foreach ($jsonFiles as $jsonFile) {
+    $jsonContent = file_get_contents($jsonFile);
+    $decodedData = json_decode($jsonContent, true);
+
+    // Check if decoding was successful and contains students
+    if ($decodedData !== null && isset($decodedData['students'])) {
+        $allStudents = array_merge($allStudents, $decodedData['students']);
+    } else {
+        echo "Error decoding JSON from file: $jsonFile\n";
+    }
+}
+
+// Define seat configuration
+$bench_order = 4;  // Number of benches per row
+$numRows = ceil(count($allStudents) / $bench_order);
+
+// Print table header
+echo "<table border='1' cellpadding='5' cellspacing='0'>";
+echo "<tr><th>Seat No</th><th>Position</th><th>Student</th></tr>";
+
+$studentIndex = 0;
+for ($r = 0; $r < $numRows; $r++) {
+    $isLeftToRight = ($r % 2 == 0); // Zigzag pattern: Even row L → R, Odd row R → L
+    $rowSeats = [];
+
+    for ($b = 0; $b < $bench_order; $b++) {
+        $studentForSeat = null;
+
+        if ($studentIndex < count($allStudents)) {
+            $studentForSeat = $allStudents[$studentIndex];
+            $studentIndex++;
+        }
+
+        // Alternate seat positions (L, R, L, R)
+        $position = ($b % 2 == 0) ? "L" : "R";
+        if (!$isLeftToRight) {
+            $position = ($position === "L") ? "R" : "L";
+        }
+
+        $rowSeats[] = [
+            'seatNumber' => ($r * $bench_order) + ($b + 1),
+            'position' => $position,
+            'student' => $studentForSeat
+        ];
+    }
+
+    // Print row seats
+    foreach ($rowSeats as $seat) {
+        echo "<tr>";
+        echo "<td>{$seat['seatNumber']}</td>";
+        echo "<td>{$seat['position']}</td>";
+        echo "<td>";
+        if ($seat['student']) {
+            echo htmlspecialchars($seat['student']['roll_no']) . " (" . htmlspecialchars($seat['student']['name']) . ")";
+        } else {
+            echo "EMPTY";
+        }
+        echo "</td>";
+        echo "</tr>";
+    }
+}
+
+echo "</table>";
+?>
+
 </body>
+
+
 
 
 </html>

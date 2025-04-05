@@ -5,25 +5,7 @@
             "room_name": "NS-9 A",
             "bench_order": 2,
             "seat_capacity": 16
-        },
-        {
-            "room_no": "09",
-            "room_name": "NS-9 C",
-            "bench_order": 2,
-            "seat_capacity": 16
-        },
-        {
-            "room_no": "13",
-            "room_name": "PG-1",
-            "bench_order": 2,
-            "seat_capacity": 24
-        },
-        {
-            "room_no": "14",
-            "room_name": "PG-2",
-            "bench_order": 2,
-            "seat_capacity": 24
         }
     ],
-    "adjustment": "Merged Multiple Rooms"
+    "adjustment": "Single Room Assigned"
 }
