@@ -1,4 +1,5 @@
 <?php
+
 $bashmodelPath = __DIR__ . '/../bashmodel.php';
 $seatAllocationPath = __DIR__ . '/../seat_allocation/seat_allocation.php';
 $sleekdbPath = __DIR__ . '/sleekdb.php';
@@ -62,33 +63,115 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     deleteJsonFiles($RemoveJsonPathxx);
     deleteJsonFiles($RemoveJsonPathxy);
 
-    echo '<pre>';
-    print_r($fetchingSimilarity);
+    $seatAllocationListStore = new CreateSeatAllocation();
+    $seatAlloc = new  CreateSeatAllocation();
 
-    // calculate total examination students
-    try {
-    //     $studentSeatCounts = [];
-    //     for ($i = 0; $i < count($fetchingSimilarity); $i += 2) {
-    //         if (isset($fetchingSimilarity[$i + 1])) {
-    //             $studentSeatCounts[] = $fetchingSimilarity[$i + 1]['totalStudent'] * 2;
-    //         } else {
-    //             $studentSeatCounts[] = $fetchingSimilarity[$i]['totalStudent'];
-    //         }
+    // for ($i = 0; $i < count($fetchingSimilarity); $i += 2) {
+    //     if (isset($fetchingSimilarity[$i + 1])) {
+    //         $finalArray = buildFinalArrayX($fetchingSimilarity[$i],$fetchingSimilarity[$i+1]);
+    //         $seatAllocationListStore->bulkInsert($finalArray);
+    //     } else {
+            
     //     }
-    //     echo '<pre/>';
-    //     print_r($studentSeatCounts);
-        // Array
-        // (
-        //     [0] => 60
-        //     [1] => 25
-        // )
+    // }
+
+    for ($i = 0; $i < count($fetchingSimilarity); $i += 2) {
+        // If we have a pair
+        if (isset($fetchingSimilarity[$i + 1])) {
+            $finalArray = buildFinalArrayX($fetchingSimilarity[$i], $fetchingSimilarity[$i + 1]);
+            $seatAllocationListStore->bulkInsert($finalArray);
+        } else {
+            // Handle the last unpaired item safely
+            $finalArray = buildFinalArrayX($fetchingSimilarity[$i], null); // Pass null as second param
+            $seatAllocationListStore->bulkInsert($finalArray);
+        }
+    }
+    
+    // calculate total examination students
+    $remainderValue = 0;        
+        try {
+            $studentSeatCounts = [];        
+            for ($i = 0; $i < count($fetchingSimilarity); $i += 2) {
+                if (isset($fetchingSimilarity[$i + 1])) {
+                    $studentSeatCounts[] = $fetchingSimilarity[$i + 1]['totalStudent'] * 2;
+                    $remainderValue = $fetchingSimilarity[$i + 1]['totalStudent'] - $fetchingSimilarity[$i]['totalStudent'];
+                } else {
+                    $studentSeatCounts[] = abs($remainderValue*2);
+                }
+            }
+            $seatAllocations = [];
+
+            // foreach ($studentSeatCounts as $totalStudent) {
+                // $targetCapacity = ceil($totalStudent / $benchSeat);
+                // $room = findNearestRoomS($rooms, $targetCapacity);
+
+                // if ($room) {
+                //     $seatAllocations[] = [
+                //         'requiredSeats' => $totalStudent,
+                //         'requiredCapacity' => $targetCapacity,
+                //         'allocatedRoom' => $room
+                //     ];
+                // } else {
+                //     $seatAllocations[] = [
+                //         'requiredSeats' => $totalStudent,
+                //         'requiredCapacity' => $targetCapacity,
+                //         'allocatedRoom' => null,
+                //         'error' => 'No matching room found'
+                //     ];
+                // }
+            // }
+
+            // foreach ($studentSeatCounts as $totalStudent) {
+            //     $targetCapacity = ceil($totalStudent / $benchSeat);
+            //     $room = findNearestRoomS($rooms, $targetCapacity);
+            
+            //     if ($room && isset($room['room'])) {
+            //         foreach ($room['room'] as $singleRoom) {
+            //             $seatAllocations[] = $singleRoom; // Flat structure: push only the room detail
+            //         }
+            //     }
+            // }
+            
+            $flatRoomList = [];
+
+            foreach ($studentSeatCounts as $totalStudent) {
+                $targetCapacity = ceil($totalStudent / $benchSeat);
+                $room = findNearestRoomS($rooms, $targetCapacity);
+            
+                if ($room && isset($room['room'])) {
+                    foreach ($room['room'] as $singleRoom) {
+                        $flatRoomList[] = $singleRoom;
+                    }
+                }
+            }
+            
+            $seatAllocations = [
+                'room' => $flatRoomList
+            ];
+            
+
+
+            $jsonData = json_encode($seatAllocations, JSON_PRETTY_PRINT);
+            if ($jsonData === false) {
+                die("JSON encoding error: " . json_last_error_msg());
+            }
+
+            if (file_put_contents($filePath, $jsonData) === false) {
+                die("Error: Unable to write to file $filePath. Check file permissions.");
+            } else {
+                /*
+                 *   echo "Data successfully saved to rooms.json";
+                 * 
+                 */
+            }
 
 
     } catch (Exception $e) {
-        echo 'Fucking Error: ' . $e->getMessage();
+        echo 'Room Allotment Error: ' . $e->getMessage();
     }
 
-    
+
+
 
     // calculate total Student final remainder 
     try {
@@ -136,6 +219,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } catch (Exception $e) {
         echo 'Error:  Remainder Seat Allote ' . $e->getMessage();
     }
+
+
+    try {
+        require_once __DIR__ . '/layout/multiLayout.php';
+    } catch (Exception $e) {
+        echo 'Error:  Room Examination Seat Allotement ' . $e->getMessage();
+    }
 }
 ?>
 
@@ -157,4 +247,94 @@ function deleteJsonFiles($directory)
         }
     }
 }
+
+function findNearestRoomS($rooms, $targetCapacity) {
+    usort($rooms, function($a, $b) {
+        return $a['seat_capacity'] - $b['seat_capacity'];
+    });
+
+    foreach ($rooms as $room) {
+        if ($room['seat_capacity'] >= $targetCapacity) {
+            return [
+                'room' => [$room],
+                'adjustment' => "Single Room Assigned"
+            ];
+        }
+    }
+    $fallbackRoom = end($rooms);
+    return [
+        'room' => [$fallbackRoom],
+        'adjustment' => "Single Room Assigned"
+    ];
+}
+?>
+
+
+
+<?php 
+function getDeptKey($dept) {
+    return $dept["department"] . "-" . $dept["semester"] . "-" . $dept["course"];
+}
+
+// Function to slice the student data from the first department based on the total students in the second department
+function getDeptStudentSlice($firstDept, $secondDept) {
+    return array_slice($firstDept["students"], 0, $secondDept["totalStudent"]);
+}
+
+// Function to build department information for each student
+function buildDeptArray($dept, $studentSlice = null, $overrideTotal = null) {
+    // For each student, include department, semester, and course information
+    $students = array_map(function($student) use ($dept) {
+        return [
+            "roll_no" => $student["roll_no"],
+            "name" => $student["name"],
+            "department" => $dept["department"],
+            "semester" => $dept["semester"],
+            "course" => $dept["course"]
+        ];
+    }, $studentSlice ?? $dept["students"]);
+
+    return [
+        "department" => $dept["department"],
+        "semester" => $dept["semester"],
+        "course" => $dept["course"],
+        "totalStudent" => $overrideTotal ?? $dept["totalStudent"], // Override totalStudent if provided
+        "students" => $students
+    ];
+}
+
+// Create the final array with department keys and data
+function buildFinalArray($departments) {
+    $finalArray = [];
+    
+    $firstDept = $departments[0];
+    $secondDept = $departments[1];
+    
+    // Get the student slice for the first department
+    $varBiggestDeptSlice = getDeptStudentSlice($firstDept, $secondDept);
+    
+    // Build the final array for the first department, overriding totalStudent with secondDept's totalStudent
+    $finalArray[] = buildDeptArray($firstDept, $varBiggestDeptSlice, $secondDept["totalStudent"]);
+    
+    // Build the final array for the second department with its own totalStudent
+    $finalArray[] = buildDeptArray($secondDept);
+    
+    return $finalArray;
+}
+
+function buildFinalArrayX($firstDept, $secondDept) {
+    $finalArray = [];
+    
+    // Get the student slice for the first department
+    $varBiggestDeptSlice = getDeptStudentSlice($firstDept, $secondDept);
+    
+    // Build the final array for the first department, overriding totalStudent with secondDept's totalStudent
+    $finalArray[] = buildDeptArray($firstDept, $varBiggestDeptSlice, $secondDept["totalStudent"]);
+    
+    // Build the final array for the second department with its own totalStudent
+    $finalArray[] = buildDeptArray($secondDept);
+    
+    return $finalArray;
+}
+
 ?>
