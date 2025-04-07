@@ -82,8 +82,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $seatAllocationListStore->bulkInsert($finalArray);
         } else {
             // Handle the last unpaired item safely
-            $finalArray = buildFinalArrayX($fetchingSimilarity[$i], null); // Pass null as second param
-            $seatAllocationListStore->bulkInsert($finalArray);
+            // $finalArray = buildFinalArrayX($fetchingSimilarity[$i], null); // Pass null as second param
+            // $seatAllocationListStore->bulkInsert($finalArray);
         }
     }
     

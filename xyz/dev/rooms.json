@@ -5,12 +5,6 @@
             "room_name": "NS-10",
             "bench_order": 2,
             "seat_capacity": 28
-        },
-        {
-            "room_no": "08",
-            "room_name": "NS-9 A",
-            "bench_order": 2,
-            "seat_capacity": 16
         }
     ]
 }

@@ -42,6 +42,15 @@ foreach ($iterator as $fileInfo) {
     }
 }
 
+// Step 1: Sort Descending
+usort($allStudentData, function ($a, $b) {
+    return $b['totalStudent'] <=> $a['totalStudent'];
+});
+
+// echo '<pre>';
+// print_r($allStudentData);
+// echo '<pre/>';
+
 $mergedGroups = [];
 $processedDepartments = [];
 
@@ -101,10 +110,10 @@ $jsonString = file_get_contents('rooms.json');
 // Decode the JSON string to a PHP array
 $dataArray = json_decode($jsonString, true);
 
-echo '<pre>';
-print_r($dataArray);
-print_r($mergedGroups);
-echo '<pre/>';
+// echo '<pre>';
+// print_r($dataArray);
+// print_r($mergedGroups);
+// echo '<pre/>';
 
 ?>
 
@@ -116,10 +125,12 @@ echo '<pre/>';
 
 <div class="container p-3">
         <?php
+        // Define department colors (you can adjust these as needed)
         $departmentColors = [
             1 => 'lightblue',  // Department 1 (example: blue)
             2 => 'lightgreen',  // Department 2 (example: green)
             3 => 'lightcoral',  // Department 3 (example: coral)
+            // Add more departments and their colors as needed
         ];
 
         if (isset($dataArray['room']) && isset($mergedGroups)) {
@@ -153,7 +164,46 @@ echo '<pre/>';
                 echo '</tr>';
                 echo '</thead>';
                 echo '<tbody>';
+
+                // Create rows for each bench row
                 $studentIndex = 0;  // Track the student index for the current room
+                // for ($r = 0; $r < $numRows; $r++) {
+                //     echo '<tr>';
+                //     for ($b = 0; $b < $room['bench_order']; $b++) {
+                //         // Calculate seat number
+                //         $seatNumber = $r * $room['bench_order'] + $b + 1;
+                //         if ($seatNumber <= $room['seat_capacity']) {
+                //             // Array to hold students for the seat (2 students per seat)
+                //             $studentsForSeat = [];
+
+                //             // Assign two students to the seat if possible
+                //             for ($i = 0; $i < 2; $i++) {
+                //                 if ($studentIndex < count($studentsInRoom)) {
+                //                     $studentsForSeat[] = $studentsInRoom[$studentIndex];
+                //                     $studentIndex++;
+                //                 }
+                //             }
+
+                //             // Display seat with assigned students
+                //             echo '<td>';
+                //             echo 'Seat ' . $seatNumber . ':<br>';
+                //             foreach ($studentsForSeat as $student) {
+                //                 // Get department color from the $departmentColors array
+                //                 $departmentColor = isset($departmentColors[$student['department']]) ? $departmentColors[$student['department']] : 'lightgray';
+
+                //                 // Display each student inline with department color and 2px gap
+                //                 echo '<span style="background-color: ' . $departmentColor . '; margin-right: 2px; padding: 2px;">';
+                //                 echo htmlspecialchars($student['roll_no']) . '</span>';
+                //             }
+                //             echo '</td>';
+                //         } else {
+                //             echo '<td></td>'; // Empty cell if the seat number exceeds seat capacity
+                //         }
+                //     }
+                //     echo '</tr>';
+                // }
+
+                // echo '<table border="1">';
 
                 for ($r = 0; $r < $numRows; $r++) {
                     echo '<tr>';
