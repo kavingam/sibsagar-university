@@ -4,11 +4,14 @@ $bashmodelPath = __DIR__ . '/../bashmodel.php';
 $seatAllocationPath = __DIR__ . '/../seat_allocation/seat_allocation.php';
 $sleekdbPath = __DIR__ . '/sleekdb.php';
 $sleekdbxPath = __DIR__ . '/sleekdbx.php';
+$sleekdbyPath = __DIR__ . '/sleekdby.php';
+
 $filePath = __DIR__ . '/rooms.json';
 require __DIR__ . '/debugs.php';
 
 $RemoveJsonPathxx = __DIR__ . '/database/departments/data/';
 $RemoveJsonPathxy = __DIR__ . '/database/seatAllocationList/data/';
+$RemoveJsonPathyx = __DIR__ . '/database/RemainderStudent/data/';
 $TestingJsonPathyx = __DIR__ . '/database/test_connection/data/';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -62,31 +65,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     deleteJsonFiles($RemoveJsonPathxx);
     deleteJsonFiles($RemoveJsonPathxy);
+    deleteJsonFiles($RemoveJsonPathyx);
+
 
     $seatAllocationListStore = new CreateSeatAllocation();
     $seatAlloc = new  CreateSeatAllocation();
+    
 
-    // for ($i = 0; $i < count($fetchingSimilarity); $i += 2) {
-    //     if (isset($fetchingSimilarity[$i + 1])) {
-    //         $finalArray = buildFinalArrayX($fetchingSimilarity[$i],$fetchingSimilarity[$i+1]);
-    //         $seatAllocationListStore->bulkInsert($finalArray);
-    //     } else {
-            
-    //     }
-    // }
+    $remainderSeatX  = new RemainderStudent();
+    $remainderSeatY  = new RemainderSeatAllocation();
 
+    $deptData = null; // to hold the unpaired remainder if exists
+    
     for ($i = 0; $i < count($fetchingSimilarity); $i += 2) {
         // If we have a pair
         if (isset($fetchingSimilarity[$i + 1])) {
             $finalArray = buildFinalArrayX($fetchingSimilarity[$i], $fetchingSimilarity[$i + 1]);
             $seatAllocationListStore->bulkInsert($finalArray);
         } else {
-            // Handle the last unpaired item safely
-            // $finalArray = buildFinalArrayX($fetchingSimilarity[$i], null); // Pass null as second param
-            // $seatAllocationListStore->bulkInsert($finalArray);
+            // Store the single unmatched department data
+            $deptData = $fetchingSimilarity[$i];
+            if (!empty($deptData)) {
+                $remainderSeatY->bulkInsert([$deptData]);
+            }
         }
     }
-    
+
     // calculate total examination students
     $remainderValue = 0;        
         try {

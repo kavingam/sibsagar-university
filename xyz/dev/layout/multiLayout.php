@@ -29,7 +29,6 @@ $iterator = new RecursiveIteratorIterator(
 
 $allStudentData = [];  // Array to store all student data
 
-
 foreach ($iterator as $fileInfo) {
     if ($fileInfo->isFile() && $fileInfo->getExtension() === 'json') {
         $filename = $fileInfo->getPathname();
@@ -42,7 +41,6 @@ foreach ($iterator as $fileInfo) {
         }
     }
 }
-
 
 // Step 1: Sort Descending
 usort($allStudentData, function ($a, $b) {
@@ -105,28 +103,16 @@ foreach ($allStudentData as $index => $dept1) {
 
 
 <?php
-
 // Read the JSON file
 $jsonString = file_get_contents('rooms.json');
-
-// Decode the JSON string to a PHP array
 $dataArray = json_decode($jsonString, true);
-
-// echo '<pre>';
-// print_r($dataArray);
-// print_r($mergedGroups);
-// echo '<pre/>';
-
+// echo count($mergedGroups);
 ?>
 
-
-
-
-
-
-
 <div class="container p-3">
+
         <?php
+        $room_no = 0;
         // Define department colors (you can adjust these as needed)
         $departmentColors = [
             1 => 'lightblue',  // Department 1 (example: blue)
@@ -140,6 +126,12 @@ $dataArray = json_decode($jsonString, true);
 
             // Loop through rooms and assign students from mergedGroups to each room
             foreach ($dataArray['room'] as $roomIndex => $room) {
+
+                // If mergedGroups has only one group, break after first loop
+                if (count($mergedGroups) == $roomIndex) {
+                    $room_no = $roomIndex;
+                    break;
+                }
                 // Ensure the room corresponds to the right merged group (if there are enough merged groups)
                 if (isset($mergedGroups[$roomIndex])) {
                     $studentsInRoom = $mergedGroups[$roomIndex]['students'];  // Get the students for the current room
@@ -243,4 +235,51 @@ $dataArray = json_decode($jsonString, true);
         ?>
     </div>    
 
+
+<?php 
+
+?>
+
+
+<?php 
+
+$directoryRemainder = 'database/departments/data';  // Define the base directory
+$iterator = new RecursiveIteratorIterator(
+    new RecursiveDirectoryIterator($directoryRemainder),
+    RecursiveIteratorIterator::LEAVES_ONLY
+);
+
+$remainderStudentData = [];  // Array to store all student data
+
+foreach ($iterator as $fileInfo) {
+    if ($fileInfo->isFile() && $fileInfo->getExtension() === 'json') {
+        $filename = $fileInfo->getPathname();
+        $jsonString = file_get_contents($filename);
+        $studentData = json_decode($jsonString, true);
+        if ($studentData !== null) {
+            $remainderStudentData[] = $studentData;
+        } else {
+            echo "Error decoding JSON from file: $filename\n";
+        }
+    }
+}
+
+// Step 1: Sort Descending
+usort($remainderStudentData, function ($a, $b) {
+    return $b['totalStudent'] <=> $a['totalStudent'];
+});
+
+echo '<pre>';
+// echo $room_no;
+$countRemainder = $remainderSeatY->findTotal();
+$retirveRemainder = $remainderSeatY->findAll();
+echo $countRemainder;
+print_r($retirveRemainder);
+// print_r($dataArray);
+// print_r($mergedGroups);
+// print_r($remainderStudentData);
+// print_r($rooms);
+echo '<pre/>';
+
+?>
 
