@@ -34,7 +34,10 @@ class SeatAllocationList {
         // echo "Total number of departments: {$totalCount}<br>";
         return $totalCount;
     }
-
+    public function findAll(){
+        $allRecords = $this->store->findAll();
+        return $allRecords;
+    }
     // New Function: Delete All Data
     public function deleteAllData() {
         $this->store->truncate(); // Deletes all records in the store

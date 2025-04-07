@@ -112,6 +112,7 @@ $dataArray = json_decode($jsonString, true);
 <div class="container p-3">
 
         <?php
+        
         $room_no = 0;
         // Define department colors (you can adjust these as needed)
         $departmentColors = [
@@ -123,112 +124,113 @@ $dataArray = json_decode($jsonString, true);
 
         if (isset($dataArray['room']) && isset($mergedGroups)) {
             echo '<div class="row g-4">';
-
             // Loop through rooms and assign students from mergedGroups to each room
             foreach ($dataArray['room'] as $roomIndex => $room) {
 
                 // If mergedGroups has only one group, break after first loop
                 if (count($mergedGroups) == $roomIndex) {
-                    $room_no = $roomIndex;
+                     //remainder
                     break;
-                }
-                // Ensure the room corresponds to the right merged group (if there are enough merged groups)
-                if (isset($mergedGroups[$roomIndex])) {
-                    $studentsInRoom = $mergedGroups[$roomIndex]['students'];  // Get the students for the current room
                 } else {
-                    // If there are more rooms than merged groups, you can either skip or handle accordingly
-                    $studentsInRoom = [];
-                }
-
-                // Calculate the number of rows
-                $numRows = ceil($room['seat_capacity'] / $room['bench_order']);
-
-                // Output the room details
-                echo '<div class="col-12">';
-                echo '<h5>Room No: ' . htmlspecialchars($room['room_no']) . ' - ' . htmlspecialchars($room['room_name']) . '</h5>';
-                echo '<table class="table table-bordered">';
-                echo '<thead>';
-                echo '<tr>';
-
-                // Create bench order columns
-                for ($i = 1; $i <= $room['bench_order']; $i++) {
-                    echo '<th>Bench ' . $i . '</th>';
-                }
-
-                echo '</tr>';
-                echo '</thead>';
-                echo '<tbody>';
-
-                // Create rows for each bench row
-                $studentIndex = 0;  // Track the student index for the current room
-
-                for ($r = 0; $r < $numRows; $r++) {
-                    echo '<tr>';
-
-                    // Determine row order: Even rows (L -> R), Odd rows (R -> L)
-                    $isLeftToRight = ($r % 2 == 0);
-                    $rowSeats = [];
-
-                    for ($b = 0; $b < $room['bench_order']; $b++) {
-                        // Calculate seat number
-                        $seatNumber = $r * $room['bench_order'] + $b + 1;
-
-                        if ($seatNumber <= $room['seat_capacity']) {
-                            // Assign students for the seat (2 per seat)
-                            $studentsForSeat = [];
-
-                            for ($i = 0; $i < 2; $i++) {
-                                if ($studentIndex < count($studentsInRoom)) {
-                                    $studentsForSeat[] = $studentsInRoom[$studentIndex];
-                                    $studentIndex++;
-                                }
-                            }
-
-                            // Swap students for odd rows (Zigzag effect)
-                            if (!$isLeftToRight) {
-                                $studentsForSeat = array_reverse($studentsForSeat);
-                            }
-
-                            // Store seat info in array
-                            $rowSeats[] = [
-                                'seatNumber' => $seatNumber,
-                                'students' => $studentsForSeat
-                            ];
-                        } else {
-                            $rowSeats[] = null;  // Empty seat
-                        }
+                    $room_no ++;
+                    // Ensure the room corresponds to the right merged group (if there are enough merged groups)
+                    if (isset($mergedGroups[$roomIndex])) {
+                        $studentsInRoom = $mergedGroups[$roomIndex]['students'];  // Get the students for the current room
+                    } else {
+                        // If there are more rooms than merged groups, you can either skip or handle accordingly
+                        $studentsInRoom = [];
                     }
 
-                    // Print row seats
-                    foreach ($rowSeats as $seat) {
-                        echo '<td>';
-                        if ($seat !== null) {
-                            echo 'Seat ' . $seat['seatNumber'] . ':<br>';
-                            foreach ($seat['students'] as $index => $student) {
-                                $position = ($index == 0) ? 'L' : 'R';  // Left or Right seat
+                    // Calculate the number of rows
+                    $numRows = ceil($room['seat_capacity'] / $room['bench_order']);
 
-                                // Get department color
-                                $departmentColor = isset($departmentColors[$student['department']])
-                                    ? $departmentColors[$student['department']]
-                                    : 'lightgray';
+                    // Output the room details
+                    echo '<div class="col-12">';
+                    echo '<h5>Room No: ' . htmlspecialchars($room['room_no']) . ' - ' . htmlspecialchars($room['room_name']) . '</h5>';
+                    echo '<table class="table table-bordered">';
+                    echo '<thead>';
+                    echo '<tr>';
 
-                                // Display student with color and position
-                                echo '<span style="background-color: ' . $departmentColor . '; 
-                                    margin-right: 2px; padding: 2px; display: inline-block;">';
-                                echo $position . ': ' . htmlspecialchars($student['roll_no']) . '</span>';
-                            }
-                        }
-                        echo '</td>';
+                    // Create bench order columns
+                    for ($i = 1; $i <= $room['bench_order']; $i++) {
+                        echo '<th>Bench ' . $i . '</th>';
                     }
 
                     echo '</tr>';
+                    echo '</thead>';
+                    echo '<tbody>';
+
+                    // Create rows for each bench row
+                    $studentIndex = 0;  // Track the student index for the current room
+
+                    for ($r = 0; $r < $numRows; $r++) {
+                        echo '<tr>';
+
+                        // Determine row order: Even rows (L -> R), Odd rows (R -> L)
+                        $isLeftToRight = ($r % 2 == 0);
+                        $rowSeats = [];
+
+                        for ($b = 0; $b < $room['bench_order']; $b++) {
+                            // Calculate seat number
+                            $seatNumber = $r * $room['bench_order'] + $b + 1;
+
+                            if ($seatNumber <= $room['seat_capacity']) {
+                                // Assign students for the seat (2 per seat)
+                                $studentsForSeat = [];
+
+                                for ($i = 0; $i < 2; $i++) {
+                                    if ($studentIndex < count($studentsInRoom)) {
+                                        $studentsForSeat[] = $studentsInRoom[$studentIndex];
+                                        $studentIndex++;
+                                    }
+                                }
+
+                                // Swap students for odd rows (Zigzag effect)
+                                if (!$isLeftToRight) {
+                                    $studentsForSeat = array_reverse($studentsForSeat);
+                                }
+
+                                // Store seat info in array
+                                $rowSeats[] = [
+                                    'seatNumber' => $seatNumber,
+                                    'students' => $studentsForSeat
+                                ];
+                            } else {
+                                $rowSeats[] = null;  // Empty seat
+                            }
+                        }
+
+                        // Print row seats
+                        foreach ($rowSeats as $seat) {
+                            echo '<td>';
+                            if ($seat !== null) {
+                                echo 'Seat ' . $seat['seatNumber'] . ':<br>';
+                                foreach ($seat['students'] as $index => $student) {
+                                    $position = ($index == 0) ? 'L' : 'R';  // Left or Right seat
+
+                                    // Get department color
+                                    $departmentColor = isset($departmentColors[$student['department']])
+                                        ? $departmentColors[$student['department']]
+                                        : 'lightgray';
+
+                                    // Display student with color and position
+                                    echo '<span style="background-color: ' . $departmentColor . '; 
+                                        margin-right: 2px; padding: 2px; display: inline-block;">';
+                                    echo $position . ': ' . htmlspecialchars($student['roll_no']) . '</span>';
+                                }
+                            }
+                            echo '</td>';
+                        }
+
+                        echo '</tr>';
+                    }
+
+                    // echo '</table>';
+
+                    echo '</tbody>';
+                    echo '</table>';
+                    echo '</div>';
                 }
-
-                // echo '</table>';
-
-                echo '</tbody>';
-                echo '</table>';
-                echo '</div>';
             }
             echo '</div>';
         }
@@ -264,22 +266,190 @@ foreach ($iterator as $fileInfo) {
     }
 }
 
-// Step 1: Sort Descending
 usort($remainderStudentData, function ($a, $b) {
     return $b['totalStudent'] <=> $a['totalStudent'];
 });
 
-echo '<pre>';
-// echo $room_no;
 $countRemainder = $remainderSeatY->findTotal();
 $retirveRemainder = $remainderSeatY->findAll();
-echo $countRemainder;
-print_r($retirveRemainder);
+
+$retriveFinalRemainder = $departmentsStore->findAll();
+// echo $countRemainder;
+
+$combinedData = array_merge($retirveRemainder, $retriveFinalRemainder);
+
+// Sort combined array in descending order by 'totalStudent'
+usort($combinedData, function ($a, $b) {
+    return $b['totalStudent'] <=> $a['totalStudent'];
+});
+
+// echo "<pre>";
+// print_r($combinedData);
+$FinalRemainderVar = buildFinalArrayX($combinedData[0],$combinedData[1]);
+usort($FinalRemainderVar, function ($a, $b) {
+    return $b['totalStudent'] <=> $a['totalStudent'];
+});
+// print_r();
+
+$mergedGroupsX = mergeSameSemesterEqualStudentDepartments($FinalRemainderVar);
+
+// Print merged groups
+// echo "<pre>";
+// print_r($mergedGroupsX[0]);
+// print_r($dataArray['room'][$room_no]);
+
+// $mergedGroupsXIndexed = [];
+
+// foreach ($dataArray['room'] as $i => $room) {
+//     if (isset($mergedGroupsX[$i])) {
+//         $mergedGroupsXIndexed[$room['room_no']] = $mergedGroupsX[$i];
+//     }
+// }
+// print_r($mergedGroupsXIndexed);
+// echo "</pre>";
+
+
+// print_r($retirveRemainder);
+// print_r($retriveFinalRemainder);
 // print_r($dataArray);
 // print_r($mergedGroups);
 // print_r($remainderStudentData);
 // print_r($rooms);
-echo '<pre/>';
+?>
+<div class="container p-3">
+<?php 
+$departmentColors = [
+    1 => 'lightblue',
+    2 => 'lightgreen',
+    3 => 'lightcoral',
+    5 => 'lightpink',
+    // Add more department => color as needed
+];
+
+$room = $dataArray['room'][$room_no];           // Get the specific room
+$studentsInRoom = $mergedGroupsX[0];            // Full merged group (with 'students' key)
+$students = $studentsInRoom['students'];        // Only students array
+
+$numRows = ceil($room['seat_capacity'] / $room['bench_order']);
+
+echo '<div class="col-12">';
+echo '<h5>Room No: ' . htmlspecialchars($room['room_no']) . ' - ' . htmlspecialchars($room['room_name']) . '</h5>';
+echo '<table class="table table-bordered">';
+echo '<thead><tr>';
+
+for ($i = 1; $i <= $room['bench_order']; $i++) {
+    echo '<th>Bench ' . $i . '</th>';
+}
+
+echo '</tr></thead><tbody>';
+
+$studentIndex = 0;
+
+for ($r = 0; $r < $numRows; $r++) {
+    echo '<tr>';
+    $isLeftToRight = ($r % 2 == 0);
+    $rowSeats = [];
+
+    for ($b = 0; $b < $room['bench_order']; $b++) {
+        $seatNumber = $r * $room['bench_order'] + $b + 1;
+
+        if ($seatNumber <= $room['seat_capacity']) {
+            $studentsForSeat = [];
+
+            for ($i = 0; $i < 2; $i++) {
+                if ($studentIndex < count($students)) {
+                    $studentsForSeat[] = $students[$studentIndex];
+                    $studentIndex++;
+                }
+            }
+
+            if (!$isLeftToRight) {
+                $studentsForSeat = array_reverse($studentsForSeat);
+            }
+
+            $rowSeats[] = [
+                'seatNumber' => $seatNumber,
+                'students' => $studentsForSeat
+            ];
+        } else {
+            $rowSeats[] = null;
+        }
+    }
+
+    foreach ($rowSeats as $seat) {
+        echo '<td>';
+        if ($seat !== null) {
+            echo 'Seat ' . $seat['seatNumber'] . ':';
+            foreach ($seat['students'] as $index => $student) {
+                $position = ($index == 0) ? 'L' : 'R';
+                $deptColor = $departmentColors[$student['department']] ?? 'lightgray';
+
+                echo '<span style="background-color: ' . $deptColor . ';
+                    margin: 2px; padding: 2px; display: inline-block;">';
+                echo $position . ': ' . htmlspecialchars($student['roll_no']) . '</span>';
+            }
+        }
+        echo '</td>';
+    }
+
+    echo '</tr>';
+}
+
+echo '</tbody></table></div>';
+
 
 ?>
 
+</div>
+
+
+<?php
+function mergeSameSemesterEqualStudentDepartments(array $allStudentData): array {
+    $mergedGroups = [];
+    $processedDepartments = [];
+
+    foreach ($allStudentData as $index => $dept1) {
+        if (in_array($index, $processedDepartments)) {
+            continue;  // Skip already processed
+        }
+
+        $matchedDepartments = [$dept1];
+        $processedDepartments[] = $index;
+
+        for ($j = $index + 1; $j < count($allStudentData); $j++) {
+            $dept2 = $allStudentData[$j];
+
+            if (
+                $dept1['department'] !== $dept2['department'] &&
+                $dept1['semester'] === $dept2['semester'] &&
+                $dept1['totalStudent'] === $dept2['totalStudent']
+            ) {
+                $matchedDepartments[] = $dept2;
+                $processedDepartments[] = $j;
+            }
+        }
+
+        // Only merge if at least 2 departments matched
+        if (count($matchedDepartments) > 1) {
+            $mergedStudents = [];
+            $numStudents = $matchedDepartments[0]['totalStudent'];
+
+            for ($i = 0; $i < $numStudents; $i++) {
+                foreach ($matchedDepartments as $dept) {
+                    $mergedStudents[] = $dept['students'][$i];
+                }
+            }
+
+            $mergedGroups[] = [
+                'department' => 'Merged',
+                'semester' => $dept1['semester'],
+                'course' => 'Mixed',
+                'totalStudent' => count($mergedStudents),
+                'students' => $mergedStudents
+            ];
+        }
+    }
+
+    return $mergedGroups;
+}
+?>
