@@ -379,7 +379,7 @@ for ($r = 0; $r < $numRows; $r++) {
     foreach ($rowSeats as $seat) {
         echo '<td>';
         if ($seat !== null) {
-            echo 'Seat ' . $seat['seatNumber'] . ':';
+            echo 'Seat ' . $seat['seatNumber'] . ':<br>';
             foreach ($seat['students'] as $index => $student) {
                 $position = ($index == 0) ? 'L' : 'R';
                 $deptColor = $departmentColors[$student['department']] ?? 'lightgray';

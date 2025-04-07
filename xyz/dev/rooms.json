@@ -1,16 +1,10 @@
 {
     "room": [
         {
-            "room_no": "07",
-            "room_name": "NS-8",
-            "bench_order": 5,
-            "seat_capacity": 60
-        },
-        {
-            "room_no": "07",
-            "room_name": "NS-8",
-            "bench_order": 5,
-            "seat_capacity": 60
+            "room_no": "01",
+            "room_name": "NS-2",
+            "bench_order": 2,
+            "seat_capacity": 30
         },
         {
             "room_no": "08",
