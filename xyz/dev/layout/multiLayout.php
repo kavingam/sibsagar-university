@@ -112,7 +112,7 @@ $dataArray = json_decode($jsonString, true);
 <div class="container p-3">
 
         <?php
-        
+
         $room_no = 0;
         // Define department colors (you can adjust these as needed)
         $departmentColors = [
@@ -126,13 +126,12 @@ $dataArray = json_decode($jsonString, true);
             echo '<div class="row g-4">';
             // Loop through rooms and assign students from mergedGroups to each room
             foreach ($dataArray['room'] as $roomIndex => $room) {
-
                 // If mergedGroups has only one group, break after first loop
                 if (count($mergedGroups) == $roomIndex) {
-                     //remainder
+                    // $room_no++;
+                    // remainder
                     break;
                 } else {
-                    $room_no ++;
                     // Ensure the room corresponds to the right merged group (if there are enough merged groups)
                     if (isset($mergedGroups[$roomIndex])) {
                         $studentsInRoom = $mergedGroups[$roomIndex]['students'];  // Get the students for the current room
@@ -231,6 +230,7 @@ $dataArray = json_decode($jsonString, true);
                     echo '</table>';
                     echo '</div>';
                 }
+                $room_no++;
             }
             echo '</div>';
         }
@@ -238,12 +238,12 @@ $dataArray = json_decode($jsonString, true);
     </div>    
 
 
-<?php 
+<?php
 
 ?>
 
 
-<?php 
+<?php
 
 $directoryRemainder = 'database/departments/data';  // Define the base directory
 $iterator = new RecursiveIteratorIterator(
@@ -265,33 +265,146 @@ foreach ($iterator as $fileInfo) {
         }
     }
 }
-
 usort($remainderStudentData, function ($a, $b) {
     return $b['totalStudent'] <=> $a['totalStudent'];
 });
 
+echo '<pre>';
 $countRemainder = $remainderSeatY->findTotal();
 $retirveRemainder = $remainderSeatY->findAll();
-
 $retriveFinalRemainder = $departmentsStore->findAll();
-// echo $countRemainder;
 
-$combinedData = array_merge($retirveRemainder, $retriveFinalRemainder);
+if (count($retirveRemainder) == 0) {
+    // remainder department 0
+    print_r(count($retirveRemainder));
+} else {
+    // remainder same department 1
+    print_r(count($retriveFinalRemainder));
 
-// Sort combined array in descending order by 'totalStudent'
-usort($combinedData, function ($a, $b) {
-    return $b['totalStudent'] <=> $a['totalStudent'];
-});
+    $combinedData = array_merge($retirveRemainder, $retriveFinalRemainder);
+    // Sort combined array in descending order by 'totalStudent'
+    usort($combinedData, function ($a, $b) {
+        return $b['totalStudent'] <=> $a['totalStudent'];
+    });
 
-// echo "<pre>";
-// print_r($combinedData);
-$FinalRemainderVar = buildFinalArrayX($combinedData[0],$combinedData[1]);
-usort($FinalRemainderVar, function ($a, $b) {
-    return $b['totalStudent'] <=> $a['totalStudent'];
-});
-// print_r();
+    if (
+        $combinedData[0]['department'] == $combinedData[1]['department'] &&
+        $combinedData[0]['semester'] == $combinedData[1]['semester'] &&
+        $combinedData[0]['course'] == $combinedData[1]['course']
+    ) {
+        echo 'Same department, semester, and course.';
+    } else {
+        echo 'Different department, semester, or course.';
+        // print_r($FinalRemainderVar);
+        $FinalRemainderVar = buildFinalArrayX($combinedData[0], $combinedData[1]);
+        
+        $stdToMinX = min(count($combinedData[0]["students"]), count($combinedData[1]["students"]));
+        $stdToVarX = array_slice($combinedData[0]["students"], $stdToMinX);
 
-$mergedGroupsX = mergeSameSemesterEqualStudentDepartments($FinalRemainderVar);
+        print_r($stdToVarX );
+
+        usort($FinalRemainderVar, function ($a, $b) {
+            return $b['totalStudent'] <=> $a['totalStudent'];
+        });
+        // print_r($FinalRemainderVar);
+        $mergedGroupsX = mergeSameSemesterEqualStudentDepartments($FinalRemainderVar);
+        ?>
+        <div class="container p-3">
+        <?php
+        // echo $room_no;
+        $departmentColors = [
+            1 => 'lightblue',
+            2 => 'lightgreen',
+            3 => 'lightcoral',
+            5 => 'lightpink',
+            // Add more department => color as needed
+        ];
+        $remainderRoom = $dataArray['room'][$room_no];
+        // Get the specific room
+        $studentsInRoom = $mergedGroupsX[0];  // Full merged group (with 'students' key)
+
+        $students = $studentsInRoom['students'];  // Only students array
+
+        $numRows = ceil($remainderRoom['seat_capacity'] / $remainderRoom['bench_order']);
+
+        echo '<div class="col-12">';
+        echo '<h5>Room No: ' . htmlspecialchars($remainderRoom['room_no']) . ' - ' . htmlspecialchars($room['room_name']) . '</h5>';
+        echo '<table class="table table-bordered">';
+        echo '<thead><tr>';
+
+        for ($i = 1; $i <= $remainderRoom['bench_order']; $i++) {
+            echo '<th>Bench ' . $i . '</th>';
+        }
+
+        echo '</tr></thead><tbody>';
+
+        $studentIndex = 0;
+
+        for ($r = 0; $r < $numRows; $r++) {
+            echo '<tr>';
+            $isLeftToRight = ($r % 2 == 0);
+            $rowSeats = [];
+
+            for ($b = 0; $b < $remainderRoom['bench_order']; $b++) {
+                $seatNumber = $r * $remainderRoom['bench_order'] + $b + 1;
+
+                if ($seatNumber <= $remainderRoom['seat_capacity']) {
+                    $studentsForSeat = [];
+
+                    for ($i = 0; $i < 2; $i++) {
+                        if ($studentIndex < count($students)) {
+                            $studentsForSeat[] = $students[$studentIndex];
+                            $studentIndex++;
+                        }
+                    }
+
+                    if (!$isLeftToRight) {
+                        $studentsForSeat = array_reverse($studentsForSeat);
+                    }
+
+                    $rowSeats[] = [
+                        'seatNumber' => $seatNumber,
+                        'students' => $studentsForSeat
+                    ];
+                } else {
+                    $rowSeats[] = null;
+                }
+            }
+
+            foreach ($rowSeats as $seat) {
+                echo '<td>';
+                if ($seat !== null) {
+                    echo 'Seat ' . $seat['seatNumber'] . ':<br>';
+                    foreach ($seat['students'] as $index => $student) {
+                        $position = ($index == 0) ? 'L' : 'R';
+                        $deptColor = $departmentColors[$student['department']] ?? 'lightgray';
+
+                        echo '<span style="background-color: ' . $deptColor . ';
+                            margin: 2px; padding: 2px; display: inline-block;">';
+                        echo $position . ': ' . htmlspecialchars($student['roll_no']) . '</span>';
+                    }
+                }
+                echo '</td>';
+            }
+
+            echo '</tr>';
+        }
+
+        echo '</tbody></table></div>';
+
+        ?>        
+        </div>
+        <?php
+    }
+}
+
+// print_r($FinalRemainderVar);
+// $FinalRemainderVar = buildFinalArrayX($combinedData[0], $combinedData[1]);
+// usort($FinalRemainderVar, function ($a, $b) {
+//     return $b['totalStudent'] <=> $a['totalStudent'];
+// });
+// print_r($FinalRemainderVar);
+// $mergedGroupsX = mergeSameSemesterEqualStudentDepartments($FinalRemainderVar);
 
 // Print merged groups
 // echo "<pre>";
@@ -308,7 +421,6 @@ $mergedGroupsX = mergeSameSemesterEqualStudentDepartments($FinalRemainderVar);
 // print_r($mergedGroupsXIndexed);
 // echo "</pre>";
 
-
 // print_r($retirveRemainder);
 // print_r($retriveFinalRemainder);
 // print_r($dataArray);
@@ -316,95 +428,12 @@ $mergedGroupsX = mergeSameSemesterEqualStudentDepartments($FinalRemainderVar);
 // print_r($remainderStudentData);
 // print_r($rooms);
 ?>
-<div class="container p-3">
-<?php 
-$departmentColors = [
-    1 => 'lightblue',
-    2 => 'lightgreen',
-    3 => 'lightcoral',
-    5 => 'lightpink',
-    // Add more department => color as needed
-];
 
-$room = $dataArray['room'][$room_no];           // Get the specific room
-$studentsInRoom = $mergedGroupsX[0];            // Full merged group (with 'students' key)
-$students = $studentsInRoom['students'];        // Only students array
-
-$numRows = ceil($room['seat_capacity'] / $room['bench_order']);
-
-echo '<div class="col-12">';
-echo '<h5>Room No: ' . htmlspecialchars($room['room_no']) . ' - ' . htmlspecialchars($room['room_name']) . '</h5>';
-echo '<table class="table table-bordered">';
-echo '<thead><tr>';
-
-for ($i = 1; $i <= $room['bench_order']; $i++) {
-    echo '<th>Bench ' . $i . '</th>';
-}
-
-echo '</tr></thead><tbody>';
-
-$studentIndex = 0;
-
-for ($r = 0; $r < $numRows; $r++) {
-    echo '<tr>';
-    $isLeftToRight = ($r % 2 == 0);
-    $rowSeats = [];
-
-    for ($b = 0; $b < $room['bench_order']; $b++) {
-        $seatNumber = $r * $room['bench_order'] + $b + 1;
-
-        if ($seatNumber <= $room['seat_capacity']) {
-            $studentsForSeat = [];
-
-            for ($i = 0; $i < 2; $i++) {
-                if ($studentIndex < count($students)) {
-                    $studentsForSeat[] = $students[$studentIndex];
-                    $studentIndex++;
-                }
-            }
-
-            if (!$isLeftToRight) {
-                $studentsForSeat = array_reverse($studentsForSeat);
-            }
-
-            $rowSeats[] = [
-                'seatNumber' => $seatNumber,
-                'students' => $studentsForSeat
-            ];
-        } else {
-            $rowSeats[] = null;
-        }
-    }
-
-    foreach ($rowSeats as $seat) {
-        echo '<td>';
-        if ($seat !== null) {
-            echo 'Seat ' . $seat['seatNumber'] . ':<br>';
-            foreach ($seat['students'] as $index => $student) {
-                $position = ($index == 0) ? 'L' : 'R';
-                $deptColor = $departmentColors[$student['department']] ?? 'lightgray';
-
-                echo '<span style="background-color: ' . $deptColor . ';
-                    margin: 2px; padding: 2px; display: inline-block;">';
-                echo $position . ': ' . htmlspecialchars($student['roll_no']) . '</span>';
-            }
-        }
-        echo '</td>';
-    }
-
-    echo '</tr>';
-}
-
-echo '</tbody></table></div>';
-
-
-?>
-
-</div>
 
 
 <?php
-function mergeSameSemesterEqualStudentDepartments(array $allStudentData): array {
+function mergeSameSemesterEqualStudentDepartments(array $allStudentData): array
+{
     $mergedGroups = [];
     $processedDepartments = [];
 
