@@ -312,7 +312,30 @@ try {
         $getTotalDepartmentx = $departmentsStore->findAll();
 
 
-        // Ensure there are at least two departments
+        // Ensure there             $studentSeatCounts = [];        
+            for ($i = 0; $i < count($fetchingSimilarity); $i += 2) {
+                if (isset($fetchingSimilarity[$i + 1])) {
+                    $studentSeatCounts[] = $fetchingSimilarity[$i + 1]['totalStudent'] * 2;
+                    $remainderValue = $fetchingSimilarity[$i + 1]['totalStudent'] - $fetchingSimilarity[$i]['totalStudent'];
+                } else {
+                    $studentSeatCounts[] = abs($remainderValue*2);
+                }
+            }
+        
+            // $jsonData = json_encode($seatAllocate, JSON_PRETTY_PRINT);
+            // $seatAllocations = [];
+            // foreach ($studentSeatCounts as $totalStudent) {
+            //     $targetCapacity = ceil($totalStudent / $benchSeat);
+            //     $seatAllocations[] = findNearestRoomS($rooms, $targetCapacity);
+            // }
+            // if ($jsonData === false) {
+            //     die("JSON encoding error: " . json_last_error_msg()); // JSON encoding error
+            // }
+            // if (file_put_contents($filePath, $jsonData) === false) {
+            //     die("Error: Unable to write to file $filePath. Check file permissions.");
+            // } else {
+            //     echo "Data successfully saved to rooms.json";
+            // }are at least two departments
         if (count($getTotalDepartmentx) < 2) {
             break;
         }
@@ -327,6 +350,7 @@ try {
         $secondDump = $getTotalDepartmentx[1];
 
         // Determine removable students
+      
         $stdToDump = min(count($secondDump["students"]), count($firstDump["students"]));
         $stdToVar = array_slice($firstDump["students"], $stdToDump);
 
@@ -341,7 +365,7 @@ try {
             ]
         ];
         
-        // echo '<pre>';
+        echo '<pre>';
 
         if (isset($firstDump["_id"]) && isset($secondDump["_id"])) {
 

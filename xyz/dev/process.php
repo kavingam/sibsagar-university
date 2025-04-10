@@ -5,6 +5,7 @@ $seatAllocationPath = __DIR__ . '/../seat_allocation/seat_allocation.php';
 $sleekdbPath = __DIR__ . '/sleekdb.php';
 $sleekdbxPath = __DIR__ . '/sleekdbx.php';
 $sleekdbyPath = __DIR__ . '/sleekdby.php';
+$sleekdbxxPath = __DIR__ . '/sleekdbxx.php';
 
 $filePath = __DIR__ . '/rooms.json';
 require __DIR__ . '/debugs.php';
@@ -80,6 +81,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     for ($i = 0; $i < count($fetchingSimilarity); $i += 2) {
         // If we have a pair
         if (isset($fetchingSimilarity[$i + 1])) {
+            // if (count($fetchingSimilarity[$i]) == count($fetchingSimilarity[$i + 1])) {
+            //     $seatAllocationListStore->bulkInsert($finalArray);
+            // }
             $finalArray = buildFinalArrayX($fetchingSimilarity[$i], $fetchingSimilarity[$i + 1]);
             $seatAllocationListStore->bulkInsert($finalArray);
         } else {
@@ -201,8 +205,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $firstDump = $retriveTotalDept[0];
             $secondDump = $retriveTotalDept[1];
 
-            $stdToDump = min(count($secondDump['students']), count($firstDump['students']));
-            $stdToVar = array_slice($firstDump['students'], $stdToDump);
+
+            // if (count($firstDump) == count($secondDump)) {
+                // print_r(count($firstDump));
+                // $stdToVar =array_merge($firstDump['students'], $secondDump['students']);
+                // continue;
+            // } else {
+                $stdToDump = min(count($secondDump['students']), count($firstDump['students']));
+                $stdToVar = array_slice($firstDump['students'], $stdToDump);
+
+            // }
 
             $varRemainder = [
                 [
@@ -213,6 +225,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'students' => $stdToVar
                 ]
             ];
+
             if (isset($firstDump['_id']) && isset($secondDump['_id'])) {
                 $deleted1 = $departmentsStore->deleteById($firstDump['_id']);
                 $deleted2 = $departmentsStore->deleteById($secondDump['_id']);

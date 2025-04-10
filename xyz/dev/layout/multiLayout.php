@@ -277,83 +277,87 @@ $retriveFinalRemainder = $departmentsStore->findAll();
 if (count($retirveRemainder) == 0) {
     // remainder department 0
     print_r(count($retirveRemainder));
-    $usedRoomNos = array_column($dataArray["room"], 'room_no');
-    // Step 2: Filter out any matching room from $rooms
-    $filteredRooms = array_filter($rooms, function($room) use ($usedRoomNos) {
-        return !in_array($room['room_no'], $usedRoomNos);
-    });
+    if ($retriveFinalRemainder[0]['totalStudent'] != 0) {
+        $usedRoomNos = array_column($dataArray["room"], 'room_no');
+        // Step 2: Filter out any matching room from $rooms
+        $filteredRooms = array_filter($rooms, function($room) use ($usedRoomNos) {
+            return !in_array($room['room_no'], $usedRoomNos);
+        });
 
-    // Step 3: Reindex the array (optional)
-    $filteredRooms = array_values($filteredRooms);
+        // Step 3: Reindex the array (optional)
+        $filteredRooms = array_values($filteredRooms);
 
-    $findKroom = findNearestRoomS($filteredRooms,$retriveFinalRemainder[0]['totalStudent']);
-    // print_r($retriveFinalRemainder);
-    // print_r($findKroom);
+        $findKroom = findNearestRoomS($filteredRooms,$retriveFinalRemainder[0]['totalStudent']);
+        // print_r($retriveFinalRemainder);
+        // print_r($findKroom);
 
-    $departmentColors = [
-        1 => 'lightblue',
-        2 => 'lightgreen',
-        3 => 'lightcoral',
-        5 => 'lightpink',
-        // Add more if needed
-    ];
-    
-    $remainderRoom = $findKroom['room'][0]; // assuming it's a single-room array
-    $students = $retriveFinalRemainder[0]['students']; // using first group of students
-    
-    $totalSeats = $remainderRoom['seat_capacity']; // total seat count
-    $benchesPerRow = $remainderRoom['bench_order'];
-    $numRows = ceil($totalSeats / $benchesPerRow);
-    
-    echo '<div class="container">';
-    echo '<div class="row">';
-    echo '<div class="col-12">';
-    echo '<h5>Room No: ' . htmlspecialchars($remainderRoom['room_no']) . ' - ' . htmlspecialchars($remainderRoom['room_name']) . '</h5>';
-    echo '<table class="table table-bordered">';
-    echo '<thead><tr>';
-    
-    for ($i = 1; $i <= $benchesPerRow; $i++) {
-        echo '<th>Bench ' . $i . '</th>';
-    }
-    
-    echo '</tr></thead><tbody>';
-    
-    $studentIndex = 0;
-    $seatNumber = 1;
-    
-    for ($row = 0; $row < $numRows; $row++) {
-        echo '<tr>';
-        $isLeftToRight = ($row % 2 == 0);
-    
-        for ($bench = 0; $bench < $benchesPerRow; $bench++) {
-            $benchIndex = $isLeftToRight ? $bench : ($benchesPerRow - 1 - $bench);
-    
-            echo '<td>';
-    
-            if ($studentIndex < count($students)) {
-                $student = $students[$studentIndex];
-                $position = ($benchIndex % 2 == 0) ? 'L' : 'R'; // Zigzag logic
-                $deptColor = $departmentColors[$student['department']] ?? 'lightgray';
-    
-                echo '<span style="background-color:' . $deptColor . ';
-                    display:inline-block; padding:4px; margin:2px;">';
-                echo $position . ' (Seat ' . $seatNumber . '): ' . htmlspecialchars($student['roll_no']);
-                echo '</span>';
-    
-                $studentIndex++;
-                $seatNumber++;
-            } else {
-                echo '&nbsp;';
-            }
-    
-            echo '</td>';
+        $departmentColors = [
+            1 => 'lightblue',
+            2 => 'lightgreen',
+            3 => 'lightcoral',
+            5 => 'lightpink',
+            // Add more if needed
+        ];
+        
+        $remainderRoom = $findKroom['room'][0]; // assuming it's a single-room array
+        $students = $retriveFinalRemainder[0]['students']; // using first group of students
+        
+        $totalSeats = $remainderRoom['seat_capacity']; // total seat count
+        $benchesPerRow = $remainderRoom['bench_order'];
+        $numRows = ceil($totalSeats / $benchesPerRow);
+        
+        echo '<div class="container">';
+        echo '<div class="row">';
+        echo '<div class="col-12">';
+        echo '<h5>Room No: ' . htmlspecialchars($remainderRoom['room_no']) . ' - ' . htmlspecialchars($remainderRoom['room_name']) . '</h5>';
+        echo '<table class="table table-bordered">';
+        echo '<thead><tr>';
+        
+        for ($i = 1; $i <= $benchesPerRow; $i++) {
+            echo '<th>Bench ' . $i . '</th>';
         }
-    
-        echo '</tr>';
+        
+        echo '</tr></thead><tbody>';
+        
+        $studentIndex = 0;
+        $seatNumber = 1;
+        
+        for ($row = 0; $row < $numRows; $row++) {
+            echo '<tr>';
+            $isLeftToRight = ($row % 2 == 0);
+        
+            for ($bench = 0; $bench < $benchesPerRow; $bench++) {
+                $benchIndex = $isLeftToRight ? $bench : ($benchesPerRow - 1 - $bench);
+        
+                echo '<td>';
+        
+                if ($studentIndex < count($students)) {
+                    $student = $students[$studentIndex];
+                    $position = ($benchIndex % 2 == 0) ? 'L' : 'R'; // Zigzag logic
+                    $deptColor = $departmentColors[$student['department']] ?? 'lightgray';
+        
+                    echo '<span style="background-color:' . $deptColor . ';
+                        display:inline-block; padding:4px; margin:2px;">';
+                    echo $position . ' (Seat ' . $seatNumber . '): ' . htmlspecialchars($student['roll_no']);
+                    echo '</span>';
+        
+                    $studentIndex++;
+                    $seatNumber++;
+                } else {
+                    echo '&nbsp;';
+                }
+        
+                echo '</td>';
+            }
+        
+            echo '</tr>';
+        }
+        
+        echo '</tbody></table></div></div></div>';
     }
-    
-    echo '</tbody></table></div></div></div>';
-    
+    else {
+
+    }
 
 } else {
     // remainder same department 1

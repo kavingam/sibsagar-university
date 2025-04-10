@@ -24,4 +24,9 @@ if (!file_exists($sleekdbyPath)) {
 }
 require_once $sleekdbyPath;
 
+if (!file_exists($sleekdbxxPath)) {
+    die("Error: $sleekdbxxPath not found at: $sleekdbxxPath");
+}
+require_once $sleekdbxxPath;
+
 ?>
