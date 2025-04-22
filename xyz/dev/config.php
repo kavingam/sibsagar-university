@@ -1,7 +1,7 @@
 <?php
 
 return [
-    "dataDir" => __DIR__ . "/database", // Database storage directory
+    "dataDir" => __DIR__ . "/json_database", // Database storage directory
     "storeConfig" => [
         "auto_cache" => false,
         "cache_lifetime" => null,

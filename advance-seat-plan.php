@@ -257,7 +257,8 @@ document.getElementById('generate').addEventListener('click', async function () 
 
     try {
         // const response = await fetch('xyz/dev/nx_var.php', {
-        const response = await fetch('xyz/dev/process.php', {
+        // const response = await fetch('xyz/dev/process.php', {
+        const response = await fetch('xyz/dev/main_activity.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ startTime, benchSeat, tableData }),

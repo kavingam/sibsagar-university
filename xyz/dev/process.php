@@ -2,18 +2,19 @@
 
 $bashmodelPath = __DIR__ . '/../bashmodel.php';
 $seatAllocationPath = __DIR__ . '/../seat_allocation/seat_allocation.php';
+
 $sleekdbPath = __DIR__ . '/sleekdb.php';
 $sleekdbxPath = __DIR__ . '/sleekdbx.php';
 $sleekdbyPath = __DIR__ . '/sleekdby.php';
 $sleekdbxxPath = __DIR__ . '/sleekdbxx.php';
 
-$filePath = __DIR__ . '/rooms.json';
-require __DIR__ . '/debugs.php';
-
 $RemoveJsonPathxx = __DIR__ . '/database/departments/data/';
 $RemoveJsonPathxy = __DIR__ . '/database/seatAllocationList/data/';
 $RemoveJsonPathyx = __DIR__ . '/database/RemainderStudent/data/';
 $TestingJsonPathyx = __DIR__ . '/database/test_connection/data/';
+
+$filePath = __DIR__ . '/rooms.json';
+require __DIR__ . '/debugs.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);
@@ -77,15 +78,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $remainderSeatY  = new RemainderSeatAllocation();
 
     $deptData = null; // to hold the unpaired remainder if exists
-    
+    // echo '<pre>';
     for ($i = 0; $i < count($fetchingSimilarity); $i += 2) {
         // If we have a pair
         if (isset($fetchingSimilarity[$i + 1])) {
-            // if (count($fetchingSimilarity[$i]) == count($fetchingSimilarity[$i + 1])) {
-            //     $seatAllocationListStore->bulkInsert($finalArray);
-            // }
+            
+            if (count($fetchingSimilarity[$i]) == count($fetchingSimilarity[$i + 1])) {
+                $seatAllocationListStore->bulkInsert($finalArray);
+            }
             $finalArray = buildFinalArrayX($fetchingSimilarity[$i], $fetchingSimilarity[$i + 1]);
             $seatAllocationListStore->bulkInsert($finalArray);
+
         } else {
             // Store the single unmatched department data
             $deptData = $fetchingSimilarity[$i];
