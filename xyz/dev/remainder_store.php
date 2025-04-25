@@ -29,6 +29,26 @@ class RemainderJSON {
             // echo "⚠️ Failure seat allocation {$dept['department']} already exists. Skipping...<br>";
         }
     }
+
+    public function insertDept($dept) {
+        // Directly insert the department without checking for existence
+        $this->store->insert($dept);
+        // echo "✅ Department '{$dept['department']}' (Semester: {$dept['semester']}, Course: {$dept['course']}) inserted successfully!<br>";
+    }
+    // Rename the bulkInsert function to insertDepartmentsIfValid
+    public function insertDepartmentsIfValid($deptList) {
+        foreach ($deptList as $dept) {
+            // Check if totalStudent is 0, if so, skip the insert for this department
+            if ($dept['totalStudent'] === 0) {
+                // echo "⚠️ Skipping department {$dept['department']} because totalStudent is 0.<br>";
+                continue; // Skip this department and move to the next one
+            }
+            // Insert the department if totalStudent is not 0
+            $this->insertDept($dept);
+        }
+    }
+        
+
     public function findTotal() {
         $totalCount = $this->store->count();
         // echo "Total number of departments: {$totalCount}<br>";
@@ -63,13 +83,40 @@ class RemainderJSON {
             // echo "✅ No data to delete. Store is empty.<br>";
         }
     }
+    // Function to delete based on array data (e.g., $remainderList[1])
+    public function deleteByArray($remainderData) {
+        // Check if the necessary fields exist in the provided array
+        if (isset($remainderData['department'], $remainderData['semester'], $remainderData['course'])) {
+            // Get the department, semester, and course from the array
+            $department = $remainderData['department'];
+            $semester = $remainderData['semester'];
+            $course = $remainderData['course'];
+
+            // Use the deleteBy method to delete records that match the criteria
+            $deletedCount = $this->store->deleteBy([
+                ["department", "=", $department],
+                ["semester", "=", $semester],
+                ["course", "=", $course]
+            ]);
+
+            // Check if any records were deleted
+            if ($deletedCount > 0) {
+                echo "✅ Successfully deleted {$deletedCount} records for department {$department}, semester {$semester}, course {$course}.<br>";
+            } else {
+                echo "⚠️ No records found for department {$department}, semester {$semester}, course {$course}.<br>";
+            }
+        } else {
+            // echo "⚠️ Invalid data. Please provide a valid array with department, semester, and course.<br>";
+        }
+    }
 
 }
 
 class NewRemainderJSON extends RemainderJSON  {
     public function bulkInsert($deptList) {
         foreach ($deptList as $dept) {
-            $this->insertDepartment($dept);
+            // $this->insertDepartment($dept);
+            $this->insertDept($dept);
         }
     }
 }

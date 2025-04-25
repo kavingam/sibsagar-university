@@ -15,7 +15,7 @@ function deleteJsonFiles($directory)
         if (unlink($file)) {
             // echo "Deleted: $file<br/>";
         } else {
-            // echo "Failed to delete: $file<br/>";
+            echo "Failed to delete: $file<br/>";
         }
     }
 }
@@ -38,8 +38,8 @@ $combinationPath = __DIR__ . '/combination_store.php';
 
 
 
-$remove_cache_x = __DIR__ . '/json_database/combination_json/data';
-$remove_cache_y = __DIR__ . '/json_database/remainder_json/data';
+$remove_cache_x = __DIR__ . '/json_database/combination_json/data/';
+$remove_cache_y = __DIR__ . '/json_database/remainder_json/data/';
 
 if (file_exists('debugs_logs.php')) {
     include_once 'debugs_logs.php';
@@ -116,39 +116,80 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   
 
-    if (isEven($totalDept)) {
-        echo '<pre>';
-        // $studentSeatCounts = computeSeatCounts($fetchStudents);
-        // print_r($studentSeatCounts);
-        print_r(pairSubtractRemainder($fetchStudents));
-        // print_r(getSimilarPairs($fetchStudents));
+    // if (isEven($totalDept)) {
+        // echo '<pre>';
+        // // $studentSeatCounts = computeSeatCounts($fetchStudents);
+        // // print_r($studentSeatCounts);
+        // // print_r(pairSubtractRemainder($fetchStudents)['pairs']);
+        // // print_r(getSimilarPairs($fetchStudents));
         // $pairSubtractRemainder = pairSubtractRemainder($fetchStudents)
-        for ($i = 0; $i < count($fetchStudents); $i += 2) {
-            if (isset($fetchStudents[$i + 1])) {
-                $firstDept = $fetchStudents[$i];
-                $secondDept = $fetchStudents[$i + 1];
-                // Build the final array for the first department, overriding totalStudent with secondDept's totalStudent
-                $finalArrayX[] = buildFinalArrayX($firstDept, $secondDept);
-            } else {
-                // Handle the last department if odd number of departments
-                $finalArrayY[] = buildFinalArrayX($fetchStudents[$i], []);
-            } 
+        // for ($i = 0; $i < count($fetchStudents); $i += 2) {
+        //     if (isset($fetchStudents[$i + 1])) {
+        //         $firstDept = $fetchStudents[$i];
+        //         $secondDept = $fetchStudents[$i + 1];
+        //         $finalArrayX[] = buildFinalArrayX($firstDept, $secondDept);
+        //     }
+        // }
+
+        // $combinationStore->bulkInsert($finalArrayX);
+        // $remainderStore->insertDepartmentsIfValid(pairSubtractRemainder($fetchStudents)['pairs']);
+        // $remainderStore->bulkInsert(pairSubtractRemainder($fetchStudents)['remainder']);
+        // echo '</pre>';
+
+    // } else {
+    //     // array_pop($fetchStudents);
+    //     // $allButLast = array_slice($fetchStudents, 0, -1);
+    //     // $lastDept = end($fetchStudents);
+    //     // print_r($lastDept);
+    //     // print_r($fetchStudents);
+    //     // print_r($allButLast);
+    //     echo '<pre>';
+    //         // print_r(pairSubtractRemainder($fetchStudents));
+
+    //     echo '</pre>';
+    // }
+
+    $finalArrayX = []; // initialize before use
+
+    for ($i = 0; $i < count($fetchStudents); $i += 2) {
+        if (isset($fetchStudents[$i + 1])) {
+            $firstDept = $fetchStudents[$i];
+            $secondDept = $fetchStudents[$i + 1];
+            $finalArrayX[] = buildFinalArrayX($firstDept, $secondDept);
         }
-
-        print_r($finalArrayX);
-        echo '</pre>';
-
-    } else {
-        // array_pop($fetchStudents);
-        // $allButLast = array_slice($fetchStudents, 0, -1);
-        // $lastDept = end($fetchStudents);
-        // print_r($lastDept);
-        // print_r($fetchStudents);
-        // print_r($allButLast);
-        echo '<pre>';
-        // print_r(pairSubtractRemainder($fetchStudents));
-        echo '</pre>';
     }
+    
+    $combinationStore->bulkInsert($finalArrayX);
+    $remainderStore->insertDepartmentsIfValid(pairSubtractRemainder($fetchStudents)['pairs']);
+    $remainderStore->bulkInsert(pairSubtractRemainder($fetchStudents)['remainder']);
+    
+    $remainderArrayX = [];
+    $trashArrayX = [];
+    while (true) {
+        // break the loop if remainder is 0, 1, or 2
+        if ($remainderStore->findTotal() <= 1) {
+            break; // <-- break here after printing
+        } else {
+            echo '<pre>';
+            // print_r($remainderStore->findTotal());
+            $remainderList = $remainderStore->findAll();
+    
+            usort($remainderList, function ($a, $b) {
+                return $b['totalStudent'] <=> $a['totalStudent'];
+            });
+    
+            $remainderArrayX[] = buildFinalArrayX($remainderList[0], $remainderList[1]);
+            $combinationStore->bulkInsert($remainderArrayX);
+
+            $remainderStore->deleteByArray($remainderList[0]);
+            $remainderStore->deleteByArray($remainderList[1]);
+
+            $remainderStore->insertDepartmentsIfValid(subtractRemainderOnly($remainderList[0], $remainderList[1]));
+            echo '</pre>';           
+            // break; 
+        }
+    }   
+
 }
 
 
@@ -247,6 +288,86 @@ function pairSubtractRemainder(array $items): array {
         'remainder' => $remainder,
     ];
 }
+
+function pairSubtractRemainderY(array $department1, array $department2): array {
+    $pairs     = [];
+    $remainder = [];
+    
+    // The total count of students in both departments
+    $n1 = count($department1);
+    $n2 = count($department2);
+
+    // Loop through both departments, pairing them
+    while (count($department1) > 0 && count($department2) > 0) {
+        // Take the first student from each department
+        $first  = array_shift($department1); // Get the first student from department1
+        $second = array_shift($department2); // Get the first student from department2
+
+        // Ensure both have totalStudent and students
+        if (isset($first['totalStudent'], $second['totalStudent'], $first['students']) 
+            && isset($second['students']) && is_array($first['students']) && is_array($second['students'])) {
+            
+            // Compute new total
+            $newTotal = $first['totalStudent'] - $second['totalStudent'];
+            $newTotal = max(0, $newTotal); // avoid negative total
+
+            // Truncate the students list to the new total count
+            $newStudents = array_slice($first['students'], -$newTotal);
+
+            // Build the resulting pair
+            $pairs[] = [
+                'department'   => $first['department'],
+                'semester'     => $first['semester'],
+                'course'       => $first['course'],
+                'totalStudent' => $newTotal,
+                'students'     => $newStudents,
+            ];
+        }
+    }
+
+    // Add remaining students to the remainder
+    if (count($department1) > 0) {
+        $remainder[] = array_shift($department1); // Remaining from department1
+    }
+
+    if (count($department2) > 0) {
+        $remainder[] = array_shift($department2); // Remaining from department2
+    }
+
+    return [
+        'pairs'     => $pairs,
+        'remainder' => $remainder,
+    ];
+}
+
+function subtractRemainderOnly(array $deptA, array $deptB): array {
+    // Ensure both have 'totalStudent' and 'students'
+    if (
+        !isset($deptA['totalStudent'], $deptA['students']) ||
+        !isset($deptB['totalStudent'], $deptB['students']) ||
+        !is_array($deptA['students']) ||
+        !is_array($deptB['students'])
+    ) {
+        return [];
+    }
+
+    // Calculate the new total after subtracting
+    $newTotal = $deptA['totalStudent'] - $deptB['totalStudent'];
+    $newTotal = max(0, $newTotal); // Ensure it's not negative
+
+    // Get only the remaining students from the end
+    $remainingStudents = array_slice($deptA['students'], -$newTotal);
+
+    // Return only the remainder info
+    return [[
+        'department'   => $deptA['department'],
+        'semester'     => $deptA['semester'],
+        'course'       => $deptA['course'],
+        'totalStudent' => $newTotal,
+        'students'     => $remainingStudents,
+    ]];
+}
+
 ?>
 <?php 
 // Function to get the key for each department

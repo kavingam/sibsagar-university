@@ -29,6 +29,14 @@ class CombinationJSON {
             // echo "⚠️ Failure seat allocation {$dept['department']} already exists. Skipping...<br>";
         }
     }
+
+    public function insertDept($dept) {
+        // Directly insert the department without checking for existence
+        $this->store->insert($dept);
+        // echo "✅ Department '{$dept['department']}' (Semester: {$dept['semester']}, Course: {$dept['course']}) inserted successfully!<br>";
+    }
+    
+
     public function findTotal() {
         $totalCount = $this->store->count();
         // echo "Total number of departments: {$totalCount}<br>";
@@ -69,7 +77,8 @@ class CombinationJSON {
 class NewCombinationJSON extends CombinationJSON  {
     public function bulkInsert($deptList) {
         foreach ($deptList as $dept) {
-            $this->insertDepartment($dept);
+            // $this->insertDepartment($dept);
+            $this->insertDept($dept);
         }
     }
 }
