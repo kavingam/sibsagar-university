@@ -120,9 +120,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo '<pre>';
         // $studentSeatCounts = computeSeatCounts($fetchStudents);
         // print_r($studentSeatCounts);
-        // print_r(pairSubtractRemainder($fetchStudents));
-        print_r(getSimilarPairs($fetchStudents));
+        print_r(pairSubtractRemainder($fetchStudents));
+        // print_r(getSimilarPairs($fetchStudents));
+        // $pairSubtractRemainder = pairSubtractRemainder($fetchStudents)
+        for ($i = 0; $i < count($fetchStudents); $i += 2) {
+            if (isset($fetchStudents[$i + 1])) {
+                $firstDept = $fetchStudents[$i];
+                $secondDept = $fetchStudents[$i + 1];
+                // Build the final array for the first department, overriding totalStudent with secondDept's totalStudent
+                $finalArrayX[] = buildFinalArrayX($firstDept, $secondDept);
+            } else {
+                // Handle the last department if odd number of departments
+                $finalArrayY[] = buildFinalArrayX($fetchStudents[$i], []);
+            } 
+        }
 
+        print_r($finalArrayX);
         echo '</pre>';
 
     } else {
@@ -235,27 +248,72 @@ function pairSubtractRemainder(array $items): array {
     ];
 }
 ?>
-<?php
-/**
- * Get similar pairs from the fetching similarity array.
- *
- * @param array $fetchingSimilarity The array containing similar students.
- * @return array An array of pairs of similar students.
- */
-function getSimilarPairs(array $fetchingSimilarity): array {
-    $result = [];
+<?php 
+// Function to get the key for each department
+// This is used to uniquely identify each department
+function getDeptKey($dept) {
+    return $dept["department"] . "-" . $dept["semester"] . "-" . $dept["course"];
+}
 
-    for ($i = 0; $i < count($fetchingSimilarity); $i += 2) {
-        $first = $fetchingSimilarity[$i];
-        $second = $fetchingSimilarity[$i + 1] ?? null; // Avoid error if odd count
+// Function to slice the student data from the first department based on the total students in the second department
+function getDeptStudentSlice($firstDept, $secondDept) {
+    return array_slice($firstDept["students"], 0, $secondDept["totalStudent"]);
+}
 
-        // Only add pair if both elements exist
-        if ($second !== null) {
-            $result[] = [$first, $second];
-        }
-    }
+// Function to build department information for each student
+function buildDeptArray($dept, $studentSlice = null, $overrideTotal = null) {
+    // For each student, include department, semester, and course information
+    $students = array_map(function($student) use ($dept) {
+        return [
+            "roll_no" => $student["roll_no"],
+            "name" => $student["name"],
+            "department" => $dept["department"],
+            "semester" => $dept["semester"],
+            "course" => $dept["course"]
+        ];
+    }, $studentSlice ?? $dept["students"]);
 
-    return $result;
+    return [
+        "department" => $dept["department"],
+        "semester" => $dept["semester"],
+        "course" => $dept["course"],
+        "totalStudent" => $overrideTotal ?? $dept["totalStudent"], // Override totalStudent if provided
+        "students" => $students
+    ];
+}
+
+// Create the final array with department keys and data
+function buildFinalArray($departments) {
+    $finalArray = [];
+    
+    $firstDept = $departments[0];
+    $secondDept = $departments[1];
+    
+    // Get the student slice for the first department
+    $varBiggestDeptSlice = getDeptStudentSlice($firstDept, $secondDept);
+    
+    // Build the final array for the first department, overriding totalStudent with secondDept's totalStudent
+    $finalArray[] = buildDeptArray($firstDept, $varBiggestDeptSlice, $secondDept["totalStudent"]);
+    
+    // Build the final array for the second department with its own totalStudent
+    $finalArray[] = buildDeptArray($secondDept);
+    
+    return $finalArray;
+}
+
+function buildFinalArrayX($firstDept, $secondDept) {
+    $finalArray = [];
+    
+    // Get the student slice for the first department
+    $varBiggestDeptSlice = getDeptStudentSlice($firstDept, $secondDept);
+    
+    // Build the final array for the first department, overriding totalStudent with secondDept's totalStudent
+    $finalArray[] = buildDeptArray($firstDept, $varBiggestDeptSlice, $secondDept["totalStudent"]);
+    
+    // Build the final array for the second department with its own totalStudent
+    $finalArray[] = buildDeptArray($secondDept);
+    
+    return $finalArray;
 }
 
 ?>
