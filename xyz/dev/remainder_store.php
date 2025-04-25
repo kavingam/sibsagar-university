@@ -101,9 +101,9 @@ class RemainderJSON {
 
             // Check if any records were deleted
             if ($deletedCount > 0) {
-                echo "✅ Successfully deleted {$deletedCount} records for department {$department}, semester {$semester}, course {$course}.<br>";
+                // echo "✅ Successfully deleted {$deletedCount} records for department {$department}, semester {$semester}, course {$course}.<br>";
             } else {
-                echo "⚠️ No records found for department {$department}, semester {$semester}, course {$course}.<br>";
+                // echo "⚠️ No records found for department {$department}, semester {$semester}, course {$course}.<br>";
             }
         } else {
             // echo "⚠️ Invalid data. Please provide a valid array with department, semester, and course.<br>";

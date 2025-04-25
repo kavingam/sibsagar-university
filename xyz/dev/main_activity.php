@@ -41,10 +41,10 @@ $combinationPath = __DIR__ . '/combination_store.php';
 $remove_cache_x = __DIR__ . '/json_database/combination_json/data/';
 $remove_cache_y = __DIR__ . '/json_database/remainder_json/data/';
 
-if (file_exists('debugs_logs.php')) {
-    include_once 'debugs_logs.php';
+if (file_exists('debugs/debugs_logs.php')) {
+    include_once 'debugs/debugs_logs.php';
 } else {
-    echo "Error: debugs_logs.php not found<br>";
+    echo "Error: debugs/debugs_logs.php not found<br>";
 }
 
 
