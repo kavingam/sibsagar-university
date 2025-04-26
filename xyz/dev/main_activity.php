@@ -36,7 +36,7 @@ $seatAllocationPath = __DIR__ . '/../seat_allocation/seat_allocation.php';
 $remainderPath = __DIR__ . '/remainder_store.php';
 $combinationPath = __DIR__ . '/combination_store.php';
 
-
+$draw_layoutPath = __DIR__ . '/layout/draw_layout.php';
 
 $remove_cache_x = __DIR__ . '/json_database/combination_json/data/';
 $remove_cache_y = __DIR__ . '/json_database/remainder_json/data/';
@@ -189,6 +189,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // break; 
         }
     }   
+
+    require_once $draw_layoutPath;
 
 }
 
