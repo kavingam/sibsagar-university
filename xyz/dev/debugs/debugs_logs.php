@@ -20,4 +20,9 @@ if (!file_exists($combinationPath)) {
 }
 require_once $combinationPath;
 
+if (!file_exists($allocationPath)) {
+    die("Error: seatallocation_store.php not found at: $seatAllocationStorePath");
+}
+require_once $allocationPath;
+
 ?>

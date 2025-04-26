@@ -35,11 +35,13 @@ $seatAllocationPath = __DIR__ . '/../seat_allocation/seat_allocation.php';
 
 $remainderPath = __DIR__ . '/remainder_store.php';
 $combinationPath = __DIR__ . '/combination_store.php';
+$allocationPath = __DIR__ . '/seatallocation_store.php';
 
 $draw_layoutPath = __DIR__ . '/layout/draw_layout.php';
 
 $remove_cache_x = __DIR__ . '/json_database/combination_json/data/';
 $remove_cache_y = __DIR__ . '/json_database/remainder_json/data/';
+$remove_cache_a = __DIR__ . '/json_database/seatallocation_json/data/';
 
 if (file_exists('debugs/debugs_logs.php')) {
     include_once 'debugs/debugs_logs.php';
@@ -107,9 +109,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     deleteJsonFiles($remove_cache_x);
     deleteJsonFiles($remove_cache_y);
+    deleteJsonFiles($remove_cache_a);
 
     $remainderStore = new RemainderJSON();
     $remainderStore = new NewRemainderJSON($remainderStore);
+
+    $seatAllocationStore = new SeatallocationJSON();
+    $seatAllocationStore = new NewSeatallocationJSON($seatAllocationStore);
 
     $combinationStore = new CombinationJSON();
     $combinationStore = new NewCombinationJSON($combinationStore);
@@ -189,6 +195,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // break; 
         }
     }   
+
+    $combinations_list = $combinationStore->findAll();
+    $zigzagBlocks = getZigzagMergedStudents($combinations_list);
+    
+    foreach ($zigzagBlocks as $block) {
+        $seatAllocationStore->insertDept($block); // Store one block at a time
+    }
+    
 
     require_once $draw_layoutPath;
 
@@ -368,6 +382,64 @@ function subtractRemainderOnly(array $deptA, array $deptB): array {
         'totalStudent' => $newTotal,
         'students'     => $remainingStudents,
     ]];
+}
+
+function allocateStudentsToRooms(array $rooms, int $total_students): array {
+    $assigned_rooms = [];
+
+    foreach ($rooms as $room) {
+        if ($total_students <= 0) break;
+
+        $room_capacity = $room['seat_capacity'] * 2; // 2 seats per bench
+        $students_in_room = min($room_capacity, $total_students);
+
+        $assigned_rooms[] = [
+            "room_no" => $room['room_no'],
+            "room_name" => $room['room_name'],
+            "students_assigned" => $students_in_room
+        ];
+
+        $total_students -= $students_in_room;
+    }
+
+    return $assigned_rooms;
+}
+   
+function getZigzagMergedStudents($data) {
+    $result = [];
+
+    foreach ($data as $blockIndex => $block) {
+        $departments = [];
+
+        // Skip '_id' and collect students by department
+        foreach ($block as $key => $group) {
+            if ($key === '_id') continue;
+
+            $deptId = $group['department'];
+            foreach ($group['students'] as $student) {
+                $departments[$deptId][] = $student;
+            }
+        }
+
+        // Zigzag merge
+        $zigzag = [];
+        $max = max(array_map('count', $departments));
+
+        for ($i = 0; $i < $max; $i++) {
+            foreach ($departments as $students) {
+                if (isset($students[$i])) {
+                    $zigzag[] = $students[$i];
+                }
+            }
+        }
+
+        $result[] = [
+            'block_id' => $block['_id'] ?? null,
+            'zigzag_students' => $zigzag
+        ];
+    }
+
+    return $result;
 }
 
 ?>
