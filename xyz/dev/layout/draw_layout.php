@@ -1,74 +1,9 @@
 <?php 
 echo '<pre>';
 // print_r(allocateStudentsToRooms($rooms, $totalStudent));
-// Output
-// echo "<h3>Room Allocation</h3>";
-// echo "<table border='1' cellpadding='5'><tr><th>Room No</th><th>Room Name</th><th>Students Assigned</th></tr>";
-// foreach ($assigned_rooms as $r) {
-//     echo "<tr>
-//         <td>{$r['room_no']}</td>
-//         <td>{$r['room_name']}</td>
-//         <td>{$r['students_assigned']}</td>
-//     </tr>";
-// }
-// echo "</table>";
-// print_r($combinationStore->findAll());
-// print_r($remainderStore->findAll());
-
 $combinations_list = $combinationStore->findAll();
-
-// foreach ($combinations_list as $level1) {
-    // foreach ($level1 as $record) {
-
-    //     // Ensure it's an array to avoid warning
-    //     if (is_array($record)) {
-    //         echo "<strong>Department:</strong> " . (isset($record['department']) ? $record['department'] : 'N/A') . "<br>";
-    //         echo "<strong>Semester:</strong> " . (isset($record['semester']) ? $record['semester'] : 'N/A') . "<br>";
-    //         echo "<strong>Course:</strong> " . (isset($record['course']) ? $record['course'] : 'N/A') . "<br>";
-    //         echo "<strong>Total Students:</strong> " . (isset($record['totalStudent']) ? $record['totalStudent'] : 'N/A') . "<br><br>";
-
-    //         echo "<strong>Students:</strong><br>";
-
-    //         if (isset($record['students']) && is_array($record['students'])) {
-    //             echo "<ul>";
-    //             foreach ($record['students'] as $student) {
-    //                 if (is_array($student)) {
-    //                     echo "<li>";
-    //                     echo "Roll No: " . (isset($student['roll_no']) ? $student['roll_no'] : 'N/A') . " | ";
-    //                     echo "Name: " . (isset($student['name']) ? $student['name'] : 'N/A');
-    //                     echo "</li>";
-    //                 }
-    //             }
-    //             echo "</ul>";
-    //         } else {
-    //             echo "No students found.<br>";
-    //         }
-
-    //         echo "<hr>";
-    //     }
-    // }
-// }
-
-$all_students = [];
-// Step 1: Combine all students into one array
-for ($i = 0; $i < count($combinations_list); $i++) {
-    // Access each department
-    $level1 = $combinations_list[$i];
-
-    for ($j = 0; $j < count($level1); $j++) {
-        // Access each record inside the department
-        $record = $level1[$j];
-
-        // Check if 'students' key exists and merge into the all_students array
-        if (isset($record['students'])) {
-            $all_students = array_merge($all_students, $record['students']);
-        }
-    }
-}
-
-// print_r($all_students);
-// $totalStudents = count($all_students);
-// print_r($totalStudents);
+print_r(getZigzagMergedStudents($combinations_list));
+// print_r($totalStudent);
 ?>
 <?php
 
@@ -92,5 +27,47 @@ function allocateStudentsToRooms(array $rooms, int $total_students): array {
 
     return $assigned_rooms;
 }
+
+?>
+
+<?php   
+function getZigzagMergedStudents($data) {
+    $result = [];
+
+    foreach ($data as $blockIndex => $block) {
+        $departments = [];
+
+        // Skip '_id' and collect students by department
+        foreach ($block as $key => $group) {
+            if ($key === '_id') continue;
+
+            $deptId = $group['department'];
+            foreach ($group['students'] as $student) {
+                $departments[$deptId][] = $student;
+            }
+        }
+
+        // Zigzag merge
+        $zigzag = [];
+        $max = max(array_map('count', $departments));
+
+        for ($i = 0; $i < $max; $i++) {
+            foreach ($departments as $students) {
+                if (isset($students[$i])) {
+                    $zigzag[] = $students[$i];
+                }
+            }
+        }
+
+        $result[] = [
+            'block_id' => $block['_id'] ?? null,
+            'zigzag_students' => $zigzag
+        ];
+    }
+
+    return $result;
+}
+
+
 
 ?>
