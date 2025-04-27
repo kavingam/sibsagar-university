@@ -203,6 +203,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $seatAllocationStore->insertDept($block); // Store one block at a time
     }
     
+    // $seatAllocationStore->insetDept();
+    echo '<pre>';
+    print_r($block);
+    print_r($remainderStore->findAll());
 
     require_once $draw_layoutPath;
 
@@ -396,6 +400,8 @@ function allocateStudentsToRooms(array $rooms, int $total_students): array {
         $assigned_rooms[] = [
             "room_no" => $room['room_no'],
             "room_name" => $room['room_name'],
+            "banch_order" => $room['bench_order'],
+            "room_capacity" => $room['seat_capacity'],
             "students_assigned" => $students_in_room
         ];
 
