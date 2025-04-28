@@ -24,6 +24,10 @@ echo 'view-room.php'; ?>">View Room</a>
 echo 'manage-department.php'; ?>">Manage Department</a>
                 <a href="<?php echo BASE_URL;
 echo 'advance-seat-plan.php'; ?>" aria-current="page" class="nav-link active text-light active">Advance Seat Plan</a>
+                <a href="<?php echo BASE_URL;
+echo 'top-sheet.php'; ?>" aria-current="page" class="nav-link active text-light active">Advance Top Sheet</a>
+                <a href="<?php echo BASE_URL;
+echo 'dutty-allotment.php'; ?>" aria-current="page" class="nav-link active text-light active">Dutty Allotment</a>
 
             </div>
         </div>
