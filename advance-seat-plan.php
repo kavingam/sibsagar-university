@@ -1,10 +1,42 @@
 <?php include 'includes/header.php'; ?>
 <div class="container">
     <div class="row g-0">
-        <div class="col-12 my-3">
-            <h4 class="text-center text-primary text-uppercase fw-semi-bold">Exam Seat plan</h4>
+       <div class="col-12 my-3 mb-5">
+            <h4 class="text-center text-primary text-uppercase fw-semi-bold">Advance Exam Seat plan</h4>
         </div>
-        <div class="col-3">
+        <div class="col-3 mt-4">
+
+        <div class="container">
+
+            <div class="mb-3" id="examSelectContainer">
+                <label for="examSelect" class="form-label">Select Exam</label>
+                <select class="form-select" id="examSelect" onchange="selectExam()">
+                    <option value="" disabled selected>Select an exam</option>
+                    <option value="Class Test">Class Test</option>
+                    <option value="Sessional">Sessional</option>
+                    <option value="Midterm Exam">Midterm Exam</option>
+                    <option value="Final Examination">Final Examination</option>
+                </select>
+            </div>
+
+            <div class="mb-3" id="examInputContainer" style="display: none;">
+                <label for="examInput" class="form-label">Enter Exam Name</label>
+                <input type="text" class="form-control" id="examInput" name="examInput" placeholder="Enter exam name"
+                    oninput="selectInput()" disabled>
+            </div>
+
+            <div class="mb-3">
+                <button class="btn btn-primary btn-sm" id="toggleButton" onclick="toggleSelection()">Switch to Exam
+                    Name</button>
+            </div>
+
+            <div class="time-picker-container">
+                <label for="startDate" class="form-label">Select Date</label>
+                <input type="date" class="form-control custom-date" id="startDate" name="startDate">
+            </div>
+
+        </div>
+
             <div class="time-picker-container p-3">
                 <label for="startTime" class="form-label">Select Start Time</label>
                 <input type="time" class="form-control custom-time" id="startTime" name="startTime">
@@ -12,12 +44,24 @@
 
             <div class="container p-3">
                 <label for="benchSeat">Select Bench Seat:</label>
-                <select class="form-select" aria-label="Size 3 select example" id="benchSeat">
+                <!-- <select class="form-select" aria-label="Size 3 select example" id="benchSeat">
                     <option selected>Open this select menu</option>
                     <option value="1">1</option>
                     <option value="2">2</option>
+                </select> -->
+
+                <select class="form-select" aria-label="Size 3 select example" id="benchSeat">
+                    <option selected disabled>Choose Number of Seats Per Bench</option>
+                    <option value="1">Bench with 1 Seat</option>
+                    <option value="2">Bench with 2 Seats</option>
+                    <!-- <option value="3">Bench with 3 Seats</option> -->
+                    <!-- <option value="4">Bench with 4 Seats</option> -->
                 </select>
+
+
             </div>
+
+            
             <div class="container p-3">
                 <button type="button" class="btn btn-primary btn-sm" id="generate"><i class="fas fa-chevron-circle-right"></i> Generate</button>
             </div>
@@ -228,7 +272,21 @@ function deleteRow(button) {
 document.getElementById('generate').addEventListener('click', async function () {
     const startTime = document.getElementById('startTime').value.trim();
     const benchSeat = parseInt(document.getElementById('benchSeat').value.trim(), 10);
+    const selectedExam = document.getElementById('examSelect').value.trim();
+    const enteredExamName = document.getElementById('examInput').value.trim();
+    const startDate = document.getElementById('startDate').value.trim();
+
     const rows = document.querySelectorAll("#tableBody tr");
+   
+    if (selectedExam === "" && enteredExamName === "") {
+     alert("Please select an exam or enter an exam name.");
+     return; // stop further execution
+    }
+
+    if (startDate === "") {
+        alert("Please select a date.");
+        return; // stop further execution
+    }
 
     if (!startTime || isNaN(benchSeat) || rows.length === 0) {
         alert("Please select a valid Start Time, Bench Seat (number), and add at least one row.");
@@ -258,7 +316,7 @@ document.getElementById('generate').addEventListener('click', async function () 
         const response = await fetch('xyz/dev/main_activity.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ startTime, benchSeat, tableData }),
+            body: JSON.stringify({ startTime, benchSeat, selectedExam, enteredExamName, startDate, tableData }),
         });
 
         if (!response.ok) {
@@ -402,4 +460,43 @@ function fetchCoursesAndSemesters(selectElement) {
 
 </script>
 
+<script>
+// Function to handle selection from the dropdown
+function selectExam() {
+    const examSelect = document.getElementById('examSelect');
+    console.log("Selected exam:", examSelect.value);
+}
+
+// Function to handle input field changes
+function selectInput() {
+    const examInput = document.getElementById('examInput');
+    console.log("Entered exam name:", examInput.value);
+}
+
+// Function to toggle between enabling and disabling the dropdown and input
+function toggleSelection() {
+    const examSelectContainer = document.getElementById('examSelectContainer');
+    const examInputContainer = document.getElementById('examInputContainer');
+    const toggleButton = document.getElementById('toggleButton');
+    const examSelect = document.getElementById('examSelect');
+    const examInput = document.getElementById('examInput');
+
+    // Check if dropdown is currently enabled or disabled
+    if (examSelectContainer.style.display === "none") {
+        // Enable the dropdown and disable the text input
+        examSelectContainer.style.display = "block";
+        examInputContainer.style.display = "none";
+        examSelect.disabled = false;
+        examInput.disabled = true;
+        toggleButton.textContent = "Switch to Exam Name";
+    } else {
+        // Enable the text input and disable the dropdown
+        examSelectContainer.style.display = "none";
+        examInputContainer.style.display = "block";
+        examSelect.disabled = true;
+        examInput.disabled = false;
+        toggleButton.textContent = "Switch to select exam";
+    }
+}    
+</script>
 <?php include 'includes/footer.php'; ?>

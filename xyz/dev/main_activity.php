@@ -68,8 +68,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // $examTime = htmlspecialchars($data['startTime']);
     $examTime = date("g:i A", strtotime($data['startTime'])); 
     $benchSeat = htmlspecialchars($data['benchSeat']);
-    $tableData = $data['tableData'];
+    $examName = htmlspecialchars($data['selectedExam']);
+    $examDate = htmlspecialchars($data['startDate']);
 
+    $tableData = $data['tableData'];
     usort($tableData, function ($a, $b) {
         return $b['totalStudent'] <=> $a['totalStudent'];
     });

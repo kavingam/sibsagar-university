@@ -29,9 +29,9 @@ echo '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstra
 
 echo '<div class="container text-center my-5">';
 // PHP variables for dynamic content
-$academicYear = "2025"; // Example value
-$examName = "Entrance Exam"; // Example value
-$examDate = "2025-05-15"; // Example value
+$academicYear = date('Y');
+// $examName = "Entrance Exam"; // Example value
+// $examDate = "2025-05-15"; // Example value
 // $examTime = "10:00 AM"; // Example value
 
 // Echoing the content dynamically
