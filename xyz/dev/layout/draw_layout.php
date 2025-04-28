@@ -33,22 +33,23 @@ $academicYear = date('Y');
 // $examName = "Entrance Exam"; // Example value
 // $examDate = "2025-05-15"; // Example value
 // $examTime = "10:00 AM"; // Example value
-
+// assets/Picture-1.png
 // Echoing the content dynamically
-echo '<h1 class="display-6">Sibsagar University</h1>';
-echo '<p class="lead">Student seat allotment list</p>';
-echo '<p class="lead">Exam: <strong>' . $examName . '</strong></p>';
+// echo '<h1 class="display-6">Sibsagar University</h1>';
+echo '<img src="assets/Picture-1.png" class="img-fluid" alt="Picture 1">'; 
+echo '<p class="fs-5 fw-bold mt-2">Student seat allotment list</p>';
+echo '<p class="fs-6">Exam: <strong>' . $examName . '</strong></p>';
 
 // echo '<p class="lead">Academic Year: <strong>' . $academicYear . '</strong></p>';
 // echo '<p class="lead">Date: <strong>' . $examDate . '</strong></p>';
 // echo '<p class="lead">Time: <strong>' . $examTime . '</strong></p>';
 echo '<div class="row">';
 echo '<div class="col-6 text-start">';
-echo '<p class="lead">Academic Year: <strong>' . $academicYear . '</strong></p>';
+echo '<p class="fs-6">Academic Year: <strong>' . $academicYear . '</strong></p>';
 echo '</div>';
 echo '<div class="col-6 text-end">';
-echo '<p class="lead">Date: <strong>' . $examDate . '</strong></p>';
-echo '<p class="lead">Time: <strong>' . $examTime . '</strong></p>';
+echo '<p class="fs-6">Date: <strong>' . $examDate . '</strong></p>';
+echo '<p class="fs-6">Time: <strong>' . $examTime . '</strong></p>';
 echo '</div>';
 echo '</div>';
 echo '</div>';
