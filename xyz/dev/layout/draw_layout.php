@@ -27,35 +27,32 @@ echo '</pre>';
 // Make sure to include Bootstrap CSS in your HTML head or via CDN:
 echo '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">';
 
-// $student_index = 0;
+echo '<div class="container text-center my-5">';
+// PHP variables for dynamic content
+$academicYear = "2025"; // Example value
+$examName = "Entrance Exam"; // Example value
+$examDate = "2025-05-15"; // Example value
+// $examTime = "10:00 AM"; // Example value
 
-// foreach ($assignedRooms as $room) {
-//     $cols = $room['banch_order'];
-//     $total_seats = $room['students_assigned'];
-//     $rows = ceil($total_seats / ($cols * 2));
+// Echoing the content dynamically
+echo '<h1 class="display-6">Sibsagar University</h1>';
+echo '<p class="lead">Student seat allotment list</p>';
+echo '<p class="lead">Exam: <strong>' . $examName . '</strong></p>';
 
-//     echo "<div class='container mb-5'>";
-//     echo "<h4 class='mb-3 text-primary'>Room No: <strong>{$room['room_no']}</strong> - {$room['room_name']}</h4>";
-//     echo "<div class='table-responsive'>";
-//     echo "<table class='table table-bordered text-center align-middle'>";
+// echo '<p class="lead">Academic Year: <strong>' . $academicYear . '</strong></p>';
+// echo '<p class="lead">Date: <strong>' . $examDate . '</strong></p>';
+// echo '<p class="lead">Time: <strong>' . $examTime . '</strong></p>';
+echo '<div class="row">';
+echo '<div class="col-6 text-start">';
+echo '<p class="lead">Academic Year: <strong>' . $academicYear . '</strong></p>';
+echo '</div>';
+echo '<div class="col-6 text-end">';
+echo '<p class="lead">Date: <strong>' . $examDate . '</strong></p>';
+echo '<p class="lead">Time: <strong>' . $examTime . '</strong></p>';
+echo '</div>';
+echo '</div>';
+echo '</div>';
 
-//     for ($i = 0; $i < $rows; $i++) {
-//         echo "<tr>";
-//         for ($j = 0; $j < $cols; $j++) {
-//             echo "<td style='min-width:180px;' class='text-nowrap text-center'>";
-//             // Print two student roll numbers in one cell using only one variable:
-//             echo (isset($students[$student_index]) ? $students[$student_index++]['roll_no'] : "");
-//             echo " | ";
-//             echo (isset($students[$student_index]) ? $students[$student_index++]['roll_no'] : "");
-//             echo "</td>";
-//         }
-//         echo "</tr>";
-//     }
-
-//     echo "</table>";
-//     echo "</div>";
-//     echo "</div>";
-// }
 ?>
 <?php
 $student_index = 0; // Initialize the student index
@@ -66,7 +63,7 @@ foreach ($assignedRooms as $room) {
     $rows = ceil($total_seats / ($cols * 2)); // Calculate number of rows based on the columns and 2 seats per bench
 
     echo "<div class='container mb-5'>";
-    echo "<h4 class='mb-3 text-primary'>Room No: <strong>{$room['room_no']}</strong> - {$room['room_name']}</h4>";
+    echo "<h4 class='mb-3 fs-6 fw-bold'>Room No: <strong>{$room['room_no']}</strong> - {$room['room_name']}</h4>";
     echo "<div class='table-responsive'>";
     echo "<table class='table table-bordered text-center align-middle'>";
     

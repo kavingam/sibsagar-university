@@ -65,7 +65,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    $startTime = htmlspecialchars($data['startTime']);
+    // $examTime = htmlspecialchars($data['startTime']);
+    $examTime = date("g:i A", strtotime($data['startTime'])); 
     $benchSeat = htmlspecialchars($data['benchSeat']);
     $tableData = $data['tableData'];
 
@@ -203,10 +204,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $seatAllocationStore->insertDept($block); // Store one block at a time
     }
     
-    // $seatAllocationStore->insetDept();
-    echo '<pre>';
-    print_r($block);
-    print_r($remainderStore->findAll());
+   
+
+    $groups = $remainderStore->findAll();
+    
+    foreach ($groups as $group) {
+        $block = transformGroupToBlockAuto($group);
+    
+        // Insert into database
+        $seatAllocationStore->insertDept($block);
+    }
+       
 
     require_once $draw_layoutPath;
 
@@ -447,6 +455,72 @@ function getZigzagMergedStudents($data) {
 
     return $result;
 }
+
+// function transformGroupToBlockAuto($group) {
+//     // Automatically create block_id using _id + 300
+//     $blockId = isset($group['_id']) ? (int)$group['_id'] + 300 : rand(1000, 9999);
+
+//     $output = [
+//         'block_id' => $blockId,
+//         'zigzag_students' => []
+//     ];
+
+//     if (isset($group['students']) && is_array($group['students'])) {
+//         foreach ($group['students'] as $student) {
+//             $output['zigzag_students'][] = [
+//                 'roll_no' => (string)$student['roll_no'],
+//                 'name' => (string)$student['name'],
+//                 'department' => (string)$student['department'],
+//                 'semester' => (string)$student['semester'],
+//                 'course' => (string)$student['course'],
+//             ];
+//         }
+//     }
+
+//     return $output;
+// }
+
+/**
+ * Transform a group of students into a block format.
+ *
+ * @param array $group The group of students to transform.
+ * @return array The transformed block with zigzag students.
+ */
+function transformGroupToBlockAuto($group) {
+    // Automatically create block_id using _id + 300
+    $blockId = isset($group['_id']) ? (int)$group['_id'] + 300 : rand(1000, 9999);
+
+    $output = [
+        'block_id' => $blockId,
+        'zigzag_students' => []
+    ];
+
+    // Check if the group has students
+    if (isset($group['students']) && is_array($group['students'])) {
+        foreach ($group['students'] as $student) {
+            // Add original student
+            $output['zigzag_students'][] = [
+                'roll_no' => (string)$student['roll_no'],
+                'name' => (string)$student['name'],
+                'department' => (string)$student['department'],
+                'semester' => (string)$student['semester'],
+                'course' => (string)$student['course'],
+            ];
+
+            // Add NIL student after the original student
+            $output['zigzag_students'][] = [
+                'roll_no' => 'NIL',
+                'name' => 'NIL',
+                'department' => 'NIL',
+                'semester' => 'NIL',
+                'course' => 'NIL',
+            ];
+        }
+    }
+
+    return $output;
+}
+
 
 ?>
 <?php 
