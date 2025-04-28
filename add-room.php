@@ -1,6 +1,6 @@
 <?php include 'includes/header.php'; ?>
 
-<div class="container my-4">
+<div class="container my-4 bg-light vh-100">
     <div class="row g-0 justify-content-center d-flex">
         <div class="col-lg-12 my-3">
             <h4 class="text-center text-primary text-uppercase fw-semi-bold">Add Room</h4>

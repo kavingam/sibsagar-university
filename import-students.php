@@ -10,7 +10,7 @@ try {
 }
 ?>
 
-<div class="container my-4">
+<div class="container my-4 bg-light vh-100">
     <form id="uploadForm" enctype="multipart/form-data">
         <div class="row no-gutters d-flex justify-content-center">
             <div class="col-md-12 col-12 mb-3">

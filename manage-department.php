@@ -1,5 +1,5 @@
 <?php include 'includes/header.php'; ?>
-<div class="container my-4">
+<div class="container my-4 bg-light vh-100">
     <div class="row no-gutters">
         <div class="col-md-6 col-12 mb-3">
             <h5>Add Department</h5>

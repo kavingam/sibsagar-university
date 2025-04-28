@@ -20,7 +20,7 @@ try {
 }
 ?>
 
-<div class="container my-4">
+<div class="container my-4 bg-light vh-100">
     <div class="row no-gutters fieldGroup justify-content-center d-flex">
         <div class="col-md-12 col-12 mb-3">
             <h4 class="text-center text-primary semi-bold text-uppercase">Export Student CSV File</h4>

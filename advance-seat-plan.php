@@ -1,5 +1,5 @@
 <?php include 'includes/header.php'; ?>
-<div class="container">
+<div class="container bg-light vh-100">
     <div class="row g-0">
        <div class="col-12 my-3 mb-5">
             <h4 class="text-center text-primary text-uppercase fw-semi-bold">Advance Exam Seat plan</h4>
