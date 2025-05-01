@@ -35,7 +35,7 @@
         <!-- Show Button -->
         <div class="col-md-2 col-12 mt-3 d-flex justify-content-center align-items-end">
             <div class="container p-2  w-100">
-                <button class="btn btn-primary w-100 btn-md" id="printButton">PRINT</button>
+                <button class="btn btn-primary w-100 btn-md" id="printButton"><i class="far fa-print"></i> PRINT</button>
             </div>
         </div>
     </div>
