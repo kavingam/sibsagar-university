@@ -1,17 +1,19 @@
 <?php include 'includes/header.php'; ?>
-<div class="container my-4 bg-light vh-100">
+<div class="container bg-light vh-100">
     <div class="row no-gutters">
-        <div class="col-md-6 col-12 mb-3">
-            <h5>Add Department</h5>
-            <form id="departmentForm" class="w-50">
-                <div class="mb-3">
-                    <label for="departmentName" class="form-label">Department Name</label>
-                    <input type="text" class="form-control" id="departmentName" required>
-                </div>
-                <button type="submit" class="btn btn-primary"><i class="fal fa-plus text-white fw-bold"></i> Add Department</button>
-            </form>
+        <div class="col-md-6 col-12 my-5">
+            <div class="container p-3">
+                <h5>Add Department</h5>
+                <form id="departmentForm" class="w-75">
+                    <div class="mb-3">
+                        <label for="departmentName" class="form-label">Department Name</label>
+                        <input type="text" class="form-control" id="departmentName" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fal fa-plus text-white fw-bold"></i> Add Department</button>
+                </form>
+            </div>
         </div>
-        <div class="col-md-6 col-12 mb-3">
+        <div class="col-md-6 col-12 my-5">
             <h5>Department Details</h5>
             <div class="overflow-auto table-responsive" style="max-height: 720px;">
             <table class="table table-striped table-bordered" cellspacing="0" width="100%">

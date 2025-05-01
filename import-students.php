@@ -10,10 +10,10 @@ try {
 }
 ?>
 
-<div class="container my-4 bg-light vh-100">
+<div class="container bg-light vh-100">
     <form id="uploadForm" enctype="multipart/form-data">
         <div class="row no-gutters d-flex justify-content-center">
-            <div class="col-md-12 col-12 mb-3">
+            <div class="col-md-12 col-12 my-5">
                 <h4 class="text-center text-primary semi-bold text-uppercase">Import Student CSV File</h4>
             </div>
             <div class="col-md-2 col-12 mb-3">

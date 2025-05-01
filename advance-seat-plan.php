@@ -269,23 +269,170 @@ function deleteRow(button) {
     rowCount--;
 }
 
+// document.getElementById('generate').addEventListener('click', async function () {
+
+//     const startTime = document.getElementById('startTime').value.trim();
+//     const benchSeat = parseInt(document.getElementById('benchSeat').value.trim(), 10);
+//     const selectedExam = document.getElementById('examSelect').value.trim();
+//     const enteredExamName = document.getElementById('examInput').value.trim();
+//     const startDate = document.getElementById('startDate').value.trim();
+
+//     const rows = document.querySelectorAll("#tableBody tr");
+   
+//     if (selectedExam === "" && enteredExamName === "") {
+//      alert("Please select an exam or enter an exam name.");
+//      return; // stop further execution
+//     }
+
+//     if (startDate === "") {
+//         alert("Please select a date.");
+//         return; // stop further execution
+//     }
+
+//     if (!startTime || isNaN(benchSeat) || rows.length === 0) {
+//         alert("Please select a valid Start Time, Bench Seat (number), and add at least one row.");
+//         return;
+//     }
+
+//     let tableData = [];
+//     rows.forEach(row => {
+//         let department = row.cells[1].getAttribute('data-department') || row.cells[1].textContent.trim();
+//         let course = row.cells[2].getAttribute('data-course') || row.cells[2].textContent.trim();
+//         let semester = row.cells[3].getAttribute('data-semester') || row.cells[3].textContent.trim();
+//         let totalStudent = parseInt(row.cells[4].getAttribute('data-totalStudent') || row.cells[4].textContent.trim(), 10);
+
+//         if (department && course && semester && !isNaN(totalStudent)) {
+//             tableData.push({ department, course, semester, totalStudent });
+//         }
+//     });
+
+//     if (tableData.length === 0) {
+//         alert("No valid data found in the table.");
+//         return;
+//     }
+
+//     try {
+//         // const response = await fetch('xyz/dev/nx_var.php', {
+//         // const response = await fetch('xyz/dev/process.php', {
+//         const response = await fetch('xyz/dev/main_activity.php', {
+//             method: 'POST',
+//             headers: { 'Content-Type': 'application/json' },
+//             body: JSON.stringify({ startTime, benchSeat, selectedExam, enteredExamName, startDate, tableData }),
+//         });
+
+//         if (!response.ok) {
+//             throw new Error(`Server error: ${response.statusText}`);
+//         }
+
+//         const responseData = await response.text();
+//         document.getElementById('modalBodyContent').innerHTML = responseData;
+//         new bootstrap.Modal(document.getElementById('generatedDataModal')).show();
+        
+//     } catch (error) {
+//         console.error("Fetch Error:", error);
+//         alert("An error occurred while processing the request. Please try again.");
+//     }
+// });
+
+// document.getElementById('generate').addEventListener('click', async function () {
+//     const startTime = document.getElementById('startTime').value.trim();
+//     const benchSeat = parseInt(document.getElementById('benchSeat').value.trim(), 10);
+//     const selectedExam = document.getElementById('examSelect').value.trim();
+//     const enteredExamName = document.getElementById('examInput').value.trim();
+//     const startDate = document.getElementById('startDate').value.trim();
+//     const rows = document.querySelectorAll("#tableBody tr");
+
+//     if (selectedExam === "" && enteredExamName === "") {
+//         alert("Please select an exam or enter an exam name.");
+//         return;
+//     }
+
+//     if (startDate === "") {
+//         alert("Please select a date.");
+//         return;
+//     }
+
+//     if (!startTime || isNaN(benchSeat) || rows.length === 0) {
+//         alert("Please select a valid Start Time, Bench Seat (number), and add at least one row.");
+//         return;
+//     }
+
+//     let tableData = [];
+//     rows.forEach(row => {
+//         let department = row.cells[1].getAttribute('data-department') || row.cells[1].textContent.trim();
+//         let course = row.cells[2].getAttribute('data-course') || row.cells[2].textContent.trim();
+//         let semester = row.cells[3].getAttribute('data-semester') || row.cells[3].textContent.trim();
+//         let totalStudent = parseInt(row.cells[4].getAttribute('data-totalStudent') || row.cells[4].textContent.trim(), 10);
+
+//         if (department && course && semester && !isNaN(totalStudent)) {
+//             tableData.push({ department, course, semester, totalStudent });
+//         }
+//     });
+
+//     if (tableData.length === 0) {
+//         alert("No valid data found in the table.");
+//         return;
+//     }
+
+//     // Ask user to confirm save
+//     const userChoice = confirm("Do you want to save this data to the database? Press OK for YES, Cancel for NO.");
+
+//     const save = userChoice ? 1 : 0;
+
+//     try {
+//         const response = await fetch('xyz/dev/main_activity.php', {
+//             method: 'POST',
+//             headers: { 'Content-Type': 'application/json' },
+//             body: JSON.stringify({ 
+//                 startTime, 
+//                 benchSeat, 
+//                 selectedExam, 
+//                 enteredExamName, 
+//                 startDate, 
+//                 tableData,
+//                 save 
+//             }),
+//         });
+
+//         if (!response.ok) {
+//             throw new Error(`Server error: ${response.statusText}`);
+//         }
+
+//         const responseData = await response.text();
+
+//         // Show modal first if you still want
+//         document.getElementById('modalBodyContent').innerHTML = responseData;
+//         new bootstrap.Modal(document.getElementById('generatedDataModal')).show();
+
+//         // Then redirect after a small delay (optional)
+//         // setTimeout(() => {
+//         //     window.location.href = "your_redirect_page.php"; // Change to your desired page
+//         // }, 2000); 
+//         // 2 seconds delay after modal shows
+//         // OR immediate redirect:
+//         // window.location.href = "your_redirect_page.php";
+
+//     } catch (error) {
+//         console.error("Fetch Error:", error);
+//         alert("An error occurred while processing the request. Please try again.");
+//     }
+// });
 document.getElementById('generate').addEventListener('click', async function () {
     const startTime = document.getElementById('startTime').value.trim();
     const benchSeat = parseInt(document.getElementById('benchSeat').value.trim(), 10);
     const selectedExam = document.getElementById('examSelect').value.trim();
     const enteredExamName = document.getElementById('examInput').value.trim();
     const startDate = document.getElementById('startDate').value.trim();
-
     const rows = document.querySelectorAll("#tableBody tr");
-   
+
     if (selectedExam === "" && enteredExamName === "") {
-     alert("Please select an exam or enter an exam name.");
-     return; // stop further execution
+        alert("Please select an exam or enter an exam name.");
+        return;
     }
 
     if (startDate === "") {
         alert("Please select a date.");
-        return; // stop further execution
+        return;
     }
 
     if (!startTime || isNaN(benchSeat) || rows.length === 0) {
@@ -310,13 +457,23 @@ document.getElementById('generate').addEventListener('click', async function () 
         return;
     }
 
+    // Ask user to confirm save
+    const userChoice = confirm("Do you want to save this data to the database? Press OK for YES, Cancel for NO.");
+    const save = userChoice ? 1 : 0;
+
     try {
-        // const response = await fetch('xyz/dev/nx_var.php', {
-        // const response = await fetch('xyz/dev/process.php', {
         const response = await fetch('xyz/dev/main_activity.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ startTime, benchSeat, selectedExam, enteredExamName, startDate, tableData }),
+            body: JSON.stringify({ 
+                startTime, 
+                benchSeat, 
+                selectedExam, 
+                enteredExamName, 
+                startDate, 
+                tableData,
+                save 
+            }),
         });
 
         if (!response.ok) {
@@ -324,9 +481,29 @@ document.getElementById('generate').addEventListener('click', async function () 
         }
 
         const responseData = await response.text();
-        document.getElementById('modalBodyContent').innerHTML = responseData;
-        new bootstrap.Modal(document.getElementById('generatedDataModal')).show();
-        
+
+        if (save === 1) {
+            // If user clicked YES (save)
+            alert("Successfully saved to database!");
+
+            // Optional: Then show your modal
+            document.getElementById('modalBodyContent').innerHTML = responseData;
+            new bootstrap.Modal(document.getElementById('generatedDataModal')).show();
+
+            // After modal, redirect
+            // setTimeout(() => {
+            //     window.location.href = "your_redirect_page.php"; // Change to your page
+            // }, 2000);
+        } else {
+            // If user clicked NO (not save)
+            document.getElementById('modalBodyContent').innerHTML = responseData;
+            new bootstrap.Modal(document.getElementById('generatedDataModal')).show();
+
+            // setTimeout(() => {
+            //     window.location.href = "your_redirect_page.php"; // Change to your page
+            // }, 2000);
+        }
+
     } catch (error) {
         console.error("Fetch Error:", error);
         alert("An error occurred while processing the request. Please try again.");

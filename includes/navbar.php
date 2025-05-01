@@ -25,10 +25,9 @@ echo 'manage-department.php'; ?>">Manage Department</a>
                 <a href="<?php echo BASE_URL;
 echo 'advance-seat-plan.php'; ?>" aria-current="page" class="nav-link active text-light active">Advance Seat Plan</a>
                 <a href="<?php echo BASE_URL;
-echo 'top-sheet.php'; ?>" aria-current="page" class="nav-link active text-light active">Advance Top Sheet</a>
+echo 'attendance-sheet.php'; ?>" aria-current="page" class="nav-link active text-light active">Attendance Sheet</a>
                 <a href="<?php echo BASE_URL;
-echo 'dutty-allotment.php'; ?>" aria-current="page" class="nav-link active text-light active">Dutty Allotment</a>
-
+echo 'top-sheet.php'; ?>" aria-current="page" class="nav-link active text-light active">Advance Top Sheet</a>
             </div>
         </div>
 </nav>

@@ -1,24 +1,24 @@
 <?php include 'includes/header.php'; ?>
 
-<div class="container my-4 bg-light vh-100">
+<div class="container bg-light vh-100">
     <div class="row g-0 justify-content-center d-flex">
-        <div class="col-lg-12 my-3">
+        <div class="col-lg-12 my-5">
             <h4 class="text-center text-primary text-uppercase fw-semi-bold">Add Room</h4>
         </div>
-        <div class="col-lg-3">
-            <div class="p-3">
+        <div class="col-md-2 col-12 mb-3">
+            <div class="container p-2">
                 <label for="roomNo">Room No:</label>
                 <input type="text" id="roomNo" class="form-control" placeholder="Enter a room serial no" required>
             </div>
         </div>
-        <div class="col-lg-3">
-            <div class="p-3">
+        <div class="col-md-2 col-12 mb-3">
+            <div class="container p-2">
                 <label for="roomName">Room Name:</label>
                 <input type="text" id="roomName" class="form-control" placeholder="Enter room name" required>
             </div>
         </div>
-        <div class="col-lg-3">
-            <div class="p-3">
+        <div class="col-md-2 col-12 mb-3">
+            <div class="container p-2">
                 <label for="bench_order">Bench Order:</label>
                 <select id="bench_order" class="form-select">
                     <option value="1">1 X 1 COLUMN</option>
@@ -32,8 +32,8 @@
                 </select>
             </div>
         </div>
-        <div class="col-lg-3">
-            <div class="p-3">
+        <div class="col-md-2 col-12 mb-3">
+            <div class="container p-2">
                 <label for="seatCapacity">Total Bench:</label>
                 <input type="number" id="seatCapacity" class="form-control" required min="1">
             </div>

@@ -65,11 +65,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // $examTime = htmlspecialchars($data['startTime']);
+    $examTime24 = htmlspecialchars($data['startTime']);
     $examTime = date("g:i A", strtotime($data['startTime'])); 
     $benchSeat = htmlspecialchars($data['benchSeat']);
     $examName = htmlspecialchars($data['selectedExam']);
     $examDate = htmlspecialchars($data['startDate']);
+    $saveData = htmlspecialchars($data['save']);
+
+    // echo $saveData;
 
     $tableData = $data['tableData'];
     usort($tableData, function ($a, $b) {
@@ -99,16 +102,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $totalStudent = $stdObj->getTotalStudents($tableData);
     $totalDept = count($tableData);
 
+    $deptObj = new Department();
+    $allDept = $deptObj->getAllDepartments();
 
+
+    // print_r($allDept);
     $roomObj = new Room();
     $rooms = $roomObj->getAllRooms();
 
-    echo '<pre>';
+    $attendance = new AttendanceSheet();
+    $dateTimes = $attendance->getAllAttendanceDateTime();
+
+    $attendance->checkExamTimeConflict($examDate, $examTime);
+
+    // foreach ($dateTimes as $dt) {
+    //     echo '<pre>';
+    //     echo "Date: " . $dt['date'] . " | Time: " . $dt['time'] . "<br>";
+    //     echo '</pre>';
+    // }
+    foreach ($dateTimes as $dt) {
+        $session = getSessionLabel($dt['time']);
+        
+        echo '<pre>';
+        echo "Date: " . $dt['date'] . " | Time: " . $dt['time'] . " | Session: " . $session . "<br>";
+        echo '</pre>';
+    }
+    
+
     // print_r($fetchStudents);
     // print_r($rooms);
     // echo $totalStudent;
     // echo $totalDept;
-    echo '</pre>';
 
     deleteJsonFiles($remove_cache_x);
     deleteJsonFiles($remove_cache_y);
@@ -523,6 +547,26 @@ function transformGroupToBlockAuto($group) {
     return $output;
 }
 
+function getDepartmentNameById($departments, $id) {
+    foreach ($departments as $dept) {
+        if ($dept['department_id'] == $id) {
+            return $dept['department_name'];
+        }
+    }
+    return null; // or return "Unknown Department";
+}
+
+function getSessionLabel($time) {
+    $hour = date('H', strtotime($time)); // Convert to 24-hour format
+
+    if ($hour < 12) {
+        return 'Morning';
+    } elseif ($hour >= 12 && $hour < 17) {
+        return 'Afternoon';
+    } else {
+        return 'Evening';
+    }
+}
 
 ?>
 <?php 

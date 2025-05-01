@@ -312,6 +312,166 @@ class Department extends BaseModel {
     }
 }
 
+class AttendanceSheet extends BaseModel {
+    public function insertAttendance(
+        $date, $time, $roll_no, $name, $department, 
+        $semester, $course, $room_no, $room_name, 
+        $bench_order, $student_status
+    ) {
+        $sql = "INSERT INTO attendance_sheet 
+            (date, time, roll_no, name, department, semester, course, room_no, room_name, bench_order, student_status)
+            VALUES 
+            (:date, :time, :roll_no, :name, :department, :semester, :course, :room_no, :room_name, :bench_order, :student_status)";
+        
+        $stmt = $this->conn->prepare($sql);
+
+        return $stmt->execute([
+            ':date' => $date,
+            ':time' => $time,
+            ':roll_no' => $roll_no,
+            ':name' => $name,
+            ':department' => $department,
+            ':semester' => $semester,
+            ':course' => $course,
+            ':room_no' => $room_no,
+            ':room_name' => $room_name,
+            ':bench_order' => $bench_order,
+            ':student_status' => $student_status
+        ]);
+    }
+    public function getAllAttendanceDateTime() {
+        $sql = "SELECT DISTINCT date, time FROM attendance_sheet ORDER BY date DESC, time DESC";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getSessionLabel($time) {
+        $hour = date('H', strtotime($time));
+        if ($hour < 12) {
+            return 'Morning';
+        } elseif ($hour >= 12 && $hour < 17) {
+            return 'Afternoon';
+        } else {
+            return 'Evening';
+        }
+    }
+
+    public function checkExamTimeConflict($examDate, $examTime24) {
+        $dateTimes = $this->getAllAttendanceDateTime();
+        $inputTime = date('H:i', strtotime($examTime24));
+
+        foreach ($dateTimes as $dt) {
+            $existingDate = $dt['date'];
+            $existingTime = date('H:i', strtotime($dt['time']));
+
+            if ($existingDate === $examDate && $existingTime === $inputTime) {
+                $session = $this->getSessionLabel($existingTime);
+                echo "<div class='alert alert-danger'>Already have examinations on $examDate at $existingTime ($session)</div>";
+                exit;
+            }
+        }
+
+        // Optional: log all existing records for debug
+        foreach ($dateTimes as $dt) {
+            $session = $this->getSessionLabel($dt['time']);
+            echo '<pre>';
+            echo "Date: " . $dt['date'] . " | Time: " . $dt['time'] . " | Session: " . $session . "<br>";
+            echo '</pre>';
+        }
+    }
+
+    // ✅ Get all unique rooms (room_no + room_name)
+    public function getAllRooms() {
+        $sql = "SELECT DISTINCT room_no, room_name FROM attendance_sheet ORDER BY room_no ASC";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // ✅ Get room by room number
+    public function getRoomByNumber($room_no) {
+        $sql = "SELECT DISTINCT room_no, room_name FROM attendance_sheet WHERE room_no = :room_no LIMIT 1";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([':room_no' => $room_no]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    // ✅ Check if a room exists in attendance records
+    public function roomExists($room_no) {
+        $sql = "SELECT COUNT(*) FROM attendance_sheet WHERE room_no = :room_no";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([':room_no' => $room_no]);
+        return $stmt->fetchColumn() > 0;
+    }
+    public function getAllExamDates() {
+        $sql = "SELECT DISTINCT date FROM attendance_sheet ORDER BY date DESC";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    public function getEventsByDate($date) {
+        $sql = "SELECT DISTINCT time FROM attendance_sheet WHERE date = :date ORDER BY time";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([':date' => $date]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    public function getRoomsByDateTime($date, $time) {
+        $sql = "SELECT DISTINCT room_no, room_name FROM attendance_sheet WHERE date = :date AND time = :time ORDER BY room_no";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([':date' => $date, ':time' => $time]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // public function getStudentsByRoom($date, $time, $room_no) {
+    //     $query = "SELECT id, roll_no, name FROM attendance_sheet 
+    //               WHERE date = :date AND time = :time AND room_no = :room_no";
+    
+    //     // Prepare the statement using PDO
+    //     $stmt = $this->conn->prepare($query);
+    
+    //     // Bind the parameters using bindParam
+    //     $stmt->bindParam(':date', $date);
+    //     $stmt->bindParam(':time', $time);
+    //     $stmt->bindParam(':room_no', $room_no);
+    
+    //     // Execute the query
+    //     $stmt->execute();
+    
+    //     // Fetch all the students
+    //     $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    //     return $students;
+    // }
+    
+    public function getStudentsByRoom($date, $time, $room_no) {
+        // Update the query to order by department and roll number
+        $query = "SELECT id, roll_no, name, department FROM attendance_sheet 
+                  WHERE date = :date AND time = :time AND room_no = :room_no 
+                  ORDER BY department, roll_no";  // Ensure sorting by department and roll_no
+        
+        // Prepare the statement using PDO
+        $stmt = $this->conn->prepare($query);
+        
+        // Bind the parameters using bindParam
+        $stmt->bindParam(':date', $date);
+        $stmt->bindParam(':time', $time);
+        $stmt->bindParam(':room_no', $room_no);
+        
+        // Execute the query
+        $stmt->execute();
+        
+        // Fetch all the students
+        $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        return $students;
+    }
+     
+        
+}
+
 // ✅ Usage Example
 // $student = new Student();
 // $students = $student->getAllStudents();
