@@ -1,132 +1,198 @@
 <?php
-// Set JSON header for proper JavaScript fetch() behavior
-// header( 'Content-Type: application/json' );
-header( 'Content-Type: text/html' );
+// Sample GET variables (replace with actual values or keep as fallback)
+$date = $_GET['date'] ?? '12/14/2024';
+$time = $_GET['time'] ?? '09:00 AM to 12:00 PM';
+$room_no = $_GET['room_no'] ?? 'PG-3';
 
-// Validate required GET parameters
-if ( !isset( $_GET[ 'date' ], $_GET[ 'time' ], $_GET[ 'room_no' ] ) ) {
-    echo json_encode( [ 'error' => 'Missing parameters.' ] );
-    exit;
-}
-
-$date = $_GET[ 'date' ];
-$time = $_GET[ 'time' ];
-$room_no = $_GET[ 'room_no' ];
-
-// Load required files
+// Load models
 require_once 'xyz/Database.php';
 require_once 'xyz/bashmodel.php';
+// require_once 'xyz/Department.php';
 
-try {
-    // Get database connection from singleton
-    $database = Database::getInstance();
-    $db = $database->getConnection();
+$database = Database::getInstance();
+$db = $database->getConnection();
 
-    // Create model instance and fetch student data
-    $attendanceSheet = new AttendanceSheet( $db );
+$deptObj = new Department($db);
+$departments = $deptObj->getAllDepartments();
 
-    $deptObj = new Department( $db );
-    $getAllDepartments = $deptObj->getAllDepartments();
+$attendanceSheet = new AttendanceSheet($db);
+$students = $attendanceSheet->getStudentsByRoom($date, $time, $room_no);
 
-    // print_r( $getAllDepartments );
-    // Debugging line to check department data
-
-    $students = $attendanceSheet->getStudentsByRoom( $date, $time, $room_no );
-
-    if ( is_array( $students ) ) {
-        // echo
-        json_encode( $students );
-        // ✅ Valid JSON array
-    } else {
-        // echo
-        json_encode( [ 'error' => 'No student data returned or query failed.' ] );
-    }
-} catch ( Exception $e ) {
-    // If there's an exception, return as JSON error
-    echo json_encode(["error" => "Server error: " . $e->getMessage()]);
+// Map departments
+$departmentNames = [];
+foreach ($departments as $dept) {
+    $departmentNames[$dept['department_id']] = $dept['department_name'];
 }
 
+// Group students by department
+$groupedStudents = [];
+foreach ($students as $student) {
+    $groupedStudents[$student['department']][] = $student;
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <title>Attendance Sheet</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        body {
+            font-size: 12pt;
+        }
+
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 15mm;
+            }
+
+            #printButton {
+                display: none;
+            }
+
+            .table th {
+                background-color: #d3d3d3 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .header h5 {
+            margin: 5px 0;
+        }
+
+        .meta-info {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .summary-table td {
+            height: 40px;
+        }
+
+        .signature-box {
+            margin-top: 20px;
+            float: right;
+            width: 250px;
+            text-align: center;
+        }
+
+        .subject-header {
+            text-align: right;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        @media print {
+    .no-print {
+        display: none;
+    }
+
+    .signature-box {
+        margin-top: 80px;
+        margin-bottom: 40px;
+    }
+}
+
+.signature-box {
+    margin-top: 60px;
+    text-align: right;
+    padding-right: 50px;
+}
 
     </style>
 </head>
+<body class="p-4 vh-100">
 
-<body class="p-4">
-
-    <div class="container">
-        <div class="d-flex justify-content-center align-items-center" style="height: 300pxx;">
-            <img src="assets/Picture-1.png" alt="Centered Image">
-        </div>
-
-        <h3 class="text-center mt-4">Attendance Sheet</h3>
-        <p><strong>Date:</strong> <?= htmlspecialchars($date) ?> | <strong>Time:</strong> <?= htmlspecialchars($time) ?>
-            | <strong>S NO:</strong> <?= htmlspecialchars($room_no) ?></p>
-        <?php
-// Fetch department list (replace $db with your actual class instance)
-
-
-// Map department ID to department name
-$departmentNames = [];
-foreach ($getAllDepartments as $dept) {
-    $departmentNames[$dept['department_id']] = $dept['department_name'];
-}
-
-// Group students by department_id
-$groupedStudents = [];
-foreach ($students as $student) {
-    $groupedStudents[$student['department']][] = $student; // assuming 'department' holds department_id
-}
-?>
-
-        <!-- Loop through grouped students by department -->
-        <?php foreach ($groupedStudents as $departmentId => $studentsList): 
-        $departmentName = $departmentNames[$departmentId] ?? 'Unknown';
-    ?>
-        <!-- Department Title -->
-        <h4 class="mt-5"><?= htmlspecialchars($departmentName) ?> Department</h4>
-
-        <!-- Student Table -->
-        <table class="table table-bordered">
-            <thead class="table-dark">
-                <tr>
-                    <th>Roll No</th>
-                    <th>Student Name</th>
-                    <th>Signature</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($studentsList as $student): ?>
-                <tr>
-                    <td><?= htmlspecialchars($student['roll_no']) ?></td>
-                    <td><?= htmlspecialchars($student['name' ] ) ?></td>
-                    <td></td>
-                </tr>
-                <?php endforeach;
-    ?>
-            </tbody>
-        </table>
-
-        <div style='page-break-after: avoid;'></div>
-        <?php endforeach;
-    ?>
-        <!-- Print Button -->
-        <button onclick='window.print()' class='btn btn-success mt-3' id='printButton'>Print</button>
-
-        <?php if ( empty( $students ) ): ?>
-        <div class='alert alert-warning'>No students found.</div>
-        <?php endif;
-    ?>
+    <div class="header">
+        <h5>Sibsagar University Exam 2024</h5>
+        <h6><?= htmlspecialchars($date) ?></h6>
+        <h6><?= htmlspecialchars( date("h:i A", strtotime($time))) ?></h6>
+        <h5>Attendance Sheet</h5>
     </div>
 
-</body>
+    <?php foreach ($groupedStudents as $deptId => $studentsList): 
+        $deptName = $departmentNames[$deptId] ?? 'Unknown';
+        $subjectCode = strtoupper(substr($deptName, 0, 3)); // Simplified subject code
+    ?>
+    <div class="meta-info mb-2">
+        <div><strong>ROOM:</strong> <?= htmlspecialchars($room_no) ?></div>
+    </div>
 
+    <div class="d-flex justify-content-between mb-2">
+        <!-- <div class="fw-bold">Roll No. | Reg. No.</div> -->
+        <div class="subject-header"> <?= strtoupper($deptName) ?></div>
+        <!-- <div class="subject-header"><?= $subjectCode ?> <?= strtoupper($deptName) ?></div> -->
+
+    </div>
+
+    <table class="table table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>Roll No</th>
+                <th>Reg. No</th>
+                <th>Student Name</th>
+                <th>Paper</th>
+                <th>Signature</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($studentsList as $student): ?>
+            <tr>
+                <td><?= htmlspecialchars($student['roll_no']) ?></td>
+                <td><?= htmlspecialchars($student['reg_no'] ?? '-') ?></td>
+                <td><?= htmlspecialchars($student['name']) ?></td>
+                <td><?= $subjectCode ?></td>
+                <td></td>
+            </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+    <?php endforeach; ?>
+
+<!-- Subject-wise Summary -->
+<h5 class="mt-5">Summary</h5>
+<table class="table table-bordered summary-table w-50">
+    <thead>
+        <tr>
+            <th>Subject</th>
+            <th>Total Allotted</th>
+            <th>Total Absent</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        $subjectCounter = 1;
+        foreach ($groupedStudents as $deptId => $studentsList):
+            $deptName = $departmentNames[$deptId] ?? 'Unknown';
+            $subjectCode = strtoupper(substr($deptName, 0, 3)); // Customize as needed
+            $totalAllotted = count($studentsList);
+        ?>
+        <tr>
+            <td>Subject <?= $subjectCounter ?>: <?= htmlspecialchars($deptName) ?></td>
+            <td><?= $totalAllotted ?></td>
+            <td></td> <!-- Leave blank for manual entry -->
+        </tr>
+        <?php $subjectCounter++; endforeach; ?>
+    </tbody>
+</table>
+
+
+<!-- Signature Area -->
+<div class="signature-box mt-5 mb-2 text-end">
+    <strong>Sign. of Invigilator(s)</strong>
+</div>
+
+<!-- Print Button at the bottom -->
+<div class="text-center mt-5 no-print">
+    <button onclick="window.print()" class="btn btn-success">Print</button>
+</div>
+
+</body>
 </html>
