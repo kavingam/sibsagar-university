@@ -1,6 +1,7 @@
 
 <?php include 'includes/header.php';?>
-<div class="container d-flex justify-content-center align-items-center bg-light vh-100">
-    <h1 class="text-center">Automated Seat Plan Generator With Teacher Duty Assignment</h1>
+<div class="container vh-100 d-flex flex-column justify-content-center align-items-center bg-light text-center">
+    <img src="assets/Picture-1.png" alt="Seat Plan Logo" class="img-fluid mb-4" style="max-width: 200px;">
+    <h1 class="">Advance Automated Seat Plan Generator</h1>
 </div>
 <?php include 'includes/footer.php';?>
