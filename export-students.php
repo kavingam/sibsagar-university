@@ -22,10 +22,14 @@ try {
 
 <div class="container bg-light vh-100">
     <div class="row no-gutters fieldGroup justify-content-center d-flex">
-        <div class="col-md-12 col-12 mb-3 my-5">
+        <!-- <div class="col-md-12 col-12 mb-3 my-5">
             <h4 class="text-center text-primary semi-bold text-uppercase">Export Student CSV File</h4>
+        </div> -->
+        <div class="col-md-12 col-12 mb-3 my-5 export-section">
+            <h4 class="section-title"><i class="fad fa-file-export"></i> Export Student CSV File</h4>
+            <p class="section-subtext">Download student data in CSV format quickly and easily.</p>
         </div>
-        
+
         <div class="col-md-2 col-12 mb-3">
             <div class="container p-2">
                 <label>Department:</label>

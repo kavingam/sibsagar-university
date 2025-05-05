@@ -9,7 +9,9 @@
             aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse justify-content-center" id="navbarNavAltMarkup">
+        <!-- <div class="collapse navbar-collapse justify-content-center" id="navbarNavAltMarkup"> -->
+        <div class="collapse navbar-collapse justify-content-center align-items-center text-center" id="navbarNavAltMarkup" style="height: 100%;">
+
             <div class="navbar-nav">
                 <li class="nav-item">
                     <a class="nav-link px-4 py-2 text-white fw-semibold 

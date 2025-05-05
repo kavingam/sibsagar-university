@@ -54,6 +54,77 @@ include 'db/pdo_connect.php'; ?>
           text-align: center;
         }
       }
+    /* General Section Styling */
+    .import-section, .export-section {
+        background: #f9f9ff;
+        /* padding: 2rem; */
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+        border-radius: 1rem;
+        margin: 1rem;
+    }
+
+    /* Title Styling */
+    .import-section .section-title, .export-section .section-title {
+        color: #000; /* Black */
+        font-weight: 700;
+        font-size: 1.6rem;
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+        text-align: center;
+    }
+
+    /* Subtext Styling */
+    .import-section .section-subtext, .export-section .section-subtext {
+        color: #000; /* Black */
+        font-size: 1rem;
+        text-align: center;
+    }
+
+    /* Responsive design for mobile devices */
+    @media (max-width: 576px) {
+        .import-section, .export-section {
+            padding: 1.5rem;
+        }
+
+        .import-section .section-title, .export-section .section-title {
+            font-size: 1.4rem;
+        }
+
+        .import-section .section-subtext, .export-section .section-subtext {
+            font-size: 0.95rem;
+        }
+    }
+
+
+      /* Responsive tweaks for screens smaller than 576px (like Android phones) */
+      @media (max-width: 576px) {
+          .import-section {
+              padding: 1.5rem;
+              margin: 1rem 0.5rem;
+          }
+
+          .import-section .section-title {
+              font-size: 1.4rem;
+          }
+
+          .import-section .section-subtext {
+              font-size: 0.95rem;
+          }
+      }
+/* This will center the button group horizontally and vertically inside the table cell */
+td.text-center {
+    display: flex;
+    justify-content: center;  /* Centers buttons horizontally */
+    align-items: center;      /* Vertically centers the buttons */
+    height: 100%;             /* Makes sure the cell takes full height */
+}
+
+/* Optional: Space out the buttons slightly */
+.btn-group a {
+    margin: 0 5px; /* Adds horizontal spacing between buttons */
+}
+
+
 
       .btn-xs {
           padding: 0.25rem 0.5rem;

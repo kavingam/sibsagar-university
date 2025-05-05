@@ -13,9 +13,15 @@ try {
 <div class="container bg-light vh-100">
     <form id="uploadForm" enctype="multipart/form-data">
         <div class="row no-gutters d-flex justify-content-center">
-            <div class="col-md-12 col-12 my-5">
+            <!-- <div class="col-md-12 col-12 my-5">
                 <h4 class="text-center text-primary semi-bold text-uppercase">Import Student CSV File</h4>
+            </div> -->
+            <div class="col-md-12 col-12 import-section my-5">
+                <h2 class="section-title"><i class="fad fa-file-import"></i> Import Student CSV File</h2>
+                <p class="section-subtext">Easily upload and manage student data in CSV format</p>
             </div>
+
+
             <div class="col-md-2 col-12 mb-3">
                 <label for="departmentSelect" class="form-label">Department:</label>
                 <select id="departmentSelect" name="department" class="form-select" required>
