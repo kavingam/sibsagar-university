@@ -91,25 +91,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $attendance->checkExamTimeConflict($examDate, $examTime);
 
-    // foreach ($dateTimes as $dt) {
-    //     echo '<pre>';
-    //     echo "Date: " . $dt['date'] . " | Time: " . $dt['time'] . "<br>";
-    //     echo '</pre>';
-    // }
-    // foreach ($dateTimes as $dt) {
-    //     $session = getSessionLabel($dt['time']);
-        
-    //     echo '<pre>';
-    //     echo "Date: " . $dt['date'] . " | Time: " . $dt['time'] . " | Session: " . $session . "<br>";
-    //     echo '</pre>';
-    // }
-    
-
-    // print_r($fetchStudents);
-    // print_r($rooms);
-    // echo $totalStudent;
-    // echo $totalDept;
-
     deleteJsonFiles($remove_cache_x);
     deleteJsonFiles($remove_cache_y);
     deleteJsonFiles($remove_cache_a);
@@ -123,42 +104,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $combinationStore = new CombinationJSON();
     $combinationStore = new NewCombinationJSON($combinationStore);
 
-  
-
-    // if (isEven($totalDept)) {
-        // echo '<pre>';
-        // // $studentSeatCounts = computeSeatCounts($fetchStudents);
-        // // print_r($studentSeatCounts);
-        // // print_r(pairSubtractRemainder($fetchStudents)['pairs']);
-        // // print_r(getSimilarPairs($fetchStudents));
-        // $pairSubtractRemainder = pairSubtractRemainder($fetchStudents)
-        // for ($i = 0; $i < count($fetchStudents); $i += 2) {
-        //     if (isset($fetchStudents[$i + 1])) {
-        //         $firstDept = $fetchStudents[$i];
-        //         $secondDept = $fetchStudents[$i + 1];
-        //         $finalArrayX[] = buildFinalArrayX($firstDept, $secondDept);
-        //     }
-        // }
-
-        // $combinationStore->bulkInsert($finalArrayX);
-        // $remainderStore->insertDepartmentsIfValid(pairSubtractRemainder($fetchStudents)['pairs']);
-        // $remainderStore->bulkInsert(pairSubtractRemainder($fetchStudents)['remainder']);
-        // echo '</pre>';
-
-    // } else {
-    //     // array_pop($fetchStudents);
-    //     // $allButLast = array_slice($fetchStudents, 0, -1);
-    //     // $lastDept = end($fetchStudents);
-    //     // print_r($lastDept);
-    //     // print_r($fetchStudents);
-    //     // print_r($allButLast);
-    //     echo '<pre>';
-    //         // print_r(pairSubtractRemainder($fetchStudents));
-
-    //     echo '</pre>';
-    // }
-
     $finalArrayX = []; // initialize before use
+
+    echo '<pre>';
+    // print_r($fetchStudents);
+    $totalDepartments = calculateTotalDepartments($fetchStudents);
+    echo "Total Unique Departments: " . $totalDepartments;
+
+    echo '</pre>';
 
     for ($i = 0; $i < count($fetchStudents); $i += 2) {
         if (isset($fetchStudents[$i + 1])) {
@@ -188,12 +141,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             });
     
             $remainderArrayX[] = buildFinalArrayX($remainderList[0], $remainderList[1]);
-            $combinationStore->bulkInsert($remainderArrayX);
+            // $combinationStore->bulkInsert($remainderArrayX);
 
             $remainderStore->deleteByArray($remainderList[0]);
             $remainderStore->deleteByArray($remainderList[1]);
 
-            $remainderStore->insertDepartmentsIfValid(subtractRemainderOnly($remainderList[0], $remainderList[1]));
+            // $remainderStore->insertDepartmentsIfValid(subtractRemainderOnly($remainderList[0], $remainderList[1]));
             echo '</pre>';           
             // break; 
         }
@@ -203,7 +156,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $zigzagBlocks = getZigzagMergedStudents($combinations_list);
     
     foreach ($zigzagBlocks as $block) {
-        $seatAllocationStore->insertDept($block); // Store one block at a time
+        // $seatAllocationStore->insertDept($block); // Store one block at a time
     }
     
    
@@ -211,10 +164,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $groups = $remainderStore->findAll();
     
     foreach ($groups as $group) {
-        $block = transformGroupToBlockAuto($group);
+        // $block = transformGroupToBlockAuto($group);
     
         // Insert into database
-        $seatAllocationStore->insertDept($block);
+        // $seatAllocationStore->insertDept($block);
     }
        
 
@@ -477,30 +430,6 @@ function getZigzagMergedStudents($data) {
     return $result;
 }
 
-// function transformGroupToBlockAuto($group) {
-//     // Automatically create block_id using _id + 300
-//     $blockId = isset($group['_id']) ? (int)$group['_id'] + 300 : rand(1000, 9999);
-
-//     $output = [
-//         'block_id' => $blockId,
-//         'zigzag_students' => []
-//     ];
-
-//     if (isset($group['students']) && is_array($group['students'])) {
-//         foreach ($group['students'] as $student) {
-//             $output['zigzag_students'][] = [
-//                 'roll_no' => (string)$student['roll_no'],
-//                 'name' => (string)$student['name'],
-//                 'department' => (string)$student['department'],
-//                 'semester' => (string)$student['semester'],
-//                 'course' => (string)$student['course'],
-//             ];
-//         }
-//     }
-
-//     return $output;
-// }
-
 /**
  * Transform a group of students into a block format.
  *
@@ -563,8 +492,20 @@ function getSessionLabel($time) {
     }
 }
 
-?>
-<?php 
+function calculateTotalDepartments($fetchStudents) {
+    $uniqueDepartments = [];
+
+    foreach ($fetchStudents as $entry) {
+        // Unique key: department-semester-course
+        $key = $entry['department'] . '-' . $entry['semester'] . '-' . $entry['course'];
+        $uniqueDepartments[$key] = true;
+    }
+
+    // Return count of unique combinations
+    return count($uniqueDepartments);
+}
+
+
 // Function to get the key for each department
 // This is used to uniquely identify each department
 function getDeptKey($dept) {

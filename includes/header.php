@@ -15,6 +15,14 @@ include 'db/pdo_connect.php'; ?>
     <link rel="stylesheet" href="assets/plugins/package/dist/sweetalert2.min.css">
     <link href="assets/plugins/DataTables/datatables.css" rel="stylesheet">
     <style>
+      .navbar-nav .nav-link {
+          color: white !important;
+      }
+      .navbar-nav .nav-link.active {
+          color: red !important;
+          font-weight: bold;
+      }
+
       .btn-xs {
           padding: 0.25rem 0.5rem;
           font-size: 0.75rem;
