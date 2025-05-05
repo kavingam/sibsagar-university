@@ -1,31 +1,7 @@
 <?php 
 /*
-    Reuseability Functions
-*/
-function deleteJsonFiles($directory)
-{
-    if (!is_dir($directory)) {
-        die("Error: Directory '$directory' does not exist.<br>");
-    }
-    $files = glob($directory . '*.json');
-    if (empty($files)) {
-        return;
-    }
-    foreach ($files as $file) {
-        if (unlink($file)) {
-            // echo "Deleted: $file<br/>";
-        } else {
-            echo "Failed to delete: $file<br/>";
-        }
-    }
-}
-?>
-<?php 
-
-/*
-    Debug Version 0.1
-*/
-
+ *   Debug Version 0.1
+ */
 error_reporting(E_ALL);
 ini_set('display_errors',1);
 
@@ -259,9 +235,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 function isEven(int $num): int {
     return ($num % 2 === 0) ? 1 : 0;
 }
-?>
 
-<?php
+/** Testing Ok
+ * Delete all JSON files in a given directory.
+ *
+ * @param string $directory The directory path to delete JSON files from.
+ */
+function deleteJsonFiles($directory) {
+    if (!is_dir($directory)) {
+        die("Error: Directory '$directory' does not exist.<br>");
+    }
+    $files = glob($directory . '*.json');
+    if (empty($files)) {
+        return;
+    }
+    foreach ($files as $file) {
+        if (unlink($file)) {
+            // echo "Deleted: $file<br/>";
+        } else {
+            echo "Failed to delete: $file<br/>";
+        }
+    }
+}
+
 /**
  * Computes student seat counts by pairing every two elements:
  * - For each pair, uses the second element’s totalStudent * 2
@@ -286,7 +282,6 @@ function computeSeatCounts(array $blocks): array {
 
     return $seatCounts;
 }
-
 
 /** Testing Ok
  * Pair up department blocks two‑by‑two, subtract their 'totalStudent' values,

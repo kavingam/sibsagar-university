@@ -17,6 +17,8 @@ echo 'import-students.php'; ?>">Import</a>
                 <a class="nav-link active text-light active" aria-current="page" href="<?php echo BASE_URL;
 echo 'export-students.php'; ?>">Export</a>
                 <a class="nav-link active text-light active" aria-current="page" href="<?php echo BASE_URL;
+echo 'manage-students.php'; ?>">Manage Student</a>
+                <a class="nav-link active text-light active" aria-current="page" href="<?php echo BASE_URL;
 echo 'add-room.php'; ?>">Add Room</a>
                 <a class="nav-link active text-light active" aria-current="page" href="<?php echo BASE_URL;
 echo 'view-room.php'; ?>">View Room</a>
