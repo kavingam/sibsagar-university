@@ -20,7 +20,39 @@ include 'db/pdo_connect.php'; ?>
       }
       .navbar-nav .nav-link.active {
           color: red !important;
-          font-weight: bold;
+          /* font-weight: bold; */
+      }
+      /* Style dropdown items in navbar */
+      .navbar .dropdown-menu a.dropdown-item {
+        color: #6a1b9a;
+        background-color: #f9f9f9;
+        padding: 10px 16px;
+        border-bottom: 1px solid #e0e0e0;
+        text-align: left;
+        font-weight: 500;
+        transition: background-color 0.3s ease;
+      }
+
+      .navbar .dropdown-menu a.dropdown-item:hover {
+        background-color: #e1bee7; /* Light purple hover */
+        color: #4a148c;
+      }
+
+      /* Center and size dropdown on small devices */
+      @media (max-width: 768px) {
+        .navbar .dropdown-menu {
+          /* left: 50% !important; */
+          /* transform: translateX(-50%) !important; */
+          width: 90vw;
+          max-width: 320px;
+          text-align: center;
+          border-radius: 12px;
+          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar .dropdown-menu a.dropdown-item {
+          text-align: center;
+        }
       }
 
       .btn-xs {

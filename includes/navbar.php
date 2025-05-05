@@ -11,60 +11,135 @@
         </button>
         <div class="collapse navbar-collapse justify-content-center" id="navbarNavAltMarkup">
             <div class="navbar-nav">
-                <a class="nav-link <?php echo ($current_page == 'index') ? 'active' : ''; ?>" href="<?php echo BASE_URL . 'index.php'; ?>">Home</a>
+                <li class="nav-item">
+                    <a class="nav-link px-4 py-2 text-white fw-semibold 
+        <?php echo ($current_page == 'index') ? 'active' : ''; ?>" href="<?php echo BASE_URL . 'index.php'; ?>">
+                        Home
+                    </a>
+                </li>
 
                 <!-- Students Dropdown -->
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle <?php echo ($current_page == 'import-students' || $current_page == 'export-students' || $current_page == 'manage-students') ? 'active' : ''; ?>"
-                       href="#" id="studentsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Students
+                    <a class="nav-link dropdown-toggle px-4 py-2 text-white fw-semibold 
+                        <?php echo ($current_page == 'import-students' || $current_page == 'export-students' || $current_page == 'manage-students') ? 'active' : ''; ?>"
+                        href="#" id="studentsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Students Manage
                     </a>
-                    <ul class="dropdown-menu" aria-labelledby="studentsDropdown" style="">
-                        <li><a class="dropdown-item <?php echo ($current_page == 'import-students') ? 'active' : ''; ?>" href="<?php echo BASE_URL . 'import-students.php'; ?>">Import CSV</a></li>
-                        <li><a class="dropdown-item <?php echo ($current_page == 'export-students') ? 'active' : ''; ?>" href="<?php echo BASE_URL . 'export-students.php'; ?>">Export CSV</a></li>
-                        <li><a class="dropdown-item <?php echo ($current_page == 'manage-students') ? 'active' : ''; ?>" href="<?php echo BASE_URL . 'manage-students.php'; ?>">Manage Student</a></li>
+
+                    <ul class="dropdown-menu dropdown-menu-center shadow-lg border-0 mt-2 rounded-4 px-2 py-2"
+                        aria-labelledby="studentsDropdown" style="min-width: 250px;">
+
+                        <li>
+                            <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'import-students') ? 'active bg-light fw-bold' : ''; ?>"
+                                href="<?php echo BASE_URL . 'import-students.php'; ?>">
+                                Import CSV
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'export-students') ? 'active bg-light fw-bold' : ''; ?>"
+                                href="<?php echo BASE_URL . 'export-students.php'; ?>">
+                                Export CSV
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'manage-students') ? 'active bg-light fw-bold' : ''; ?>"
+                                href="<?php echo BASE_URL . 'manage-students.php'; ?>">
+                                Manage Student
+                            </a>
+                        </li>
                     </ul>
                 </li>
 
                 <!-- Room Dropdown -->
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle <?php echo ($current_page == 'add-room' || $current_page == 'view-room') ? 'active' : ''; ?>"
-                       href="#" id="roomDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Room
+                    <a class="nav-link dropdown-toggle px-4 py-2 text-white fw-semibold 
+                        <?php echo ($current_page == 'add-room' || $current_page == 'view-room') ? 'active' : ''; ?>"
+                        href="#" id="roomDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Room Manage
                     </a>
-                    <ul class="dropdown-menu" aria-labelledby="roomDropdown">
-                        <li><a class="dropdown-item <?php echo ($current_page == 'add-room') ? 'active' : ''; ?>" href="<?php echo BASE_URL . 'add-room.php'; ?>">Add Room</a></li>
-                        <li><a class="dropdown-item <?php echo ($current_page == 'view-room') ? 'active' : ''; ?>" href="<?php echo BASE_URL . 'view-room.php'; ?>">View Room</a></li>
+
+                    <ul class="dropdown-menu dropdown-menu-center shadow-lg border-0 mt-2 rounded-4 px-2 py-2"
+                        aria-labelledby="roomDropdown" style="min-width: 220px;">
+
+                        <li>
+                            <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'add-room') ? 'active bg-light fw-bold' : ''; ?>"
+                                href="<?php echo BASE_URL . 'add-room.php'; ?>">
+                                Add Room
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'view-room') ? 'active bg-light fw-bold' : ''; ?>"
+                                href="<?php echo BASE_URL . 'view-room.php'; ?>">
+                                View Room
+                            </a>
+                        </li>
                     </ul>
                 </li>
-
-
 
                 <!-- Examination Plan Dropdown -->
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle <?php echo ($current_page == 'advance-seat-plan' || $current_page == 'attendance-sheet' || $current_page == 'top-sheet') ? 'active' : ''; ?>"
-                       href="#" id="examinationPlanDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Examination Plan
+                    <a class="nav-link dropdown-toggle px-4 py-2 text-white fw-semibold 
+                        <?php echo ($current_page == 'advance-seat-plan' || $current_page == 'attendance-sheet' || $current_page == 'top-sheet' || $current_page == 'manage-department') ? 'active' : ''; ?>"
+                        href="#" id="examinationPlanDropdown" role="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        Examination Planning
                     </a>
-                    <ul class="dropdown-menu" aria-labelledby="examinationPlanDropdown">
-                        <li><a class="dropdown-item <?php echo ($current_page == 'manage-department') ? 'active' : ''; ?>" href="<?php echo BASE_URL . 'manage-department.php'; ?>">Manage Department</a></li>
-                        <li><a class="dropdown-item <?php echo ($current_page == 'advance-seat-plan') ? 'active' : ''; ?>" href="<?php echo BASE_URL . 'advance-seat-plan.php'; ?>">Advance Seat Plan</a></li>
-                        <li><a class="dropdown-item <?php echo ($current_page == 'attendance-sheet') ? 'active' : ''; ?>" href="<?php echo BASE_URL . 'attendance-sheet.php'; ?>">Attendance Sheet</a></li>
-                        <li><a class="dropdown-item <?php echo ($current_page == 'top-sheet') ? 'active' : ''; ?>" href="<?php echo BASE_URL . 'top-sheet.php'; ?>">Advance Top Sheet</a></li>
+
+                    <ul class="dropdown-menu dropdown-menu-center shadow-lg border-0 mt-2 rounded-4 px-2 py-2"
+                        aria-labelledby="examinationPlanDropdown" style="min-width: 250px;">
+                        <li>
+                            <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'manage-department') ? 'active bg-light fw-bold' : ''; ?>"
+                                href="<?php echo BASE_URL . 'manage-department.php'; ?>">
+                                Manage Department
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'advance-seat-plan') ? 'active bg-light fw-bold' : ''; ?>"
+                                href="<?php echo BASE_URL . 'advance-seat-plan.php'; ?>">
+                                Advance Seat Plan
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'attendance-sheet') ? 'active bg-light fw-bold' : ''; ?>"
+                                href="<?php echo BASE_URL . 'attendance-sheet.php'; ?>">
+                                Attendance Sheet
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'top-sheet') ? 'active bg-light fw-bold' : ''; ?>"
+                                href="<?php echo BASE_URL . 'top-sheet.php'; ?>">
+                                Advance Top Sheet
+                            </a>
+                        </li>
                     </ul>
                 </li>
+
                 <!-- Dropdown for Help and About -->
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle <?php echo ($current_page == 'help' || $current_page == 'about') ? 'active' : ''; ?>"
-                       href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle px-4 py-2 text-white fw-semibold 
+                        <?php echo ($current_page == 'help' || $current_page == 'about') ? 'active' : ''; ?>" href="#"
+                        id="moreDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         More
                     </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item <?php echo ($current_page == 'help') ? 'active' : ''; ?>" href="<?php echo BASE_URL . 'help.php'; ?>">Help</a></li>
-                        <li><a class="dropdown-item <?php echo ($current_page == 'about') ? 'active' : ''; ?>" href="<?php echo BASE_URL . 'about.php'; ?>">About</a></li>
+
+                    <ul class="dropdown-menu dropdown-menu-center shadow-lg border-0 mt-2 rounded-4 px-2 py-2"
+                        aria-labelledby="moreDropdown" style="min-width: 200px;">
+
+                        <li>
+                            <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'help') ? 'active bg-light fw-bold' : ''; ?>"
+                                href="<?php echo BASE_URL . 'help.php'; ?>">
+                                Help
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'about') ? 'active bg-light fw-bold' : ''; ?>"
+                                href="<?php echo BASE_URL . 'about.php'; ?>">
+                                About
+                            </a>
+                        </li>
                     </ul>
                 </li>
-                
+
             </div>
         </div>
     </div>
