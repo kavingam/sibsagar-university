@@ -7,7 +7,7 @@ include 'db/pdo_connect.php'; ?>
     <title></title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="assets/layout/css/styles.css" type="text/css">
+    <!-- <link rel="stylesheet" href="assets/layout/css/styles.css" type="text/css"> -->
     <link href="assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
     <link href="assets/plugins/bootstrap-icons/font/bootstrap-icons.min.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="assets/plugins/FontAwesome-pro/assets/css/all.min.css">

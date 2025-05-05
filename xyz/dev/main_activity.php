@@ -120,13 +120,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //     echo "Date: " . $dt['date'] . " | Time: " . $dt['time'] . "<br>";
     //     echo '</pre>';
     // }
-    foreach ($dateTimes as $dt) {
-        $session = getSessionLabel($dt['time']);
+    // foreach ($dateTimes as $dt) {
+    //     $session = getSessionLabel($dt['time']);
         
-        echo '<pre>';
-        echo "Date: " . $dt['date'] . " | Time: " . $dt['time'] . " | Session: " . $session . "<br>";
-        echo '</pre>';
-    }
+    //     echo '<pre>';
+    //     echo "Date: " . $dt['date'] . " | Time: " . $dt['time'] . " | Session: " . $session . "<br>";
+    //     echo '</pre>';
+    // }
     
 
     // print_r($fetchStudents);

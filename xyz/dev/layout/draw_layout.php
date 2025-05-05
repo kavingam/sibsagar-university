@@ -235,9 +235,6 @@ foreach ($assignedRooms as $room) {
 echo ' 
 </body>
 </html>';
-
-
-
 /* 
 
 "Date": "2023-10-01",
@@ -253,3 +250,5 @@ echo '
 "students_status": 0 OR 1,  
 
 */
+?>
+

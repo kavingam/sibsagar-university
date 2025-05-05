@@ -376,7 +376,7 @@ class AttendanceSheet extends BaseModel {
         foreach ($dateTimes as $dt) {
             $session = $this->getSessionLabel($dt['time']);
             echo '<pre>';
-            echo "Date: " . $dt['date'] . " | Time: " . $dt['time'] . " | Session: " . $session . "<br>";
+            // echo "Date: " . $dt['date'] . " | Time: " . $dt['time'] . " | Session: " . $session . "<br>";
             echo '</pre>';
         }
     }
