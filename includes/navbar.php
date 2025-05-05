@@ -118,13 +118,30 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle px-4 py-2 text-white fw-semibold 
                         <?php echo ($current_page == 'help' || $current_page == 'about') ? 'active' : ''; ?>" href="#"
-                        id="moreDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        More
+                        id="moreDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-person-circle me-2 text-white"></i>
+                        Account
                     </a>
 
                     <ul class="dropdown-menu dropdown-menu-center shadow-lg border-0 mt-2 rounded-4 px-2 py-2"
                         aria-labelledby="moreDropdown" style="min-width: 200px;">
-
+                        <li>
+                            <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'help') ? 'active bg-light fw-bold' : ''; ?>"
+                                href="<?php echo BASE_URL . 'help.php'; ?>">
+                                Profile
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'help') ? 'active bg-light fw-bold' : ''; ?>"
+                                href="<?php echo BASE_URL . 'help.php'; ?>">
+                                Change Password
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'help') ? 'active bg-light fw-bold' : ''; ?>"
+                                href="<?php echo BASE_URL . 'help.php'; ?>">
+                                Logout
+                            </a>
+                        </li>
                         <li>
                             <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'help') ? 'active bg-light fw-bold' : ''; ?>"
                                 href="<?php echo BASE_URL . 'help.php'; ?>">
