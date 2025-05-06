@@ -70,13 +70,14 @@ $student_index = 0;
 
 foreach ($assignedRooms as $room) {
     $cols = $room['banch_order']; // Benches per row
+    // echo $cols;
     $total_seats = $room['students_assigned'];
     $rows = ceil($total_seats / ($cols * 2));
 
     echo "<div class='container mb-5'>";
     echo "<h4 class='mb-3 fs-6 fw-bold'>Room No: <strong>{$room['room_no']}</strong> - {$room['room_name']}</h4>";
-    echo "<div class='table-responsive'>";
-    echo "<table class='table table-bordered text-center align-middle'>";
+    echo "<div class='table-responsivex'>";
+    echo "<table class='tablex table-borderedx text-centerx align-middlex'>";
 
     for ($i = 0; $i < $rows; $i++) {
         echo "<tr>";
@@ -101,7 +102,7 @@ foreach ($assignedRooms as $room) {
 
             // Seat 2
             echo "<div class='col-6 col-md-6 box text-center border p-2 fs-7'>";
-            echo renderSeat($seat2, $room, $allDept, $examName, $academicYear, $saveData, $attendance, $examDate, $examTime24);
+            // echo renderSeat($seat2, $room, $allDept, $examName, $academicYear, $saveData, $attendance, $examDate, $examTime24);
             echo "</div>";
 
             echo "</div></div>"; // end row and container

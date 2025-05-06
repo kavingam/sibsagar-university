@@ -109,10 +109,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo '<pre>';
     // print_r($fetchStudents);
     $totalDepartments = calculateTotalDepartments($fetchStudents);
-    echo "Total Unique Departments: " . $totalDepartments;
 
-    echo '</pre>';
+    if ($totalDepartments <= 2) {
+        // echo "Total departments are 1 or 2.";
+        for ($i = 0; $i < count($fetchStudents); $i += 2) {
+            if (isset($fetchStudents[$i + 1])) {
+                $firstDept = $fetchStudents[$i];
+                $secondDept = $fetchStudents[$i + 1];
+                $finalArrayX[] = buildFinalArrayX($firstDept, $secondDept);
+            }
+        }
+        print_r($finalArrayX);
+    } else if ($totalDepartments == 3) {
+        // echo "Total departments are exactly 3.";
+        for ($i = 0; $i < count($fetchStudents); $i += 3) {
+            if (isset($fetchStudents[$i + 2])) {
+                $firstDept = $fetchStudents[$i];
+                $secondDept = $fetchStudents[$i + 1];
+                $thirdDept = $fetchStudents[$i + 2];
+        
+                $finalArrayX[] = buildFinalArrayX($firstDept, $secondDept, $thirdDept);
+            }
+        }
+        
+    } else if ($totalDepartments == 4) {
+        // echo "Total departments are exactly 4.";
+        for ($i = 0; $i < count($fetchStudents); $i += 4) {
+            if (isset($fetchStudents[$i + 3])) {
+                $firstDept  = $fetchStudents[$i];
+                $secondDept = $fetchStudents[$i + 1];
+                $thirdDept  = $fetchStudents[$i + 2];
+                $fourthDept = $fetchStudents[$i + 3];
 
+                $finalArrayX[] =  buildFinalArrayX4($firstDept, $secondDept, $thirdDept, $fourthDept);
+            }
+        }
+        print_r( $finalArrayX);
+
+    } else {
+        echo "Total unique departments: " . $totalDepartments;
+    }
+    
+    
+    
+    
+    
     for ($i = 0; $i < count($fetchStudents); $i += 2) {
         if (isset($fetchStudents[$i + 1])) {
             $firstDept = $fetchStudents[$i];
@@ -120,6 +161,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $finalArrayX[] = buildFinalArrayX($firstDept, $secondDept);
         }
     }
+
+    echo '</pre>';
+
     
     $combinationStore->bulkInsert($finalArrayX);
     $remainderStore->insertDepartmentsIfValid(pairSubtractRemainder($fetchStudents)['pairs']);
@@ -516,6 +560,25 @@ function getDeptKey($dept) {
 function getDeptStudentSlice($firstDept, $secondDept) {
     return array_slice($firstDept["students"], 0, $secondDept["totalStudent"]);
 }
+function getDeptStudentSlicesFor3Depts($firstDept, $secondDept, $thirdDept) {
+    $lastTotal = $thirdDept["totalStudent"];
+
+    return [
+        array_slice($firstDept["students"], 0, $lastTotal),
+        array_slice($secondDept["students"], 0, $lastTotal),
+        array_slice($thirdDept["students"], 0, $lastTotal) // also sliced to match
+    ];
+}
+function getDeptStudentSlicesFor4Depts($firstDept, $secondDept, $thirdDept, $fourthDept) {
+    $lastTotal = $fourthDept["totalStudent"];
+
+    return [
+        array_slice($firstDept["students"], 0, $lastTotal),
+        array_slice($secondDept["students"], 0, $lastTotal),
+        array_slice($thirdDept["students"], 0, $lastTotal),
+        array_slice($fourthDept["students"], 0, $lastTotal) // also sliced to match
+    ];
+}
 
 // Function to build department information for each student
 function buildDeptArray($dept, $studentSlice = null, $overrideTotal = null) {
@@ -571,6 +634,9 @@ function buildFinalArrayX($firstDept, $secondDept) {
     $finalArray[] = buildDeptArray($secondDept);
     
     return $finalArray;
+}
+function buildFinalArray4X($firstDept, $secondDept, $thirdDept, $fourthDept) {
+    $varBiggestDeptSlice = getDeptStudentSlicesFor4Depts($firstDept, $secondDept, $thirdDept, $fourthDept);
 }
 
 ?>

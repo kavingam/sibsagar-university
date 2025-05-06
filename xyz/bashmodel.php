@@ -14,6 +14,48 @@ class BaseModel {
         $this->conn = Database::getInstance()->getConnection();
     }
 
+    // // 🔥 Fetch all records
+    // public function getAll($table) {
+    //     $allowedTables = ['student', 'rooms', 'departments'];
+
+    //     if (!in_array($table, $allowedTables)) {
+    //         die("Invalid table name!");
+    //     }
+
+    //     $sql = "SELECT * FROM `$table`";
+    //     $stmt = $this->conn->prepare($sql);
+    //     $stmt->execute();
+    //     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // }
+
+    // // 🛑 Delete all records
+    // public function deleteAll($table) {
+    //     $allowedTables = ['student', 'rooms', 'departments'];
+
+    //     if (!in_array($table, $allowedTables)) {
+    //         die("Invalid table name!");
+    //     }
+
+    //     $sql = "DELETE FROM `$table`";
+    //     $stmt = $this->conn->prepare($sql);
+    //     return $stmt->execute();
+    // }
+
+    // // 🔢 Get total count
+    // public function getCount($table) {
+    //     $allowedTables = ['student', 'rooms', 'departments'];
+
+    //     if (!in_array($table, $allowedTables)) {
+    //         die("Invalid table name!");
+    //     }
+
+    //     $sql = "SELECT COUNT(*) AS total FROM `$table`";
+    //     $stmt = $this->conn->prepare($sql);
+    //     $stmt->execute();
+    //     $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    //     return $result['total'];
+    // }
+
     // 🔥 Fetch all records
     public function getAll($table) {
         $allowedTables = ['student', 'rooms', 'departments'];
@@ -55,69 +97,135 @@ class BaseModel {
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return $result['total'];
     }
+
+    // ✅ Execute any query with parameters (This is the missing method)
+    public function executeQuery($sql, $params) {
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute($params);
+    }    
 }
 
-// ✅ Student CRUD
-class Student extends BaseModel {
-    public function createStudent($roll_no, $name, $department, $semester, $course) {
-        $sql = "INSERT INTO student (roll_no, name, department, semester, course) VALUES (:roll_no, :name, :department, :semester, :course)";
-        $stmt = $this->conn->prepare($sql);
-        return $stmt->execute([
-            ':roll_no' => $roll_no,
-            ':name' => $name,
-            ':department' => $department,
-            ':semester' => $semester,
-            ':course' => $course
-        ]);
+class UserInfo extends BaseModel {
+
+    /**
+     * Create a new user in the `users_info` table.
+     *
+     * @param string $email
+     * @param string $password
+     * @return bool
+     */
+    public function createUser($email, $password) {
+        // Hash the password (password_hash generates the salt for you)
+        $passwordHash = password_hash($password, PASSWORD_ARGON2ID);
+
+        // SQL to insert a new user record
+        $sql = "INSERT INTO users_info (email, password_hash) VALUES (:email, :password_hash)";
+        $params = [
+            ':email' => $email,
+            ':password_hash' => $passwordHash
+        ];
+
+        return $this->executeQuery($sql, $params);
     }
 
     /**
-     * Find students who have the same department, course, and semester.
+     * Login function to authenticate the user by checking email and password.
+     *
+     * @param string $email
+     * @param string $password
+     * @return bool
+     */
+    public function login($email, $password) {
+        // Fetch user from the database by email
+        $user = $this->getUserByEmail($email);
+
+        if ($user) {
+            // Check if the password matches the stored hash
+            if (password_verify($password, $user['password_hash'])) {
+                // Password is correct, authentication successful
+                return true;
+            }
+        }
+
+        // Either user doesn't exist or password is incorrect
+        return false;
+    }
+
+    /**
+     * Get user by email
      * 
-     * @param string $department
-     * @param string $course
-     * @param int $semester
+     * @param string $email
      * @return array
      */
-    public function findSimilarStudents($department, $course, $semester) {
-        $sql = "SELECT * FROM student WHERE department = :department AND course = :course AND semester = :semester";
+    public function getUserByEmail($email) {
+        $sql = "SELECT * FROM users_info WHERE email = :email";
         $stmt = $this->conn->prepare($sql);
-        $stmt->execute([
-            ':department' => $department,
-            ':course' => $course,
-            ':semester' => $semester
-        ]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt->execute([':email' => $email]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
-    
-    
-    public function getAllStudents() {
-        return $this->getAll('student');
+
+    /**
+     * Update user information
+     * 
+     * @param string $email
+     * @param string $password
+     * @return bool
+     */
+    public function updateUser($email, $password) {
+        // Hash the new password
+        $passwordHash = password_hash($password, PASSWORD_ARGON2ID);
+
+        $sql = "UPDATE users_info SET password_hash = :password_hash WHERE email = :email";
+        $params = [
+            ':email' => $email,
+            ':password_hash' => $passwordHash
+        ];
+
+        return $this->executeQuery($sql, $params);
     }
 
 
-    public function updateStudent($roll_no, $name, $department, $semester, $course) {
-        $sql = "UPDATE student SET name = :name, department = :department, semester = :semester, course = :course WHERE roll_no = :roll_no";
+    /**
+     * Update user's password.
+     *
+     * @param string $email
+     * @param string $passwordHash
+     * @return bool
+     */
+    public function updateUserPassword($email, $passwordHash) {
+        $sql = "UPDATE users_info SET password_hash = :password_hash WHERE email = :email";
+        $params = [
+            ':email' => $email,
+            ':password_hash' => $passwordHash
+        ];
+
+        return $this->executeQuery($sql, $params);
+    }
+
+
+    /**
+     * Delete user by email
+     * 
+     * @param string $email
+     * @return bool
+     */
+    public function deleteUser($email) {
+        $sql = "DELETE FROM users_info WHERE email = :email";
         $stmt = $this->conn->prepare($sql);
-        return $stmt->execute([
-            ':roll_no' => $roll_no,
-            ':name' => $name,
-            ':department' => $department,
-            ':semester' => $semester,
-            ':course' => $course
-        ]);
+        return $stmt->execute([':email' => $email]);
     }
 
-    public function deleteStudent($roll_no) {
-        $sql = "DELETE FROM student WHERE roll_no = :roll_no";
-        $stmt = $this->conn->prepare($sql);
-        return $stmt->execute([':roll_no' => $roll_no]);
-    }
-
-    public function getStudentCount() {
-        return $this->getCount('student');
+    /**
+     * Get user count (for example, for admin dashboard)
+     * 
+     * @return int
+     */
+    public function getUserCount() {
+        return $this->getCount('users_info');
     }
 }
+
+
 
 // ✅ Room CRUD
 class Room extends BaseModel {

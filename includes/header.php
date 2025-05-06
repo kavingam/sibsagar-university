@@ -1,5 +1,15 @@
-<?php include 'config.php';
-include 'db/pdo_connect.php'; ?>
+<?php 
+// include 'config.php';
+// include 'db/pdo_connect.php'; 
+?>
+
+<?php 
+// Include configuration and DB connection files
+include 'config.php';
+include 'db/pdo_connect.php';
+
+
+?>
 
 <!doctype html>
 <html lang="en">

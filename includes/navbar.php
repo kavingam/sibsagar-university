@@ -102,6 +102,12 @@
                             </a>
                         </li>
                         <li>
+                            <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'advance-seat-plan') ? 'active bg-light fw-bold' : ''; ?>"
+                                href="<?php echo BASE_URL . 'seat-summary.php'; ?>">
+                                 Seat Plan Summary
+                            </a>
+                        </li>
+                        <li>
                             <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'attendance-sheet') ? 'active bg-light fw-bold' : ''; ?>"
                                 href="<?php echo BASE_URL . 'attendance-sheet.php'; ?>">
                                 Attendance Sheet
@@ -127,20 +133,20 @@
                     <ul class="dropdown-menu dropdown-menu-center shadow-lg border-0 mt-2 rounded-4 px-2 py-2"
                         aria-labelledby="moreDropdown" style="min-width: 200px;">
                         <li>
-                            <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'help') ? 'active bg-light fw-bold' : ''; ?>"
-                                href="<?php echo BASE_URL . 'help.php'; ?>">
+                            <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'profile') ? 'active bg-light fw-bold' : ''; ?>"
+                                href="<?php echo BASE_URL . 'profile.php'; ?>">
                                 Profile
                             </a>
                         </li>
                         <li>
-                            <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'help') ? 'active bg-light fw-bold' : ''; ?>"
-                                href="<?php echo BASE_URL . 'help.php'; ?>">
+                            <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'change-password') ? 'active bg-light fw-bold' : ''; ?>"
+                                href="<?php echo BASE_URL . 'change-password.php'; ?>">
                                 Change Password
                             </a>
                         </li>
                         <li>
-                            <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'help') ? 'active bg-light fw-bold' : ''; ?>"
-                                href="<?php echo BASE_URL . 'help.php'; ?>">
+                            <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'logout') ? 'active bg-light fw-bold' : ''; ?>"
+                                href="<?php echo BASE_URL . 'logout.php'; ?>">
                                 Logout
                             </a>
                         </li>
