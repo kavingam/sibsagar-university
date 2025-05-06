@@ -1,9 +1,14 @@
 <?php include 'includes/header.php'; ?>
 <div class="container bg-light vh-100">
     <div class="row g-0">
-       <div class="col-12 my-3 mb-5">
+       <!-- <div class="col-12 my-3 mb-5">
             <h4 class="text-center text-primary text-uppercase fw-semi-bold">Advance Exam Seat plan</h4>
+        </div> -->
+        <div class="col-md-12 col-12 import-section my-5">
+            <h2 class="section-title"><i class="fas fa-th-large"></i> Advanced Exam Seat Plan</h2>
+            <p class="section-subtext">Generate and manage detailed seating arrangements for examinations</p>
         </div>
+
         <div class="col-3 mt-4">
 
         <div class="container">

@@ -2,9 +2,14 @@
 
 <div class="container bg-light vh-100">
     <div class="row g-0 justify-content-center d-flex">
-        <div class="col-lg-12 my-5">
+        <!-- <div class="col-lg-12 my-5">
             <h4 class="text-center text-primary text-uppercase fw-semi-bold">Add Room</h4>
+        </div> -->
+        <div class="col-md-12 col-12 import-section my-5">
+            <h2 class="section-title"><i class="fas fa-plus-square"></i> Add New Room</h2>
+            <p class="section-subtext">Fill out the form below to add a new room with its capacity and other details</p>
         </div>
+
         <div class="col-md-2 col-12 mb-3">
             <div class="container p-2">
                 <label for="roomNo">Room No:</label>

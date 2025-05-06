@@ -16,7 +16,7 @@
         <div class="col-md-6 col-12 my-5">
             <h5>Department Details</h5>
             <div class="overflow-auto table-responsive" style="max-height: 720px;">
-            <table class="table table-striped table-bordered" cellspacing="0" width="100%">
+            <!-- <table class="table table-striped table-bordered" cellspacing="0" width="100%">
                 <thead class="text-center bg-dark text-white">
                     <tr>
                         <th scope="col">Department ID</th>
@@ -26,7 +26,39 @@
                 </thead>
                 <tbody id="departmentTableBody">
                 </tbody>
-            </table>
+            </table> -->
+            <div class="table-responsive">
+    <!-- Header Table -->
+    <table class="table table-striped table-bordered fixed-header-table m-0">
+        <colgroup>
+            <col style="width: 20%;">
+            <col style="width: 50%;">
+            <col style="width: 30%;">
+        </colgroup>
+        <thead class="text-center bg-dark text-white">
+            <tr>
+                <th scope="col">Department ID</th>
+                <th scope="col">Department Name</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+    </table>
+
+    <!-- Scrollable Body Table -->
+    <div class="scrollable-body">
+        <table class="table table-striped table-bordered m-0">
+            <colgroup>
+                <col style="width: 20%;">
+                <col style="width: 50%;">
+                <col style="width: 30%;">
+            </colgroup>
+            <tbody id="departmentTableBody">
+                <!-- Dynamic rows inserted here -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
             </div>
             <!-- <p>Total Departments: <span id="totalDepartments">0</span></p> -->
         </div>

@@ -8,15 +8,20 @@ try {
 
 	if ($departments) {
         foreach ($departments as $row) {
-            echo "<tr>
-                    <td>{$row['department_id']}</td>
-                    <td>{$row['department_name']}</td>
-                    <td class='text-center'>
-                        <button class='btn btn-sm edit-btn' data-id='{$row['department_id']}' data-name='{$row['department_name']}'><i class='fad fa-edit text-success'></i></button>
-                        <button class='btn btn-sm delete-btn' data-id='{$row['department_id']}'><i class='fad fa-trash-alt text-danger'></i></button>
-                        
-                    </td>
-                  </tr>";
+            echo "
+            <tr>
+                <td>{$row['department_id']}</td>
+                <td>{$row['department_name']}</td>
+                <td class='text-center'>
+                    <button class='btn btn-sm edit-btn' data-id='{$row['department_id']}' data-name='{$row['department_name']}'>
+                        <i class='fad fa-edit text-success me-1'></i> Edit
+                    </button>
+                    <button class='btn btn-sm delete-btn' data-id='{$row['department_id']}'>
+                        <i class='fad fa-trash-alt text-danger me-1'></i> Remove
+                    </button>
+                </td>
+            </tr>";
+            
         }
     } else {
         echo "<tr><td colspan='3' class='text-center'>No departments found</td></tr>";
@@ -27,7 +32,10 @@ try {
 }
 ?>
 <?php
-
+                //     <td class='text-center'>
+                //     <button class='btn btn-sm edit-btn' data-id='{$row['department_id']}' data-name='{$row['department_name']}'><i class='fad fa-edit text-success'></i></button>
+                //     <button class='btn btn-sm delete-btn' data-id='{$row['department_id']}'><i class='fad fa-trash-alt text-danger'></i></button>
+                // </td>
 // include('../bashmodel.php');
 
 // header('Content-Type: application/json');

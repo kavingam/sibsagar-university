@@ -46,7 +46,7 @@
                         <li>
                             <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'manage-students') ? 'active bg-light fw-bold' : ''; ?>"
                                 href="<?php echo BASE_URL . 'manage-students.php'; ?>">
-                                Manage Student
+                                View Student
                             </a>
                         </li>
                     </ul>

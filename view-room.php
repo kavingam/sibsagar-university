@@ -1,9 +1,14 @@
 <?php include 'includes/header.php'; ?>
 <div class="container bg-light vh-100">
     <div class="row g-0 justify-content-center d-flex">
-        <div class="col-lg-12 my-5">
+        <!-- <div class="col-lg-12 my-5">
             <h4 class="text-center text-primary text-uppercase fw-semi-bold">Room Details</h4>
+        </div> -->
+        <div class="col-md-12 col-12 import-section my-5">
+            <h2 class="section-title"><i class="fad fa-door-open"></i> Manage Room Details</h2>
+            <p class="section-subtext">Easily view, edit, and organize room information and seating capacity</p>
         </div>
+
         <div class="col-lg-12">
             <!-- <div class="container">
                 <div class="table-responsive">
