@@ -140,22 +140,45 @@ function fetchRooms() {
             data.forEach((room, index) => {
                 let benchOrderText = benchOrderLabels[room.bench_order] || "Unknown"; 
                 
-                let row = `
-                    <tr>
-                        <td>${room.room_no}</td>
-                        <td>${room.room_name}</td>
-                        <td>${benchOrderText}</td>
-                        <td>${room.seat_capacity}</td>
-                        <td class="justify-content-center d-flex">
-                            <button class="ms-2 btn" onclick="editRoom('${room.room_no}', '${room.room_name}', '${room.bench_order}', '${room.seat_capacity}')">
-                                <i class="bi bi-pencil-square text-primary"></i>
+                // let row = `
+                //     <tr>
+                //         <td>${room.room_no}</td>
+                //         <td>${room.room_name}</td>
+                //         <td>${benchOrderText}</td>
+                //         <td>${room.seat_capacity}</td>
+                //         <td class="justify-content-center d-flex">
+                //             <button class="ms-2 btn btn-primary d-flex align-items-center gap-1"
+                //                 onclick="editRoom('${room.room_no}', '${room.room_name}', '${room.bench_order}', '${room.seat_capacity}')">
+                //                 <i class="bi bi-pencil-square"></i> Edit
+                //             </button>
+                //             <button class="ms-2 btn btn-danger d-flex align-items-center gap-1"
+                //                 onclick="deleteRoom('${room.room_no}')">
+                //                 <i class="bi bi-trash-fill"></i> Remove
+                //             </button>
+                //         </td>
+
+                //     </tr>
+                // `;
+                const row = `
+                <tr>
+                    <td style="width: 15%;">${room.room_no}</td>
+                    <td style="width: 25%;">${room.room_name}</td>
+                    <td style="width: 20%;">${benchOrderText}</td>
+                    <td style="width: 10%;">${room.seat_capacity}</td>
+                    <td style="width: 100%;" class="text-center">
+                        <div class="d-flex justify-content-center align-items-center gap-2">
+                            <button class="btn btn-primary d-flex align-items-center gap-1"
+                                onclick="editRoom('${room.room_no}', '${room.room_name}', '${room.bench_order}', '${room.seat_capacity}')">
+                                <i class="bi bi-pencil-square"></i> <span>Edit</span>
                             </button>
-                            <button class="ms-2 btn" onclick="deleteRoom('${room.room_no}')">
-                                <i class="bi bi-trash-fill text-danger"></i>
+                            <button class="btn btn-danger d-flex align-items-center gap-1"
+                                onclick="deleteRoom('${room.room_no}')">
+                                <i class="bi bi-trash-fill"></i> <span>Remove</span>
                             </button>
-                        </td>
-                    </tr>
-                `;
+                        </div>
+                    </td>
+                </tr>`;
+
                 tableBody.innerHTML += row;
             });
         })

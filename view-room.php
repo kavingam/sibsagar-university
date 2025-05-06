@@ -5,12 +5,11 @@
             <h4 class="text-center text-primary text-uppercase fw-semi-bold">Room Details</h4>
         </div>
         <div class="col-lg-12">
-            <div class="container">
-                <div class="overflow-auto table-responsive" style="max-height: 720px;">
-                    <table class="table table-striped table-bordered" cellspacing="0" width="100%">
+            <!-- <div class="container">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered mb-0">
                         <thead class="text-center">
                             <tr>
-                                <!-- <th>SNO</th> -->
                                 <th>Room No</th>
                                 <th>Room Name</th>
                                 <th>Bench Order</th>
@@ -18,10 +17,32 @@
                                 <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody id="roomTableBody"></tbody>
                     </table>
+                    <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                        <table class="table table-striped table-bordered mb-0">
+                            <tbody id="roomTableBody"></tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
+            </div> -->
+
+            <div class="container">
+    <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+        <table class="table table-striped table-bordered mb-0">
+            <thead class="text-center bg-light sticky-top" style="z-index: 1;">
+                <tr>
+                    <th style="width: 15%;">Room No</th>
+                    <th style="width: 25%;">Room Name</th>
+                    <th style="width: 20%;">Bench Order</th>
+                    <th style="width: 10%;">Capacity</th>
+                    <th style="width: 30%;">Action</th>
+                </tr>
+            </thead>
+            <tbody id="roomTableBody"></tbody>
+        </table>
+    </div>
+</div>
+
         </div>
     </div>
 </div>
