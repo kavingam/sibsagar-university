@@ -163,7 +163,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <div id="modalBodyContent">
+                <div id="modalBodyContent" class="">
                     <!-- PHP returned content will be loaded here -->
                 </div>
             </div>
@@ -583,10 +583,10 @@ function addRow() {
                         <td data-department="${department}">${departmentText}</td>
                         <td data-course="${course}">${courseText}</td>
                         <td data-semester="${semester}">${semesterText}</td>
-                        <td data-totalStudent="${totalStudents}" class="text-center">${totalStudents}</td>
-                        <td class="text-center">
+                        <td data-totalStudent="${totalStudents}">${totalStudents}</td>
+                        <td>
                             <button class="btn btn-transparent" style="background: none; border: none;" onclick="deleteRow(this)">
-                                <i class="fad fa-file-times"></i>
+                                <i class="fad fa-file-times"></i> remove
                             </button>
                         </td>
                     `;
