@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Responsive Login</title>
+  <title>Admin Login</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body {
-      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      /* background: linear-gradient(135deg, #6a11cb, #2575fc); */
       height: 100vh;
       margin: 0;
       display: flex;

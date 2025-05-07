@@ -7,6 +7,8 @@
     <script src="assets/plugins/package/dist/sweetalert2.all.min.js"></script>
     <script src="assets/plugins/DataTables/datatables.min.js"></script>
     <script src="assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-    
+    <script>
+      const userEmail = <?php echo json_encode($userEmail); ?>;
+    </script>
   </body>
 </html>

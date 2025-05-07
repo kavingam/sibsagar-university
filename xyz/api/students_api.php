@@ -8,3 +8,4 @@ $student = new Student();
 $allStudents = $student->getAllStudents();
 
 echo json_encode($allStudents);
+?>

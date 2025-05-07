@@ -1,3 +1,13 @@
+<?php 
+// Start the session to access session data
+session_start();
+// Check if the user is logged in, redirect to login page if not
+if (!isset($_SESSION['user_email'])) {
+    header('Location: login.php');  // Redirect to login page
+    exit;
+}
+?>
+
 <?php
 // Sample GET variables (replace with actual values or keep as fallback)
 $date = $_GET['date'] ?? '12/14/2024';
