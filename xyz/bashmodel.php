@@ -15,18 +15,18 @@ class BaseModel {
     }
 
     // // 🔥 Fetch all records
-    // public function getAll($table) {
-    //     $allowedTables = ['student', 'rooms', 'departments'];
+    public function getAll($table) {
+        $allowedTables = ['student', 'rooms', 'departments'];
 
-    //     if (!in_array($table, $allowedTables)) {
-    //         die("Invalid table name!");
-    //     }
+        if (!in_array($table, $allowedTables)) {
+            die("Invalid table name!");
+        }
 
-    //     $sql = "SELECT * FROM `$table`";
-    //     $stmt = $this->conn->prepare($sql);
-    //     $stmt->execute();
-    //     return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    // }
+        $sql = "SELECT * FROM `$table`";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
     // // 🛑 Delete all records
     // public function deleteAll($table) {
@@ -57,18 +57,18 @@ class BaseModel {
     // }
 
     // 🔥 Fetch all records
-    public function getAll($table) {
-        $allowedTables = ['student', 'rooms', 'departments'];
+    // public function getAll($table) {
+    //     $allowedTables = ['student', 'rooms', 'departments'];
 
-        if (!in_array($table, $allowedTables)) {
-            die("Invalid table name!");
-        }
+    //     if (!in_array($table, $allowedTables)) {
+    //         die("Invalid table name!");
+    //     }
 
-        $sql = "SELECT * FROM `$table`";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+    //     $sql = "SELECT * FROM `$table`";
+    //     $stmt = $this->conn->prepare($sql);
+    //     $stmt->execute();
+    //     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // }
 
     // 🛑 Delete all records
     public function deleteAll($table) {
@@ -225,7 +225,67 @@ class UserInfo extends BaseModel {
     }
 }
 
+// ✅ Student CRUD
+class Student extends BaseModel {
+    public function createStudent($roll_no, $name, $department, $semester, $course) {
+        $sql = "INSERT INTO student (roll_no, name, department, semester, course) VALUES (:roll_no, :name, :department, :semester, :course)";
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([
+            ':roll_no' => $roll_no,
+            ':name' => $name,
+            ':department' => $department,
+            ':semester' => $semester,
+            ':course' => $course
+        ]);
+    }
 
+    /**
+     * Find students who have the same department, course, and semester.
+     * 
+     * @param string $department
+     * @param string $course
+     * @param int $semester
+     * @return array
+     */
+    public function findSimilarStudents($department, $course, $semester) {
+        $sql = "SELECT * FROM student WHERE department = :department AND course = :course AND semester = :semester";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([
+            ':department' => $department,
+            ':course' => $course,
+            ':semester' => $semester
+        ]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    
+    public function getAllStudents() {
+        return $this->getAll('student');
+    }
+
+
+    public function updateStudent($roll_no, $name, $department, $semester, $course) {
+        $sql = "UPDATE student SET name = :name, department = :department, semester = :semester, course = :course WHERE roll_no = :roll_no";
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([
+            ':roll_no' => $roll_no,
+            ':name' => $name,
+            ':department' => $department,
+            ':semester' => $semester,
+            ':course' => $course
+        ]);
+    }
+
+    public function deleteStudent($roll_no) {
+        $sql = "DELETE FROM student WHERE roll_no = :roll_no";
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([':roll_no' => $roll_no]);
+    }
+
+    public function getStudentCount() {
+        return $this->getCount('student');
+    }
+}
 
 // ✅ Room CRUD
 class Room extends BaseModel {

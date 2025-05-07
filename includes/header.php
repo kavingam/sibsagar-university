@@ -14,7 +14,7 @@ include 'db/pdo_connect.php';
 <!doctype html>
 <html lang="en">
   <head>
-    <title></title>
+    <title>Advance Automated Seat Plan Generator</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- <link rel="stylesheet" href="assets/layout/css/styles.css" type="text/css"> -->

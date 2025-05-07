@@ -1,0 +1,16 @@
+{
+    "department": "3",
+    "semester": "1",
+    "course": "1",
+    "totalStudent": 1,
+    "students": [
+        {
+            "roll_no": "EDU-SEM-1035",
+            "name": "AA-35",
+            "department": 3,
+            "semester": 1,
+            "course": 1
+        }
+    ],
+    "_id": 1647
+}
