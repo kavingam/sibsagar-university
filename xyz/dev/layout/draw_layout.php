@@ -7,6 +7,9 @@ foreach ($data as $block) {
     $students = array_merge($students, $block['zigzag_students']);
 }
 
+echo '<pre>';
+// print_r($students);
+echo '</pre>';
 // Allocate students to rooms
 $assignedRooms = allocateStudentsToRooms($rooms, count($students));
 
@@ -69,53 +72,62 @@ function renderSeat($seat, $room, $allDept, $examName, $academicYear, $saveData,
         return "<div class='fw-semibold fs-3'>NIL</div>";
     }
 }
+?>
 
+<?php
 $student_index = 0;
 
 foreach ($assignedRooms as $room) {
-    $cols = $room['banch_order']; // Benches per row
     $total_seats = $room['students_assigned'];
-    $rows = ceil($total_seats / ($cols * 2));
+    $cols = $room['banch_order']; // Number of columns
+    $rows = ceil($total_seats / ($cols * 2)); // 2 seats per column
 
     echo "<div class='container mb-5'>";
     echo "<h4 class='mb-3 fs-6 fw-bold'>Room No: <strong>" . htmlspecialchars($room['room_no']) . "</strong> - " . htmlspecialchars($room['room_name']) . "</h4>";
-    echo "<div class='table-responsive'>";
-    echo "<table class='table table-bordered text-center align-middle'>";
 
     for ($i = 0; $i < $rows; $i++) {
-        echo "<tr>";
+        echo "<div class='row gx-4 gy-3'>";
 
         for ($j = 0; $j < $cols; $j++) {
-            echo "<td style='min-width:180px;' class='text-nowrap text-center'>";
+            $seat1 = isset($students[$student_index]) ? $students[$student_index++] : null;
+            $seat2 = isset($students[$student_index]) ? $students[$student_index++] : null;
 
-            if ($i % 2 == 1) {
-                $seat2 = isset($students[$student_index]) ? $students[$student_index++] : null;
-                $seat1 = isset($students[$student_index]) ? $students[$student_index++] : null;
+            echo "<div class='col'>";
+            echo "<div class='row'>";
+
+            // Swap seat1 and seat2 every alternate row
+            if ($i % 2 === 0) {
+                // Even row: seat1 left, seat2 right
+                renderStudentBox($seat1);
+                renderStudentBox($seat2);
             } else {
-                $seat1 = isset($students[$student_index]) ? $students[$student_index++] : null;
-                $seat2 = isset($students[$student_index]) ? $students[$student_index++] : null;
+                // Odd row: seat2 left, seat1 right
+                renderStudentBox($seat2);
+                renderStudentBox($seat1);
             }
 
-            echo "<div class='container'><div class='row p-2'>";
-
-            // Seat 1
-            echo "<div class='col-6 col-md-6 box text-center border p-2 fs-7'>";
-            echo renderSeat($seat1, $room, $allDept, $examName, $academicYear, $saveData, $attendance, $examDate, $examTime24);
-            echo "</div>";
-
-            // Seat 2
-            echo "<div class='col-6 col-md-6 box text-center border p-2 fs-7'>";
-            echo renderSeat($seat2, $room, $allDept, $examName, $academicYear, $saveData, $attendance, $examDate, $examTime24);
-            echo "</div>";
-
-            echo "</div></div>"; // end row and container
-            echo "</td>";
+            echo "</div>"; // End seat row
+            echo "</div>"; // End column
         }
 
-        echo "</tr>";
+        echo "</div>"; // End row
     }
 
-    echo "</table>";
-    echo "</div></div>"; // end table and container
+    echo "</div>"; // End container
+}
+
+// Helper function to render student box
+function renderStudentBox($seat) {
+    echo "<div class='col p-2 border fs-6'>";
+    if ($seat) {
+        echo "<strong>Roll No:</strong> " . htmlspecialchars($seat['roll_no']) . "<br>";
+        echo "<strong>Name:</strong> " . htmlspecialchars($seat['name']) . "<br>";
+        echo "<strong>Department:</strong> " . htmlspecialchars($seat['department']) . "<br>";
+        echo "<strong>Semester:</strong> " . htmlspecialchars($seat['semester']) . "<br>";
+        echo "<strong>Course:</strong> " . htmlspecialchars($seat['course']) . "<br>";
+    } else {
+        echo "No student assigned.";
+    }
+    echo "</div>";
 }
 ?>
