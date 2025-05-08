@@ -211,6 +211,39 @@ foreach ($students as $student) {
 // });
 </script>
 <script>
+// $(document).ready(function() {
+//     $('.form-check-input').on('click', function() {
+//         var rollNo = $(this).attr('id');
+//         var statusText = $(this).prop('checked') ? 1 : 0;  // 1 for Present, 0 for Absent
+//         var date = '<?= htmlspecialchars($date) ?>';
+//         var time = '<?= htmlspecialchars($time) ?>';
+//         var deptId = '<?= $deptId ?>';
+
+//         $.ajax({
+//             url: 'xyz/api/update_attendance.php',  // The PHP file where attendance update happens
+//             method: 'POST',
+//             contentType: 'application/json',
+//             data: JSON.stringify({
+//                 roll_no: rollNo,
+//                 student_status: statusText,
+//                 date: date,
+//                 time: time,
+//                 department_id: deptId
+//             }),
+//             success: function(response) {
+//                 var result = JSON.parse(response);
+//                 if (result.success) {
+//                     alert(result.message);
+//                 } else {
+//                     alert(result.message);
+//                 }
+//             },
+//             error: function() {
+//                 alert('An error occurred while updating the attendance.');
+//             }
+//         });
+//     });
+// });
 $(document).ready(function() {
     $('.form-check-input').on('click', function() {
         var rollNo = $(this).attr('id');
@@ -220,7 +253,7 @@ $(document).ready(function() {
         var deptId = '<?= $deptId ?>';
 
         $.ajax({
-            url: 'xyz/api/update_attendance.php',  // The PHP file where attendance update happens
+            url: 'xyz/api/update_attendance.php',
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({
@@ -232,10 +265,9 @@ $(document).ready(function() {
             }),
             success: function(response) {
                 var result = JSON.parse(response);
+                alert(result.message);
                 if (result.success) {
-                    alert(result.message);
-                } else {
-                    alert(result.message);
+                    location.reload(); // ✅ Refresh the page on success
                 }
             },
             error: function() {

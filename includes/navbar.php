@@ -1,5 +1,5 @@
 <?php $current_page = pathinfo($_SERVER['PHP_SELF'], PATHINFO_FILENAME);?>
-<nav class="navbar navbar-expand-lg" style="background-color: #800000;">
+<nav class="navbar navbar-expand-lg fixed-top" style="background-color: #800000;">
     <div class="container-fluid">
         <a class="navbar-brand" href="<?php echo BASE_URL . 'index.php'; ?>">
             <img src="<?php echo BASE_URL . 'assets/Picture-1.png'; ?>" alt="University Logo" style="height: 45px;">
@@ -34,15 +34,28 @@
                         <li>
                             <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'import-students') ? 'active bg-light fw-bold' : ''; ?>"
                                 href="<?php echo BASE_URL . 'import-students.php'; ?>">
-                                Import CSV
+                                Import Student CSV
                             </a>
                         </li>
+                      
                         <li>
                             <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'export-students') ? 'active bg-light fw-bold' : ''; ?>"
                                 href="<?php echo BASE_URL . 'export-students.php'; ?>">
-                                Export CSV
+                                Export Student CSV
                             </a>
                         </li>
+                        <li>
+                            <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'import-subject') ? 'active bg-light fw-bold' : ''; ?>"
+                                href="<?php echo BASE_URL . 'import-subject.php'; ?>">
+                                Import Subject & Code CSV
+                            </a>
+                        </li>  
+                        <li>
+                            <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'export-subject') ? 'active bg-light fw-bold' : ''; ?>"
+                                href="<?php echo BASE_URL . 'export-subject.php'; ?>">
+                                Export Subject & Code CSV
+                            </a>
+                        </li>                        
                         <li>
                             <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'manage-students') ? 'active bg-light fw-bold' : ''; ?>"
                                 href="<?php echo BASE_URL . 'manage-students.php'; ?>">
@@ -98,7 +111,7 @@
                         <li>
                             <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'advance-seat-plan') ? 'active bg-light fw-bold' : ''; ?>"
                                 href="<?php echo BASE_URL . 'advance-seat-plan.php'; ?>">
-                                Advance Seat Plan
+                                Hall Ticket Preparation
                             </a>
                         </li>
                         <li>

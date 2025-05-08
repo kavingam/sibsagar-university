@@ -181,7 +181,7 @@ td.text-center {
       }
     </style>
   </head>
-  <body>
+  <body class="mt-5">
 
 <?php include 'navbar.php';
 include 'modal.php'; ?>

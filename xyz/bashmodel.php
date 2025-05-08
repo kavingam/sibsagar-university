@@ -668,7 +668,7 @@ class AttendanceSheet extends BaseModel {
 
     public function getStudentsByExam($date, $time, $department_id = null) {
         // SQL query to get students based on the exam date, time, and optional department filter
-        $sql = "SELECT a.roll_no, a.name, a.department, a.semester, a.course, a.room_no, a.room_name
+        $sql = "SELECT a.roll_no, a.name, a.department, a.semester, a.course, a.room_no, a.room_name,a.student_status
                 FROM attendance_sheet a
                 WHERE a.date = :date AND a.time = :time";
     

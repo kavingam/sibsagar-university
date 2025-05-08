@@ -121,8 +121,6 @@ function renderStudentBox($seat, $saveData, $room, $examDate, $examTime) {
 
     if ($seat) {
         echo "<div class='student-cardx p-3 borderx roundedx h-100x'>";
-
-        // echo "<h6 class='fw-bold fs-7'>Student Info</h6>";
         echo "<p class='fs-6'><strong>Roll No:</strong> " . htmlspecialchars($seat['roll_no']) . "</p>";
         echo "<p class='fs-6'><strong>Name:</strong> " . htmlspecialchars($seat['name']) . "</p>";
         echo "<p class='fs-6'><strong>Department:</strong> " . htmlspecialchars($seat['department']) . "</p>";
