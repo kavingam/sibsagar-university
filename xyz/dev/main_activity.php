@@ -120,9 +120,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     if ($totalDepartments == 1) {
-        echo 'Total unique departments: 1';
+        // echo 'Total unique departments: 1';
+        $remainderStore->insertDepartmentsIfValid(pairSubtractRemainder($fetchStudents)['pairs']);
+        $remainderStore->bulkInsert(pairSubtractRemainder($fetchStudents)['remainder']);
     } else if ($totalDepartments == 2) {
-        echo 'Total unique departments: 2';
+        // echo 'Total unique departments: 2';
         for ($i = 0; $i < count($fetchStudents); $i += 2) {
             if (isset($fetchStudents[$i + 1])) {
                 $firstDept = $fetchStudents[$i];
@@ -134,7 +136,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $remainderStore->insertDepartmentsIfValid(pairSubtractRemainder($fetchStudents)['pairs']);
         $remainderStore->bulkInsert(pairSubtractRemainder($fetchStudents)['remainder']);
     } else if ($totalDepartments == 3) {
-        echo 'Total unique departments: 3';
+        // echo 'Total unique departments: 3';
+        // buildFinalArray3X
+        for ($i = 0; $i < count($fetchStudents); $i += 3) {
+            if (
+                isset($fetchStudents[$i]) &&
+                isset($fetchStudents[$i + 1]) &&
+                isset($fetchStudents[$i + 2]) 
+            ) {
+                $first = $fetchStudents[$i];
+                $second = $fetchStudents[$i + 1];
+                $third = $fetchStudents[$i + 2];
+        
+                $finalArrayX[] = buildFinalArray3X($first, $second, $third);
+            }
+            // echo 'ok';
+        }
+        $combinationStore->bulkInsert($finalArrayX);   
+        $remainderStore->insertDepartmentsIfValid(getDeptStudentRemaindersFor3($fetchStudents));        
     } else if ($totalDepartments == 4) {
         // echo 'Total unique departments: 4' .$totalDepartments;
         for ($i = 0; $i < count($fetchStudents); $i += 4) {
@@ -182,17 +201,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // $remainderStore->insertDepartmentsIfValid(pairSubtractRemainder($fetchStudents)['pairs']);
     // $remainderStore->bulkInsert(pairSubtractRemainder($fetchStudents)['remainder']);
     
-    echo '<pre>';
+    // echo '<pre>';
     // print_r($fetchStudents);
     // print_r($finalArrayX);  
     // print_r(pairSubtractRemainder($fetchStudents)['pairs']);    
-    echo '<br/>';
+    // echo '<br/>';
     // print_r(pairSubtractRemainder($fetchStudents)['remainder']);
     // print_r(pairSubtractRemainder4X($fetchStudents)['pairs']);
     // print_r(pairSubtractRemainder4X($fetchStudents)['remainder']);
     
+    // print_r(getDeptStudentRemaindersFor3($fetchStudents));
     // print_r(getDeptStudentRemaindersFor4($fetchStudents));
-    echo '</pre>';
+    // echo '</pre>';
 
     $remainderArrayX = [];
     $trashArrayX = [];
@@ -200,7 +220,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // break the loop if remainder is 0, 1, or 2
         if ($remainderStore->findTotal() <= 1) {
             break; // <-- break here after printing
-        } else if ($remainderStore->findTotal() == 4) {
+        } else if ($remainderStore->findTotal() == 2) {
+            // echo 'remainder 4 ok';
+            // echo '<pre>';
+            print_r($remainderStore->findTotal());
+            $remainderList = $remainderStore->findAll();
+    
+            usort($remainderList, function ($a, $b) {
+                return $b['totalStudent'] <=> $a['totalStudent'];
+            });
+    
+            $remainderArrayX[] = buildFinalArrayX($remainderList[0], $remainderList[1]);
+            $combinationStore->bulkInsert($remainderArrayX);
+
+            $remainderStore->deleteByArray($remainderList[0]);
+            $remainderStore->deleteByArray($remainderList[1]);
+
+            $remainderStore->insertDepartmentsIfValid(subtractRemainderOnly($remainderList[0], $remainderList[1]));
+            // echo count($remainderList);
+            // echo '</pre>';     
+
+            // break; 
+
+        } else if($remainderStore->findTotal() == 3) {
+            // echo '<pre>';
+            // print_r($remainderStore->findTotal());
+            $remainderList = $remainderStore->findAll();
+    
+            usort($remainderList, function ($a, $b) {
+                return $b['totalStudent'] <=> $a['totalStudent'];
+            });
+            // buildFinalArray3X
+            $remainderArrayX[] = buildFinalArray3X($remainderList[0], $remainderList[1], $remainderList[2]);
+            $combinationStore->bulkInsert($remainderArrayX);
+
+            $remainderStore->deleteByArray($remainderList[0]);
+            $remainderStore->deleteByArray($remainderList[1]);
+            $remainderStore->deleteByArray($remainderList[2]);
+
+            // $remainderStore->insertDepartmentsIfValid(subtractRemainderOnly($remainderList[0], $remainderList[1]));
+            $remainderStore->insertDepartmentsIfValid(getDeptStudentRemaindersFor3($remainderList));   
+            // echo count($remainderList);
+            // echo '</pre>';     
+
+            // break; 
+        }else {
+
             $remainderList = $remainderStore->findAll();
     
             usort($remainderList, function ($a, $b) {
@@ -217,28 +282,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $remainderStore->insertDepartmentsIfValid(subtractRemainderOnly($remainderList[0], $remainderList[1]));
             $remainderStore->insertDepartmentsIfValid(subtractRemainderOnly($remainderList[2], $remainderList[3]));
-            echo 'remainder 4 ok';
 
-        } else {
-            echo '<pre>';
-            // print_r($remainderStore->findTotal());
-            $remainderList = $remainderStore->findAll();
-    
-            usort($remainderList, function ($a, $b) {
-                return $b['totalStudent'] <=> $a['totalStudent'];
-            });
-    
-            $remainderArrayX[] = buildFinalArrayX($remainderList[0], $remainderList[1]);
-            $combinationStore->bulkInsert($remainderArrayX);
-
-            $remainderStore->deleteByArray($remainderList[0]);
-            $remainderStore->deleteByArray($remainderList[1]);
-
-            $remainderStore->insertDepartmentsIfValid(subtractRemainderOnly($remainderList[0], $remainderList[1]));
-            // echo count($remainderList);
-            echo '</pre>';     
-
-            // break; 
         }
     }   
 
@@ -744,6 +788,21 @@ function buildFinalArrayX($firstDept, $secondDept) {
     
     return $finalArray;
 }
+function buildFinalArray3X($firstDept, $secondDept, $thirdDept) {
+    $finalArray = [];
+
+    // Get student slices from each department, all based on the smallest size (from thirdDept)
+    list($slice1, $slice2, $slice3) = getDeptStudentSlicesFor3Depts($firstDept, $secondDept, $thirdDept);
+    $total = $thirdDept["totalStudent"];
+
+    // Build final department arrays with sliced students and override totalStudent
+    $finalArray[] = buildDeptArray($firstDept, $slice1, $total);
+    $finalArray[] = buildDeptArray($secondDept, $slice2, $total);
+    $finalArray[] = buildDeptArray($thirdDept, $slice3, $total);
+
+    return $finalArray;
+}
+
 function buildFinalArray4X($firstDept, $secondDept, $thirdDept, $fourthDept) {
     $finalArray = [];
 
@@ -760,28 +819,92 @@ function buildFinalArray4X($firstDept, $secondDept, $thirdDept, $fourthDept) {
     return $finalArray;
 }
 
-function getDeptStudentRemaindersFor4($finalArrayX) {
-    // Ensure we have exactly 4 departments
-    if (count($finalArrayX) !== 4) {
-        throw new InvalidArgumentException("Expected exactly 4 departments.");
-    }
+// function getDeptStudentRemaindersFor4($finalArrayX) {
+//     // Ensure we have exactly 4 departments
+//     if (count($finalArrayX) !== 4) {
+//         throw new InvalidArgumentException("Expected exactly 4 departments.");
+//     }
 
-    $fourthDept = $finalArrayX[3];
-    $total = $fourthDept["totalStudent"];
+//     $fourthDept = $finalArrayX[3];
+//     $total = $fourthDept["totalStudent"];
 
+//     $remainders = [];
+
+//     foreach ($finalArrayX as $dept) {
+//         $students = $dept["students"];
+//         $remainingStudents = array_slice($students, $total); // get the remaining students
+
+//         // Rebuild department array with remainder students and updated total
+//         $remainders[] = buildDeptArray($dept, $remainingStudents, count($remainingStudents));
+//     }
+
+//     return $remainders;
+// }
+function getDeptStudentRemaindersFor3($finalArrayX) {
     $remainders = [];
 
-    foreach ($finalArrayX as $dept) {
-        $students = $dept["students"];
-        $remainingStudents = array_slice($students, $total); // get the remaining students
+    // Ensure we have at least 3 departments
+    if (count($finalArrayX) < 3) {
+        throw new InvalidArgumentException("Expected at least 3 departments.");
+    }
 
-        // Rebuild department array with remainder students and updated total
-        $remainders[] = buildDeptArray($dept, $remainingStudents, count($remainingStudents));
+    // Use the 3rd department as reference
+    $referenceTotal = $finalArrayX[2]["totalStudent"];
+
+    // First: process the first 3 departments for remainders
+    for ($i = 0; $i < 3; $i++) {
+        $dept = $finalArrayX[$i];
+        $students = $dept["students"];
+
+        // Get students beyond the 3rd dept's size
+        $remainingStudents = array_slice($students, $referenceTotal);
+
+        // Add the remainders only if there are any
+        if (count($remainingStudents) > 0) {
+            $remainders[] = buildDeptArray($dept, $remainingStudents, count($remainingStudents));
+        }
+    }
+
+    // Second: Add all departments beyond index 2
+    for ($i = 3; $i < count($finalArrayX); $i++) {
+        $remainders[] = $finalArrayX[$i];
     }
 
     return $remainders;
 }
 
+function getDeptStudentRemaindersFor4($finalArrayX) {
+    $remainders = [];
+
+    // Ensure we have at least 4 departments
+    if (count($finalArrayX) < 4) {
+        throw new InvalidArgumentException("Expected at least 4 departments.");
+    }
+
+    // Use the 4th department as reference
+    $referenceTotal = $finalArrayX[3]["totalStudent"];
+
+    // First: process the first 4 departments for remainders
+    for ($i = 0; $i < 4; $i++) {
+        $dept = $finalArrayX[$i];
+        $students = $dept["students"];
+
+        // Get students beyond the 4th dept's size
+        $remainingStudents = array_slice($students, $referenceTotal);
+
+        // Add the remainders only if there are any
+        if (count($remainingStudents) > 0) {
+            $remainders[] = buildDeptArray($dept, $remainingStudents, count($remainingStudents));
+        }
+    }
+
+    // Second: Add all departments beyond index 3
+    for ($i = 4; $i < count($finalArrayX); $i++) {
+        $remainders[] = $finalArrayX[$i];
+    }
+
+    return $remainders;
+}
 
 
 ?>

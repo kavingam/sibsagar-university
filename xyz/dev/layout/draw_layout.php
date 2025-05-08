@@ -7,9 +7,10 @@ foreach ($data as $block) {
     $students = array_merge($students, $block['zigzag_students']);
 }
 
-echo '<pre>';
+// echo '<pre>';
 // print_r($students);
-echo '</pre>';
+// print_r($saveData);
+// echo '</pre>';
 // Allocate students to rooms
 $assignedRooms = allocateStudentsToRooms($rooms, count($students));
 
@@ -35,43 +36,43 @@ $academicYear = date('Y');
 
 <?php
 // Helper function to render seat
-function renderSeat($seat, $room, $allDept, $examName, $academicYear, $saveData, $attendance, $examDate, $examTime24)
-{
-    if ($seat) {
-        if (isset($seat['semester']) && $seat['semester'] === 'NIL') {
-            return "<div class='fw-semibold fs-3'>NIL</div>";
-        } else {
-            if ($saveData == 1) {
-                $attendance->insertAttendance(
-                    $examDate,
-                    $examTime24,
-                    $seat['roll_no'],
-                    $seat['name'],
-                    $seat['department'],
-                    $seat['semester'],
-                    $seat['course'],
-                    $room['room_no'],
-                    $room['room_name'],
-                    $room['banch_order'],
-                    0
-                );
-            }
+// function renderSeat($seat, $room, $allDept, $examName, $academicYear, $saveData, $attendance, $examDate, $examTime24)
+// {
+//     if ($seat) {
+//         if (isset($seat['semester']) && $seat['semester'] === 'NIL') {
+//             return "<div class='fw-semibold fs-3'>NIL</div>";
+//         } else {
+//             if ($saveData == 1) {
+//                 $attendance->insertAttendance(
+//                     $examDate,
+//                     $examTime24,
+//                     $seat['roll_no'],
+//                     $seat['name'],
+//                     $seat['department'],
+//                     $seat['semester'],
+//                     $seat['course'],
+//                     $room['room_no'],
+//                     $room['room_name'],
+//                     $room['banch_order'],
+//                     0
+//                 );
+//             }
 
-            $deptName = htmlspecialchars(getDepartmentNameById($allDept, $seat['department']));
+//             $deptName = htmlspecialchars(getDepartmentNameById($allDept, $seat['department']));
 
-            return "<strong>SEM: " . htmlspecialchars($seat['semester']) . "<sup>TH</sup> SEM " . 
-                   htmlspecialchars($examName) . " - " . 
-                   htmlspecialchars($academicYear) . "</strong><br>
-                    <strong>(UNDER AUTONOMOUS)</strong><br>
-                    <span>SL NO: " . htmlspecialchars($room['room_no']) . 
-                   " ROOM: " . htmlspecialchars($room['room_name']) . "</span><br>
-                    <strong>ROLL NO: " . htmlspecialchars($seat['roll_no']) . "</strong><br>
-                    <strong>DEPT: " . $deptName . "</strong><br>";
-        }
-    } else {
-        return "<div class='fw-semibold fs-3'>NIL</div>";
-    }
-}
+//             return "<strong>SEM: " . htmlspecialchars($seat['semester']) . "<sup>TH</sup> SEM " . 
+//                    htmlspecialchars($examName) . " - " . 
+//                    htmlspecialchars($academicYear) . "</strong><br>
+//                     <strong>(UNDER AUTONOMOUS)</strong><br>
+//                     <span>SL NO: " . htmlspecialchars($room['room_no']) . 
+//                    " ROOM: " . htmlspecialchars($room['room_name']) . "</span><br>
+//                     <strong>ROLL NO: " . htmlspecialchars($seat['roll_no']) . "</strong><br>
+//                     <strong>DEPT: " . $deptName . "</strong><br>";
+//         }
+//     } else {
+//         return "<div class='fw-semibold fs-3'>NIL</div>";
+//     }
+// }
 ?>
 
 <?php
@@ -85,49 +86,135 @@ foreach ($assignedRooms as $room) {
     echo "<div class='container mb-5'>";
     echo "<h4 class='mb-3 fs-6 fw-bold'>Room No: <strong>" . htmlspecialchars($room['room_no']) . "</strong> - " . htmlspecialchars($room['room_name']) . "</h4>";
 
-    for ($i = 0; $i < $rows; $i++) {
-        echo "<div class='row gx-4 gy-3'>";
+    // for ($i = 0; $i < $rows; $i++) {
+    //     echo "<div class='row gx-4 gy-3'>";
 
-        for ($j = 0; $j < $cols; $j++) {
-            $seat1 = isset($students[$student_index]) ? $students[$student_index++] : null;
-            $seat2 = isset($students[$student_index]) ? $students[$student_index++] : null;
+    //     for ($j = 0; $j < $cols; $j++) {
+    //         $seat1 = isset($students[$student_index]) ? $students[$student_index++] : null;
+    //         $seat2 = isset($students[$student_index]) ? $students[$student_index++] : null;
 
-            echo "<div class='col'>";
-            echo "<div class='row'>";
+    //         echo "<div class='col'>";
+    //         echo "<div class='row'>";
 
-            // Swap seat1 and seat2 every alternate row
-            if ($i % 2 === 0) {
-                // Even row: seat1 left, seat2 right
-                renderStudentBox($seat1);
-                renderStudentBox($seat2);
-            } else {
-                // Odd row: seat2 left, seat1 right
-                renderStudentBox($seat2);
-                renderStudentBox($seat1);
-            }
+    //         // Swap seat1 and seat2 every alternate row
+    //         if ($i % 2 === 0) {
+    //             // Even row: seat1 left, seat2 right
+    //             renderStudentBox($seat1);
+    //             renderStudentBox($seat2);
+    //         } else {
+    //             // Odd row: seat2 left, seat1 right
+    //             renderStudentBox($seat2);
+    //             renderStudentBox($seat1);
+    //         }
 
-            echo "</div>"; // End seat row
-            echo "</div>"; // End column
+    //         echo "</div>"; // End seat row
+    //         echo "</div>"; // End column
+    //     }
+
+    //     echo "</div>"; // End row
+    // }
+for ($i = 0; $i < $rows; $i++) {
+    echo "<div class='row'>";
+
+    $rowColumns = [];
+
+    for ($j = 0; $j < $cols; $j++) {
+        $seat1 = isset($students[$student_index]) ? $students[$student_index++] : null;
+        $seat2 = isset($students[$student_index]) ? $students[$student_index++] : null;
+
+        ob_start(); // Start output buffering
+        echo "<div class='col'>";
+        echo "<div class='row'>";
+        if ($i % 2 === 0) {
+            renderStudentBox($seat1,$saveData,$room,$examDate,$examTime24);
+            renderStudentBox($seat2,$saveData,$room,$examDate,$examTime24);
+        } else {
+            renderStudentBox($seat2,$saveData,$room,$examDate,$examTime24); // reverse inside column
+            renderStudentBox($seat1,$saveData,$room,$examDate,$examTime24);
         }
-
-        echo "</div>"; // End row
+        echo "</div>";
+        echo "</div>";
+        $rowColumns[] = ob_get_clean(); // Store the column HTML
     }
+
+    // Reverse entire row if odd
+    if ($i % 2 !== 0) {
+        $rowColumns = array_reverse($rowColumns);
+    }
+
+    // Output row
+    foreach ($rowColumns as $colHtml) {
+        echo $colHtml;
+    }
+
+    echo "</div>"; // End row
+}
 
     echo "</div>"; // End container
 }
 
 // Helper function to render student box
-function renderStudentBox($seat) {
+function renderStudentBox($seat,$saveData,$room,$examDate,$examTime) {
     echo "<div class='col p-2 border fs-6'>";
+    // if ($seat) {
+    //     echo "<strong>Roll No:</strong> " . htmlspecialchars($seat['roll_no']) . "<br>";
+    //     echo "<strong>Name:</strong> " . htmlspecialchars($seat['name']) . "<br>";
+    //     echo "<strong>Department:</strong> " . htmlspecialchars($seat['department']) . "<br>";
+    //     echo "<strong>Semester:</strong> " . htmlspecialchars($seat['semester']) . "<br>";
+    //     echo "<strong>Course:</strong> " . htmlspecialchars($seat['course']) . "<br>";
+
+    //     $attendance = new AttendanceSheet();
+    //     if ($saveData == 1) {
+    //         $attendance->insertAttendance(
+    //             $examDate,
+    //             $examTime,
+    //             $seat['roll_no'],
+    //             $seat['name'],
+    //             $seat['department'],
+    //             $seat['semester'],
+    //             $seat['course'],
+    //             $room['room_no'],
+    //             $room['room_name'],
+    //             $room['banch_order'],
+    //             0
+    //         );
+    //     }
+    // } else {
+    //     echo "No student assigned.";
+    // }
+
     if ($seat) {
         echo "<strong>Roll No:</strong> " . htmlspecialchars($seat['roll_no']) . "<br>";
         echo "<strong>Name:</strong> " . htmlspecialchars($seat['name']) . "<br>";
         echo "<strong>Department:</strong> " . htmlspecialchars($seat['department']) . "<br>";
         echo "<strong>Semester:</strong> " . htmlspecialchars($seat['semester']) . "<br>";
         echo "<strong>Course:</strong> " . htmlspecialchars($seat['course']) . "<br>";
+    
+        if (strtoupper(trim($seat['name'])) !== 'NIL') {
+            $attendance = new AttendanceSheet();
+            if ($saveData == 1) {
+                $attendance->insertAttendance(
+                    $examDate,
+                    $examTime,
+                    $seat['roll_no'],
+                    $seat['name'],
+                    $seat['department'],
+                    $seat['semester'],
+                    $seat['course'],
+                    $room['room_no'],
+                    $room['room_name'],
+                    $room['banch_order'],
+                    0
+                );
+            }
+        } 
+        // else {
+        //     echo "<strong>Note:</strong> Attendance not saved because student name is NIL.<br>";
+        // }
     } else {
         echo "No student assigned.";
     }
+    
     echo "</div>";
 }
 ?>
