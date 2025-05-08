@@ -16,6 +16,8 @@ $assignedRooms = allocateStudentsToRooms($rooms, count($students));
 
 // Academic details
 $academicYear = date('Y');
+
+// echo '<link rel="stylesheet" href="a4.css">';
 ?>
 
 <!-- Header Info -->
@@ -33,47 +35,6 @@ $academicYear = date('Y');
         </div>
     </div>
 </div>
-
-<?php
-// Helper function to render seat
-// function renderSeat($seat, $room, $allDept, $examName, $academicYear, $saveData, $attendance, $examDate, $examTime24)
-// {
-//     if ($seat) {
-//         if (isset($seat['semester']) && $seat['semester'] === 'NIL') {
-//             return "<div class='fw-semibold fs-3'>NIL</div>";
-//         } else {
-//             if ($saveData == 1) {
-//                 $attendance->insertAttendance(
-//                     $examDate,
-//                     $examTime24,
-//                     $seat['roll_no'],
-//                     $seat['name'],
-//                     $seat['department'],
-//                     $seat['semester'],
-//                     $seat['course'],
-//                     $room['room_no'],
-//                     $room['room_name'],
-//                     $room['banch_order'],
-//                     0
-//                 );
-//             }
-
-//             $deptName = htmlspecialchars(getDepartmentNameById($allDept, $seat['department']));
-
-//             return "<strong>SEM: " . htmlspecialchars($seat['semester']) . "<sup>TH</sup> SEM " . 
-//                    htmlspecialchars($examName) . " - " . 
-//                    htmlspecialchars($academicYear) . "</strong><br>
-//                     <strong>(UNDER AUTONOMOUS)</strong><br>
-//                     <span>SL NO: " . htmlspecialchars($room['room_no']) . 
-//                    " ROOM: " . htmlspecialchars($room['room_name']) . "</span><br>
-//                     <strong>ROLL NO: " . htmlspecialchars($seat['roll_no']) . "</strong><br>
-//                     <strong>DEPT: " . $deptName . "</strong><br>";
-//         }
-//     } else {
-//         return "<div class='fw-semibold fs-3'>NIL</div>";
-//     }
-// }
-?>
 
 <?php
 $student_index = 0;
@@ -124,7 +85,8 @@ for ($i = 0; $i < $rows; $i++) {
 
         ob_start(); // Start output buffering
         echo "<div class='col'>";
-        echo "<div class='row'>";
+        // echo "<div class='row'>";
+        echo "<div class='row border g-4'>";
         if ($i % 2 === 0) {
             renderStudentBox($seat1,$saveData,$room,$examDate,$examTime24);
             renderStudentBox($seat2,$saveData,$room,$examDate,$examTime24);
@@ -152,44 +114,23 @@ for ($i = 0; $i < $rows; $i++) {
 
     echo "</div>"; // End container
 }
-
-// Helper function to render student box
-function renderStudentBox($seat,$saveData,$room,$examDate,$examTime) {
-    echo "<div class='col p-2 border fs-6'>";
-    // if ($seat) {
-    //     echo "<strong>Roll No:</strong> " . htmlspecialchars($seat['roll_no']) . "<br>";
-    //     echo "<strong>Name:</strong> " . htmlspecialchars($seat['name']) . "<br>";
-    //     echo "<strong>Department:</strong> " . htmlspecialchars($seat['department']) . "<br>";
-    //     echo "<strong>Semester:</strong> " . htmlspecialchars($seat['semester']) . "<br>";
-    //     echo "<strong>Course:</strong> " . htmlspecialchars($seat['course']) . "<br>";
-
-    //     $attendance = new AttendanceSheet();
-    //     if ($saveData == 1) {
-    //         $attendance->insertAttendance(
-    //             $examDate,
-    //             $examTime,
-    //             $seat['roll_no'],
-    //             $seat['name'],
-    //             $seat['department'],
-    //             $seat['semester'],
-    //             $seat['course'],
-    //             $room['room_no'],
-    //             $room['room_name'],
-    //             $room['banch_order'],
-    //             0
-    //         );
-    //     }
-    // } else {
-    //     echo "No student assigned.";
-    // }
+?>
+<?php 
+function renderStudentBox($seat, $saveData, $room, $examDate, $examTime) {
+    echo "<div class='col-md-6x col-lg-4x col'>"; // Responsive columns: 2/row (md), 3/row (lg)
 
     if ($seat) {
-        echo "<strong>Roll No:</strong> " . htmlspecialchars($seat['roll_no']) . "<br>";
-        echo "<strong>Name:</strong> " . htmlspecialchars($seat['name']) . "<br>";
-        echo "<strong>Department:</strong> " . htmlspecialchars($seat['department']) . "<br>";
-        echo "<strong>Semester:</strong> " . htmlspecialchars($seat['semester']) . "<br>";
-        echo "<strong>Course:</strong> " . htmlspecialchars($seat['course']) . "<br>";
-    
+        echo "<div class='student-cardx p-3 borderx roundedx h-100x'>";
+
+        // echo "<h6 class='fw-bold fs-7'>Student Info</h6>";
+        echo "<p class='fs-6'><strong>Roll No:</strong> " . htmlspecialchars($seat['roll_no']) . "</p>";
+        echo "<p class='fs-6'><strong>Name:</strong> " . htmlspecialchars($seat['name']) . "</p>";
+        echo "<p class='fs-6'><strong>Department:</strong> " . htmlspecialchars($seat['department']) . "</p>";
+        echo "<p class='fs-6'><strong>Semester:</strong> " . htmlspecialchars($seat['semester']) . "</p>";
+        echo "<p class='fs-6'><strong>Course:</strong> " . htmlspecialchars($seat['course']) . "</p>";
+
+        echo "</div>";
+
         if (strtoupper(trim($seat['name'])) !== 'NIL') {
             $attendance = new AttendanceSheet();
             if ($saveData == 1) {
@@ -207,14 +148,13 @@ function renderStudentBox($seat,$saveData,$room,$examDate,$examTime) {
                     0
                 );
             }
-        } 
-        // else {
-        //     echo "<strong>Note:</strong> Attendance not saved because student name is NIL.<br>";
-        // }
+        }
+
     } else {
-        echo "No student assigned.";
+        echo "<div class='text-danger'>No student assigned.</div>";
     }
-    
+
     echo "</div>";
 }
+
 ?>

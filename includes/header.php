@@ -24,6 +24,7 @@ include 'db/pdo_connect.php';
     <script src="assets/plugins/jquery-3.7.1.min.js"></script>
     <link rel="stylesheet" href="assets/plugins/package/dist/sweetalert2.min.css">
     <link href="assets/plugins/DataTables/datatables.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/printCss/a4.css">
     <style>
       .navbar-nav .nav-link {
           color: white !important;
@@ -171,6 +172,12 @@ td.text-center {
       }
       .fs-10 {
         font-size: 1rem;
+      }
+
+      .student-card {
+        border: 1px solid #000 !important;
+        /* padding: 10mm !important; */
+        /* margin-bottom: 10mm !important; */
       }
     </style>
   </head>
