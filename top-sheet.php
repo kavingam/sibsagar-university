@@ -124,7 +124,7 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        const url = `attendance-view.php?date=${encodeURIComponent(selectedDate)}&time=${encodeURIComponent(selectedTime)}&room_no=${encodeURIComponent(selectedRoom)}`;
+        const url = `create-top-sheet.php?date=${encodeURIComponent(selectedDate)}&time=${encodeURIComponent(selectedTime)}&room_no=${encodeURIComponent(selectedRoom)}`;
         window.open(url, '_blank');
     });
 });
