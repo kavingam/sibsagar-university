@@ -32,12 +32,12 @@ if (!isset($_SESSION['user_email'])) {
             </div>
         </div>
 
-        <!-- Room List -->
+        <!-- Department List -->
         <div class="col-md-2 col-12 mb-3">
             <div class="container p-2">
-                <label for="roomListSelect" class="form-label">Select Room:</label>
-                <select class="form-select" id="roomListSelect" disabled>
-                    <option selected disabled>Select date & event</option>
+                <label for="departmentSelect" class="form-label">Select Department:</label>
+                <select class="form-select" id="departmentSelect" disabled>
+                    <option selected disabled>Select department</option>
                 </select>
             </div>
         </div>
@@ -45,7 +45,7 @@ if (!isset($_SESSION['user_email'])) {
         <!-- Show Button -->
         <div class="col-md-2 col-12 mt-3 d-flex justify-content-center align-items-end">
             <div class="container p-2  w-100">
-                <button class="btn btn-primary w-100 btn-md" id="printButton"><i class="far fa-plus"></i> CREAT</button>
+                <button class="btn btn-primary w-100 btn-md" id="printButton"><i class="far fa-plus"></i> CREATE</button>
             </div>
         </div>
     </div>
@@ -55,7 +55,7 @@ if (!isset($_SESSION['user_email'])) {
 document.addEventListener("DOMContentLoaded", function () {
     const dateSelect = document.getElementById("examDateSelect");
     const eventSelect = document.getElementById("examEventSelect");
-    const roomSelect = document.getElementById("roomListSelect");
+    const departmentSelect = document.getElementById("departmentSelect");
     const printButton = document.getElementById("printButton");
 
     // Load exam dates
@@ -68,15 +68,18 @@ document.addEventListener("DOMContentLoaded", function () {
             });
             dateSelect.disabled = false;
         })
-        .catch(error => console.error('Error loading dates:', error));
+        .catch(error => {
+            console.error('Error loading dates:', error);
+            dateSelect.innerHTML = '<option selected disabled>Error loading dates</option>';
+        });
 
     // Load events when a date is selected
     dateSelect.addEventListener("change", function () {
         const selectedDate = this.value;
         eventSelect.innerHTML = '<option selected disabled>Loading events...</option>';
         eventSelect.disabled = true;
-        roomSelect.innerHTML = '<option selected disabled>Select date & event</option>';
-        roomSelect.disabled = true;
+        departmentSelect.innerHTML = '<option selected disabled>Select department</option>';
+        departmentSelect.disabled = true;
 
         fetch(`xyz/api/get_events_by_date.php?date=${selectedDate}`)
             .then(res => res.json())
@@ -90,41 +93,53 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
                 eventSelect.disabled = false;
             })
-            .catch(error => console.error('Error loading events:', error));
+            .catch(error => {
+                console.error('Error loading events:', error);
+                eventSelect.innerHTML = '<option selected disabled>Error loading events</option>';
+            });
     });
 
-    // Load rooms when an event is selected
+    // Load departments when an event is selected
     eventSelect.addEventListener("change", function () {
+        fetchDepartments();
+    });
+
+    function fetchDepartments() {
         const selectedDate = dateSelect.value;
-        const selectedTime = this.value;
+        const selectedTime = eventSelect.value;
 
-        roomSelect.innerHTML = '<option selected disabled>Loading rooms...</option>';
-        roomSelect.disabled = true;
+        // Clear previous results
+        departmentSelect.innerHTML = '<option selected disabled>Loading departments...</option>';
+        departmentSelect.disabled = true;
 
-        fetch(`xyz/api/get_rooms_by_datetime.php?date=${selectedDate}&time=${selectedTime}`)
+        // Fetch departments from the server
+        fetch(`xyz/api/get_departments_by_datetime.php?date=${selectedDate}&time=${selectedTime}`)
             .then(res => res.json())
             .then(data => {
-                roomSelect.innerHTML = '<option selected disabled>Select a room</option>';
-                data.forEach(room => {
-                    roomSelect.innerHTML += `<option value="${room.room_no}">${room.room_no} - ${room.room_name}</option>`;
+                departmentSelect.innerHTML = '<option selected disabled>Select a department</option>';
+                data.forEach(department => {
+                    departmentSelect.innerHTML += `<option value="${department.department_id}">${department.department_name}</option>`;
                 });
-                roomSelect.disabled = false;
+                departmentSelect.disabled = false;
             })
-            .catch(error => console.error('Error loading rooms:', error));
-    });
+            .catch(error => {
+                console.error('Error loading departments:', error);
+                departmentSelect.innerHTML = '<option selected disabled>Error loading departments</option>';
+            });
+    }
 
-    // Redirect to attendance-view.php
+    // Redirect to attendance-view.php when clicking the create button
     printButton.addEventListener("click", function () {
         const selectedDate = dateSelect.value;
         const selectedTime = eventSelect.value;
-        const selectedRoom = roomSelect.value;
+        const selectedDepartment = departmentSelect.value;
 
-        if (!selectedDate || !selectedTime || !selectedRoom) {
-            alert("Please select a date, event, and room first.");
+        if (!selectedDate || !selectedTime || !selectedDepartment) {
+            alert("Please select a date, event, and department first.");
             return;
         }
 
-        const url = `create-top-sheet.php?date=${encodeURIComponent(selectedDate)}&time=${encodeURIComponent(selectedTime)}&room_no=${encodeURIComponent(selectedRoom)}`;
+        const url = `create-top-sheet.php?date=${encodeURIComponent(selectedDate)}&time=${encodeURIComponent(selectedTime)}&department_id=${encodeURIComponent(selectedDepartment)}`;
         window.open(url, '_blank');
     });
 });

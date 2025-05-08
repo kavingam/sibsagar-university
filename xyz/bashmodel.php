@@ -478,6 +478,21 @@ class Department extends BaseModel {
     public function getDepartmentCount() {
         return $this->getCount('departments');
     }
+
+    // public function getDepartmentsByDateTime($date, $time) {
+    //     // Assuming you have a table like "exams" that stores department info for specific dates and times.
+    //     $sql = "SELECT d.department_id, d.department_name
+    //             FROM departments d
+    //             JOIN attendance_sheet e ON e.department_id = d.department_id
+    //             WHERE e.exam_date = :date AND e.exam_time = :time";
+        
+    //     $stmt = $this->conn->prepare($sql);
+    //     $stmt->execute([':date' => $date, ':time' => $time]);
+
+    //     // Fetch departments
+    //     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // }
+
 }
 
 class AttendanceSheet extends BaseModel {
@@ -636,7 +651,78 @@ class AttendanceSheet extends BaseModel {
         
         return $students;
     }
-     
+
+    public function getDepartmentsByDateTime($date, $time) {
+        // SQL query to get distinct departments based on the date and time
+        $sql = "SELECT DISTINCT d.department_id, d.department_name
+                FROM attendance_sheet a
+                JOIN departments d ON a.department = d.department_id
+                WHERE a.date = :date AND a.time = :time";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([':date' => $date, ':time' => $time]);
+
+        // Fetch departments
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getStudentsByExam($date, $time, $department_id = null) {
+        // SQL query to get students based on the exam date, time, and optional department filter
+        $sql = "SELECT a.roll_no, a.name, a.department, a.semester, a.course, a.room_no, a.room_name
+                FROM attendance_sheet a
+                WHERE a.date = :date AND a.time = :time";
+    
+        // If department_id is provided, filter by department
+        if ($department_id !== null) {
+            $sql .= " AND a.department = :department_id";
+        }
+    
+        // Prepare and execute the query
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([':date' => $date, ':time' => $time, ':department_id' => $department_id ?? '']);
+    
+        // Fetch and return students
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // public function updateAttendanceStatus($roll_no, $student_status, $date, $time, $course, $semester) {
+    //     // SQL query to update the student's attendance status
+    //     $sql = "UPDATE attendance_sheet
+    //             SET student_status = :student_status
+    //             WHERE roll_no = :roll_no AND date = :date AND time = :time AND course = :course AND semester = :semester";
+    
+    //     // Prepare the statement
+    //     $stmt = $this->conn->prepare($sql);
+    
+    //     // Execute the statement with bound parameters
+    //     return $stmt->execute([
+    //         ':student_status' => $student_status,
+    //         ':roll_no' => $roll_no,
+    //         ':date' => $date,
+    //         ':time' => $time,
+    //         ':course' => $course,
+    //         ':semester' => $semester
+    //     ]);
+    // }
+    
+    public function updateAttendanceStatus($roll_no, $student_status, $date, $time, $course, $semester) {
+        $sql = "UPDATE attendance_sheet
+                SET student_status = :student_status
+                WHERE roll_no = :roll_no AND date = :date AND time = :time
+                  AND course = :course AND semester = :semester";
+    
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([
+            ':student_status' => $student_status,
+            ':roll_no' => $roll_no,
+            ':date' => $date,
+            ':time' => $time,
+            ':course' => $course,
+            ':semester' => $semester
+        ]);
+    }
+    
+    
         
 }
 
