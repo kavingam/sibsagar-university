@@ -20,14 +20,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $duplicates = [];
         $successCount = 0;
         while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+
             $roll_no = $data[0];
-            $name = $data[1];
+            $reg_no = $data[1];
+            $name = $data[2];
+
             if (empty($roll_no) || empty($name)) {
                 echo json_encode(["status" => "error", "message" => "Invalid data in CSV file. Roll number and name are required."]);
                 exit;
             }
-            $stmt = $conn->prepare("INSERT INTO student (roll_no, name, department, semester, course) VALUES (?, ?, ?, ?, ?)");
-            $stmt->bind_param("ssiii", $roll_no, $name, $department, $semester, $course);
+            $stmt = $conn->prepare("INSERT INTO student (roll_no, reg_no, name, department, semester, course) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("sssiii", $roll_no, $reg_no, $name, $department, $semester, $course);
             if ($stmt->execute()) {
                 $successCount++;
             } else {

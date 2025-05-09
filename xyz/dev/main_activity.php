@@ -55,25 +55,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         return $b['totalStudent'] <=> $a['totalStudent'];
     });
 
-    $students = new Student();
-    $fetchStudents = [];
-    foreach ($tableData as $data) {
-        $similarStudents = $students->findSimilarStudents(
-            $data['department'],
-            $data['semester'],
-            $data['course'],
-            $data['totalStudent']            
-        );
+    // $students = new Student();
+    // $fetchStudents = [];
+    // foreach ($tableData as $data) {
+    //     $similarStudents = $students->findSimilarStudents(
+    //         $data['department'],
+    //         $data['semester'],
+    //         $data['course'],
+    //         $data['totalStudent']            
+    //     );
 
-        $fetchStudents[] = [
-            'department' => $data['department'],
-            'semester' => $data['semester'],
-            'course' => $data['course'],
-            'subject' => $data['subject'],
-            'totalStudent' => $data['totalStudent'],
-            'students' => $similarStudents
-        ];
-    }
+    //     $fetchStudents[] = [
+    //         'department' => $data['department'],
+    //         'semester' => $data['semester'],
+    //         'course' => $data['course'],
+    //         'subject' => $data['subject'],
+    //         'totalStudent' => $data['totalStudent'],
+    //         'students' => $similarStudents
+    //     ];
+    // }
+$students = new Student();
+$fetchStudents = [];
+
+foreach ($tableData as $data) {
+    $similarStudents = $students->findSimilarStudents(
+        $data['department'],
+        $data['course'],
+        $data['semester']
+    );
+
+    $fetchStudents[] = [
+        'department' => $data['department'],
+        'semester' => $data['semester'],
+        'course' => $data['course'],
+        'subject' => $data['subject'],
+        'totalStudent' => $data['totalStudent'],
+        'students' => $similarStudents
+    ];
+}
 
     $stdObj = new SeatAllocation();
     $totalStudent = $stdObj->getTotalStudents($tableData);
@@ -83,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $allDept = $deptObj->getAllDepartments();
 
 
-    print_r($fetchStudents);
+
     $roomObj = new Room();
     $rooms = $roomObj->getAllRooms();
 
@@ -215,77 +234,127 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // print_r(getDeptStudentRemaindersFor4($fetchStudents));
     // echo '</pre>';
 
-    $remainderArrayX = [];
-    $trashArrayX = [];
-    while (true) {
-        // break the loop if remainder is 0, 1, or 2
-        if ($remainderStore->findTotal() <= 1) {
-            break; // <-- break here after printing
-        } else if ($remainderStore->findTotal() == 2) {
-            // echo 'remainder 4 ok';
-            // echo '<pre>';
-            print_r($remainderStore->findTotal());
-            $remainderList = $remainderStore->findAll();
+    // $remainderArrayX = [];
+    // $trashArrayX = [];
+    // while (true) {
+    //     // break the loop if remainder is 0, 1, or 2
+    //     if ($remainderStore->findTotal() <= 1) {
+    //         break; 
+    //     } else if ($remainderStore->findTotal() == 2) {
+    //         // echo '<pre>';
+    //         // print_r($remainderStore->findTotal());
+    //         $remainderList = $remainderStore->findAll();
     
-            usort($remainderList, function ($a, $b) {
-                return $b['totalStudent'] <=> $a['totalStudent'];
-            });
+    //         usort($remainderList, function ($a, $b) {
+    //             return $b['totalStudent'] <=> $a['totalStudent'];
+    //         });
     
-            $remainderArrayX[] = buildFinalArrayX($remainderList[0], $remainderList[1]);
-            $combinationStore->bulkInsert($remainderArrayX);
+    //         $remainderArrayX[] = buildFinalArrayX($remainderList[0], $remainderList[1]);
+    //         print_r($remainderArrayX);
+    //         $combinationStore->bulkInsert($remainderArrayX);
 
-            $remainderStore->deleteByArray($remainderList[0]);
-            $remainderStore->deleteByArray($remainderList[1]);
+    //         $remainderStore->deleteByArray($remainderList[0]);
+    //         $remainderStore->deleteByArray($remainderList[1]);
 
-            $remainderStore->insertDepartmentsIfValid(subtractRemainderOnly($remainderList[0], $remainderList[1]));
-            // echo count($remainderList);
-            // echo '</pre>';     
+    //         // $remainderStore->insertDepartmentsIfValid(subtractRemainderOnly($remainderList[0], $remainderList[1]));
+    //         echo count($remainderList);
+    //         $remainderStore->insertDepartmentsValid(subtractRemainderOnly($remainderList[0], $remainderList[1]));
+    //         // print_r(subtractRemainderOnly($remainderList[0], $remainderList[1]));
+    //         // echo '</pre>';     
 
-            // break; 
-
-        } else if($remainderStore->findTotal() == 3) {
-            // echo '<pre>';
-            // print_r($remainderStore->findTotal());
-            $remainderList = $remainderStore->findAll();
+    //     }
+        
+    //     else {
+    //         continue; 
+    //     } 
+        // else if($remainderStore->findTotal() == 3) {
+        //     // echo '<pre>';
+        //     // print_r($remainderStore->findTotal());
+        //     $remainderList = $remainderStore->findAll();
     
-            usort($remainderList, function ($a, $b) {
-                return $b['totalStudent'] <=> $a['totalStudent'];
-            });
-            // buildFinalArray3X
-            $remainderArrayX[] = buildFinalArray3X($remainderList[0], $remainderList[1], $remainderList[2]);
-            $combinationStore->bulkInsert($remainderArrayX);
+        //     usort($remainderList, function ($a, $b) {
+        //         return $b['totalStudent'] <=> $a['totalStudent'];
+        //     });
+        //     // buildFinalArray3X
+        //     $remainderArrayX[] = buildFinalArray3X($remainderList[0], $remainderList[1], $remainderList[2]);
+        //     $combinationStore->bulkInsert($remainderArrayX);
 
-            $remainderStore->deleteByArray($remainderList[0]);
-            $remainderStore->deleteByArray($remainderList[1]);
-            $remainderStore->deleteByArray($remainderList[2]);
+        //     $remainderStore->deleteByArray($remainderList[0]);
+        //     $remainderStore->deleteByArray($remainderList[1]);
+        //     $remainderStore->deleteByArray($remainderList[2]);
 
-            // $remainderStore->insertDepartmentsIfValid(subtractRemainderOnly($remainderList[0], $remainderList[1]));
-            $remainderStore->insertDepartmentsIfValid(getDeptStudentRemaindersFor3($remainderList));   
-            // echo count($remainderList);
-            // echo '</pre>';     
+        //     $remainderStore->insertDepartmentsIfValid(subtractRemainderOnly($remainderList[0], $remainderList[1]));
+        //     $remainderStore->insertDepartmentsIfValid(getDeptStudentRemaindersFor3($remainderList));   
+        //     // echo count($remainderList);
+        //     // echo '</pre>';     
 
-            // break; 
-        }else {
+        //     // break; 
+        // } 
+        // // else if ($remainderStore->findTotal() == 4) {
 
-            $remainderList = $remainderStore->findAll();
+        // // }
+        
+        // else {
+
+        //     $remainderList = $remainderStore->findAll();
     
-            usort($remainderList, function ($a, $b) {
-                return $b['totalStudent'] <=> $a['totalStudent'];
-            });
+        //     usort($remainderList, function ($a, $b) {
+        //         return $b['totalStudent'] <=> $a['totalStudent'];
+        //     });
     
-            $remainderArrayX[] = buildFinalArray4X($remainderList[0], $remainderList[1], $remainderList[2], $remainderList[3]);
-            $combinationStore->bulkInsert($remainderArrayX);
+        //     $remainderArrayX[] = buildFinalArray4X($remainderList[0], $remainderList[1], $remainderList[2], $remainderList[3]);
+        //     $combinationStore->bulkInsert($remainderArrayX);
 
-            $remainderStore->deleteByArray($remainderList[0]);
-            $remainderStore->deleteByArray($remainderList[1]);
-            $remainderStore->deleteByArray($remainderList[2]);            
-            $remainderStore->deleteByArray($remainderList[3]);    
+        //     $remainderStore->deleteByArray($remainderList[0]);
+        //     $remainderStore->deleteByArray($remainderList[1]);
+        //     $remainderStore->deleteByArray($remainderList[2]);            
+        //     $remainderStore->deleteByArray($remainderList[3]);    
 
-            $remainderStore->insertDepartmentsIfValid(subtractRemainderOnly($remainderList[0], $remainderList[1]));
-            $remainderStore->insertDepartmentsIfValid(subtractRemainderOnly($remainderList[2], $remainderList[3]));
+        //     $remainderStore->insertDepartmentsIfValid(subtractRemainderOnly($remainderList[0], $remainderList[1]));
+        //     $remainderStore->insertDepartmentsIfValid(subtractRemainderOnly($remainderList[2], $remainderList[3]));
 
+        // }
+
+        $remainderArrayX = [];
+        $trashArrayX = [];
+
+        while (true) {
+            $total = $remainderStore->findTotal();
+
+            // Stop the loop if no more pairs to process
+            if ($total <= 1) {
+                break;
+            }
+
+            if ($total == 2) {
+                $remainderList = $remainderStore->findAll();
+
+                // Sort in descending order by totalStudent
+                usort($remainderList, function ($a, $b) {
+                    return $b['totalStudent'] <=> $a['totalStudent'];
+                });
+
+                // Build final combination
+                $finalCombo = buildFinalArrayX($remainderList[0], $remainderList[1]);
+                $remainderArrayX[] = $finalCombo;
+
+                // Insert into combination store
+                $combinationStore->bulkInsert($remainderArrayX);
+
+                // Remove used pairs from the store
+                $remainderStore->deleteByArray($remainderList[0]);
+                $remainderStore->deleteByArray($remainderList[1]);
+
+                // Subtract remainder and reinsert if still valid
+                $newEntry = subtractRemainderOnly($remainderList[0], $remainderList[1]);
+                $remainderStore->insertDepartmentsValid($newEntry);
+            } else {
+                // In any other case, break to prevent infinite loop
+                break;
+            }
         }
-    }   
+
+    // }   
 
     $combinations_list = $combinationStore->findAll();
     $zigzagBlocks = getZigzagMergedStudents($combinations_list);

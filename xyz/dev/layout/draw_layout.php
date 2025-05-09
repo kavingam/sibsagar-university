@@ -7,6 +7,8 @@ foreach ($data as $block) {
     $students = array_merge($students, $block['zigzag_students']);
 }
 
+
+
 // echo '<pre>';
 // print_r($students);
 // print_r($saveData);
@@ -42,6 +44,7 @@ $student_index = 0;
 foreach ($assignedRooms as $room) {
     $total_seats = $room['students_assigned'];
     $cols = $room['banch_order']; // Number of columns
+    // $r1 = ceil($total_seats / $cols); // Number of rows
     $rows = ceil($total_seats / ($cols * 2)); // 2 seats per column
 
     echo "<div class='container mb-5'>";
@@ -116,17 +119,71 @@ for ($i = 0; $i < $rows; $i++) {
 }
 ?>
 <?php 
+// function renderStudentBox($seat, $saveData, $room, $examDate, $examTime) {
+//     $department = new Department();
+//     echo "<div class='col-md-6x col-lg-4x col'>"; // Responsive columns: 2/row (md), 3/row (lg)
+//     if ($seat) {
+//         echo "<div class='student-cardx p-3 borderx roundedx h-100x'>";
+//         echo "<p class='fs-6'><strong>Roll No:</strong> " . htmlspecialchars($seat['roll_no']) . "</p>";
+//         echo "<p class='fs-6'><strong>Name:</strong> " . htmlspecialchars($seat['name']) . "</p>";
+//         // echo "<p class='fs-6'><strong>Department:</strong> " . htmlspecialchars() . "</p>";
+
+//         if ($seat['department'] != 'NIL' ) {
+//               $deptName = $department->getDepartmentName($seat['department']);
+//         } 
+        
+//         echo "<p class='fs-6'><strong>Department:</strong> " . htmlspecialchars( $deptName) . "</p>";
+//         echo "<p class='fs-6'><strong>Semester:</strong> " . htmlspecialchars($seat['semester']) . "</p>";
+//         echo "<p class='fs-6'><strong>Course:</strong> " . htmlspecialchars($seat['course']) . "</p>";
+//         // echo "<p class='fs-6'><strong>Paper Code:</strong> " . htmlspecialchars($seat['subject']) . "</p>";
+//         echo "</div>";
+
+//         if (strtoupper(trim($seat['name'])) !== 'NIL') {
+//             $attendance = new AttendanceSheet();
+//             if ($saveData == 1) {
+//                 $attendance->insertAttendance(
+//                     $examDate,
+//                     $examTime,
+//                     $seat['roll_no'],
+//                     $seat['name'],
+//                     $seat['department'],
+//                     $seat['semester'],
+//                     $seat['course'],
+//                     $room['room_no'],
+//                     $room['room_name'],
+//                     $room['banch_order'],
+//                     0
+//                 );
+//             }
+//         }
+
+//     } else {
+//         echo "<div class='text-danger'>No student assigned.</div>";
+//     }
+
+//     echo "</div>";
+// }
 function renderStudentBox($seat, $saveData, $room, $examDate, $examTime) {
+    $department = new Department();
     echo "<div class='col-md-6x col-lg-4x col'>"; // Responsive columns: 2/row (md), 3/row (lg)
 
     if ($seat) {
         echo "<div class='student-cardx p-3 borderx roundedx h-100x'>";
         echo "<p class='fs-6'><strong>Roll No:</strong> " . htmlspecialchars($seat['roll_no']) . "</p>";
         echo "<p class='fs-6'><strong>Name:</strong> " . htmlspecialchars($seat['name']) . "</p>";
-        echo "<p class='fs-6'><strong>Department:</strong> " . htmlspecialchars($seat['department']) . "</p>";
+
+        // ✅ Initialize with a default value first
+        $deptName = 'NIL';
+        if (!empty($seat['department']) && strtoupper(trim($seat['department'])) !== 'NIL') {
+            $fetched = $department->getDepartmentName($seat['department']);
+            if ($fetched) {
+                $deptName = $fetched;
+            }
+        }
+
+        echo "<p class='fs-6'><strong>Department:</strong> " . htmlspecialchars($deptName) . "</p>";
         echo "<p class='fs-6'><strong>Semester:</strong> " . htmlspecialchars($seat['semester']) . "</p>";
         echo "<p class='fs-6'><strong>Course:</strong> " . htmlspecialchars($seat['course']) . "</p>";
-        echo "<p class='fs-6'><strong>Paper Code:</strong> " . htmlspecialchars($seat['subject']) . "</p>";
         echo "</div>";
 
         if (strtoupper(trim($seat['name'])) !== 'NIL') {

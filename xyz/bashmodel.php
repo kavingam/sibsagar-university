@@ -247,17 +247,34 @@ class Student extends BaseModel {
      * @param int $semester
      * @return array
      */
+    // public function findSimilarStudents($department, $course, $semester) {
+    //     $sql = "SELECT * FROM student WHERE department = :department AND course = :course AND semester = :semester";
+    //     $stmt = $this->conn->prepare($sql);
+    //     $stmt->execute([
+    //         ':department' => $department,
+    //         ':course' => $course,
+    //         ':semester' => $semester
+    //     ]);
+    //     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // }
+
     public function findSimilarStudents($department, $course, $semester) {
-        $sql = "SELECT * FROM student WHERE department = :department AND course = :course AND semester = :semester";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([
-            ':department' => $department,
-            ':course' => $course,
-            ':semester' => $semester
-        ]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+    $sql = "SELECT roll_no, reg_no, name, department, semester, course 
+            FROM student 
+            WHERE department = :department 
+              AND course = :course 
+              AND semester = :semester";
     
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute([
+        ':department' => $department,
+        ':course' => $course,
+        ':semester' => $semester
+    ]);
+    
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
     
     public function getAllStudents() {
         return $this->getAll('student');
@@ -410,6 +427,14 @@ class Department extends BaseModel {
             ':department_name' => $department_name
         ]);
     }
+        public function getDepartmentName($department_id) {
+            $sql = "SELECT department_name FROM departments WHERE department_id = :department_id";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([':department_id' => $department_id]);
+
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result ? $result['department_name'] : null;
+        }
 
     public function getAllDepartments() {
         return $this->getAll('departments');
