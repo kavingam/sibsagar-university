@@ -126,7 +126,7 @@ function renderStudentBox($seat, $saveData, $room, $examDate, $examTime) {
         echo "<p class='fs-6'><strong>Department:</strong> " . htmlspecialchars($seat['department']) . "</p>";
         echo "<p class='fs-6'><strong>Semester:</strong> " . htmlspecialchars($seat['semester']) . "</p>";
         echo "<p class='fs-6'><strong>Course:</strong> " . htmlspecialchars($seat['course']) . "</p>";
-
+        echo "<p class='fs-6'><strong>Paper Code:</strong> " . htmlspecialchars($seat['subject']) . "</p>";
         echo "</div>";
 
         if (strtoupper(trim($seat['name'])) !== 'NIL') {

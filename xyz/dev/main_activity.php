@@ -62,13 +62,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data['department'],
             $data['semester'],
             $data['course'],
-            $data['totalStudent']
+            $data['totalStudent']            
         );
 
         $fetchStudents[] = [
             'department' => $data['department'],
             'semester' => $data['semester'],
             'course' => $data['course'],
+            'subject' => $data['subject'],
             'totalStudent' => $data['totalStudent'],
             'students' => $similarStudents
         ];
@@ -82,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $allDept = $deptObj->getAllDepartments();
 
 
-    // print_r($allDept);
+    print_r($fetchStudents);
     $roomObj = new Room();
     $rooms = $roomObj->getAllRooms();
 
@@ -407,6 +408,7 @@ function pairSubtractRemainder(array $items): array {
                 'department'   => $first['department'],
                 'semester'     => $first['semester'],
                 'course'       => $first['course'],
+                'subject'      => $first['subject'],
                 'totalStudent' => $newTotal,
                 'students'     => $newStudents,
             ];
@@ -450,6 +452,7 @@ function pairSubtractRemainder4X(array $items): array {
                 'department'   => $first['department'],
                 'semester'     => $first['semester'],
                 'course'       => $first['course'],
+                'subject'      => $first['subject'],
                 'totalStudent' => $newTotal,
                 'students'     => $newStudents,
             ];
@@ -473,6 +476,7 @@ function pairSubtractRemainder4X(array $items): array {
                 'department'   => $third['department'],
                 'semester'     => $third['semester'],
                 'course'       => $third['course'],
+                'subject'      => $third['subject'],
                 'totalStudent' => $newTotal,
                 'students'     => $newStudents,
             ];
@@ -522,6 +526,7 @@ function pairSubtractRemainderY(array $department1, array $department2): array {
                 'department'   => $first['department'],
                 'semester'     => $first['semester'],
                 'course'       => $first['course'],
+                'subject'      => $first['subject'],
                 'totalStudent' => $newTotal,
                 'students'     => $newStudents,
             ];
@@ -566,6 +571,7 @@ function subtractRemainderOnly(array $deptA, array $deptB): array {
         'department'   => $deptA['department'],
         'semester'     => $deptA['semester'],
         'course'       => $deptA['course'],
+        'subject'      => $deptA['subject'],
         'totalStudent' => $newTotal,
         'students'     => $remainingStudents,
     ]];
@@ -744,7 +750,8 @@ function buildDeptArray($dept, $studentSlice = null, $overrideTotal = null) {
             "name" => $student["name"],
             "department" => $dept["department"],
             "semester" => $dept["semester"],
-            "course" => $dept["course"]
+            "course" => $dept["course"],
+            "subject" => $dept["subject"]
         ];
     }, $studentSlice ?? $dept["students"]);
 
@@ -752,6 +759,7 @@ function buildDeptArray($dept, $studentSlice = null, $overrideTotal = null) {
         "department" => $dept["department"],
         "semester" => $dept["semester"],
         "course" => $dept["course"],
+        "subject" => $dept["subject"],
         "totalStudent" => $overrideTotal ?? $dept["totalStudent"], // Override totalStudent if provided
         "students" => $students
     ];
