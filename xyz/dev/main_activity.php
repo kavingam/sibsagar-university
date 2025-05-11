@@ -127,7 +127,7 @@ foreach ($tableData as $data) {
     $finalArrayX = []; // initialize before use
     
 
-    $totalDepartments = calculateTotalDepartments($fetchStudents);
+    
     
     
     // for ($i = 0; $i < count($fetchStudents); $i += 2) {
@@ -138,85 +138,418 @@ foreach ($tableData as $data) {
     //     }
     // }
 
-
-    if ($totalDepartments == 1) {
-        // echo 'Total unique departments: 1';
-        $remainderStore->insertDepartmentsIfValid(pairSubtractRemainder($fetchStudents)['pairs']);
-        $remainderStore->bulkInsert(pairSubtractRemainder($fetchStudents)['remainder']);
-    } else if ($totalDepartments == 2) {
-        // echo 'Total unique departments: 2';
-        for ($i = 0; $i < count($fetchStudents); $i += 2) {
-            if (isset($fetchStudents[$i + 1])) {
-                $firstDept = $fetchStudents[$i];
-                $secondDept = $fetchStudents[$i + 1];
-                $finalArrayX[] = buildFinalArrayX($firstDept, $secondDept);
-            }
-        }
-        $combinationStore->bulkInsert($finalArrayX);   
-        $remainderStore->insertDepartmentsIfValid(pairSubtractRemainder($fetchStudents)['pairs']);
-        $remainderStore->bulkInsert(pairSubtractRemainder($fetchStudents)['remainder']);
-    } else if ($totalDepartments == 3) {
-        // echo 'Total unique departments: 3';
-        // buildFinalArray3X
-        for ($i = 0; $i < count($fetchStudents); $i += 3) {
-            if (
-                isset($fetchStudents[$i]) &&
-                isset($fetchStudents[$i + 1]) &&
-                isset($fetchStudents[$i + 2]) 
-            ) {
-                $first = $fetchStudents[$i];
-                $second = $fetchStudents[$i + 1];
-                $third = $fetchStudents[$i + 2];
+// $totalDepartments = calculateTotalDepartments($fetchStudents);
+//     if ($totalDepartments == 1) {
+//         // echo 'Total unique departments: 1';
+//         $remainderStore->insertDepartmentsIfValid(pairSubtractRemainder($fetchStudents)['pairs']);
+//         $remainderStore->bulkInsert(pairSubtractRemainder($fetchStudents)['remainder']);
+//     } else if ($totalDepartments == 2) {
+//         // echo 'Total unique departments: 2';
+//         for ($i = 0; $i < count($fetchStudents); $i += 2) {
+//             if (isset($fetchStudents[$i + 1])) {
+//                 $firstDept = $fetchStudents[$i];
+//                 $secondDept = $fetchStudents[$i + 1];
+//                 $finalArrayX[] = buildFinalArrayX($firstDept, $secondDept);
+//             }
+//         }
+//         $combinationStore->bulkInsert($finalArrayX);   
+//         $remainderStore->insertDepartmentsIfValid(pairSubtractRemainder($fetchStudents)['pairs']);
+//         $remainderStore->bulkInsert(pairSubtractRemainder($fetchStudents)['remainder']);
+//     } else if ($totalDepartments == 3) {
+//         // echo 'Total unique departments: 3';
+//         // buildFinalArray3X
+//         for ($i = 0; $i < count($fetchStudents); $i += 3) {
+//             if (
+//                 isset($fetchStudents[$i]) &&
+//                 isset($fetchStudents[$i + 1]) &&
+//                 isset($fetchStudents[$i + 2]) 
+//             ) {
+//                 $first = $fetchStudents[$i];
+//                 $second = $fetchStudents[$i + 1];
+//                 $third = $fetchStudents[$i + 2];
         
-                $finalArrayX[] = buildFinalArray3X($first, $second, $third);
-            }
-            // echo 'ok';
-        }
-        $combinationStore->bulkInsert($finalArrayX);   
-        $remainderStore->insertDepartmentsIfValid(getDeptStudentRemaindersFor3($fetchStudents));        
-    } else if ($totalDepartments == 4) {
-        // echo 'Total unique departments: 4' .$totalDepartments;
-        for ($i = 0; $i < count($fetchStudents); $i += 4) {
-            if (
-                isset($fetchStudents[$i]) &&
-                isset($fetchStudents[$i + 1]) &&
-                isset($fetchStudents[$i + 2]) &&
-                isset($fetchStudents[$i + 3])
-            ) {
-                $first = $fetchStudents[$i];
-                $second = $fetchStudents[$i + 1];
-                $third = $fetchStudents[$i + 2];
-                $fourth = $fetchStudents[$i + 3];
+//                 $finalArrayX[] = buildFinalArray3X($first, $second, $third);
+//             }
+//             // echo 'ok';
+//         }
+//         $combinationStore->bulkInsert($finalArrayX);   
+//         $remainderStore->insertDepartmentsIfValid(getDeptStudentRemaindersFor3($fetchStudents));        
+//     } else if ($totalDepartments == 4) {
+//         // echo 'Total unique departments: 4' .$totalDepartments;
+//         for ($i = 0; $i < count($fetchStudents); $i += 4) {
+//             if (
+//                 isset($fetchStudents[$i]) &&
+//                 isset($fetchStudents[$i + 1]) &&
+//                 isset($fetchStudents[$i + 2]) &&
+//                 isset($fetchStudents[$i + 3])
+//             ) {
+//                 $first = $fetchStudents[$i];
+//                 $second = $fetchStudents[$i + 1];
+//                 $third = $fetchStudents[$i + 2];
+//                 $fourth = $fetchStudents[$i + 3];
         
-                $finalArrayX[] = buildFinalArray4X($first, $second, $third, $fourth);
-            }
-            // echo 'ok';
-        }
-        $combinationStore->bulkInsert($finalArrayX);   
-        $remainderStore->insertDepartmentsIfValid(getDeptStudentRemaindersFor4($fetchStudents));
+//                 $finalArrayX[] = buildFinalArray4X($first, $second, $third, $fourth);
+//             }
+//             // echo 'ok';
+//         }
+//         $combinationStore->bulkInsert($finalArrayX);   
+//         $remainderStore->insertDepartmentsIfValid(getDeptStudentRemaindersFor4($fetchStudents));
         
-    } else {
-        for ($i = 0; $i < count($fetchStudents); $i += 4) {
-            if (
-                isset($fetchStudents[$i]) &&
-                isset($fetchStudents[$i + 1]) &&
-                isset($fetchStudents[$i + 2]) &&
-                isset($fetchStudents[$i + 3])
-            ) {
-                $first = $fetchStudents[$i];
-                $second = $fetchStudents[$i + 1];
-                $third = $fetchStudents[$i + 2];
-                $fourth = $fetchStudents[$i + 3];
+//     } else {
+//         for ($i = 0; $i < count($fetchStudents); $i += 4) {
+//             if (
+//                 isset($fetchStudents[$i]) &&
+//                 isset($fetchStudents[$i + 1]) &&
+//                 isset($fetchStudents[$i + 2]) &&
+//                 isset($fetchStudents[$i + 3])
+//             ) {
+//                 $first = $fetchStudents[$i];
+//                 $second = $fetchStudents[$i + 1];
+//                 $third = $fetchStudents[$i + 2];
+//                 $fourth = $fetchStudents[$i + 3];
         
-                $finalArrayX[] = buildFinalArray4X($first, $second, $third, $fourth);
-            }
-        }
-        // echo "Total unique departments: " . $totalDepartments;
-        $combinationStore->bulkInsert($finalArrayX);   
-        $remainderStore->insertDepartmentsIfValid(getDeptStudentRemaindersFor4($fetchStudents));
-    }
+//                 $finalArrayX[] = buildFinalArray4X($first, $second, $third, $fourth);
+//             }
+//         }
+//         // echo "Total unique departments: " . $totalDepartments;
+//         $combinationStore->bulkInsert($finalArrayX);   
+//         $remainderStore->insertDepartmentsIfValid(getDeptStudentRemaindersFor4($fetchStudents));
+//     }
     
+//####################################################################################################3
+// $totalDepartments = calculateTotalDepartments($fetchStudents);
+// $finalArrayX = [];
 
+// if ($totalDepartments == 1) {
+//     $pairData = pairSubtractRemainder($fetchStudents);
+//     $remainderStore->insertDepartmentsIfValid($pairData['pairs']);
+//     $remainderStore->bulkInsert($pairData['remainder']);
+
+// } else if ($totalDepartments == 2) {
+//     for ($i = 0; $i < count($fetchStudents); $i += 2) {
+//         if (isset($fetchStudents[$i + 1])) {
+//             $finalArrayX[] = buildFinalArrayX($fetchStudents[$i], $fetchStudents[$i + 1]);
+//         }
+//     }
+//     $combinationStore->bulkInsert($finalArrayX);
+
+//     $pairData = pairSubtractRemainder($fetchStudents);
+//     $remainderStore->insertDepartmentsIfValid($pairData['pairs']);
+//     $remainderStore->bulkInsert($pairData['remainder']);
+
+// } else if ($totalDepartments == 3) {
+//     for ($i = 0; $i < count($fetchStudents); $i += 3) {
+//         if (
+//             isset($fetchStudents[$i]) &&
+//             isset($fetchStudents[$i + 1]) &&
+//             isset($fetchStudents[$i + 2])
+//         ) {
+//             $finalArrayX[] = buildFinalArray3X(
+//                 $fetchStudents[$i],
+//                 $fetchStudents[$i + 1],
+//                 $fetchStudents[$i + 2]
+//             );
+//         }
+//     }
+//     $combinationStore->bulkInsert($finalArrayX);
+//     $remainderStore->insertDepartmentsIfValid(getDeptStudentRemaindersFor3($fetchStudents));
+
+// } else {
+//     // Handle 4 or more departments
+//     for ($i = 0; $i < count($fetchStudents); $i += 4) {
+//         if (
+//             isset($fetchStudents[$i]) &&
+//             isset($fetchStudents[$i + 1]) &&
+//             isset($fetchStudents[$i + 2]) &&
+//             isset($fetchStudents[$i + 3])
+//         ) {
+//             $finalArrayX[] = buildFinalArray4X(
+//                 $fetchStudents[$i],
+//                 $fetchStudents[$i + 1],
+//                 $fetchStudents[$i + 2],
+//                 $fetchStudents[$i + 3]
+//             );
+//         }
+//     }
+//     $combinationStore->bulkInsert($finalArrayX);
+//     $remainderStore->insertDepartmentsIfValid(getDeptStudentRemaindersFor4($fetchStudents));
+// }
+//         $remainderArrayX = [];
+//         $trashArrayX = [];
+
+//         while (true) {
+//             $total = $remainderStore->findTotal();
+
+//             // Stop the loop if no more pairs to process
+//             if ($total <= 1) {
+//                 break;
+//             }
+
+//             if ($total == 2) {
+//                 $remainderList = $remainderStore->findAll();
+
+//                 // Sort in descending order by totalStudent
+//                 usort($remainderList, function ($a, $b) {
+//                     return $b['totalStudent'] <=> $a['totalStudent'];
+//                 });
+
+//                 // Build final combination
+//                 $finalCombo = buildFinalArrayX($remainderList[0], $remainderList[1]);
+//                 $remainderArrayX[] = $finalCombo;
+
+//                 // Insert into combination store
+//                 $combinationStore->bulkInsert($remainderArrayX);
+
+//                 // Remove used pairs from the store
+//                 $remainderStore->deleteByArray($remainderList[0]);
+//                 $remainderStore->deleteByArray($remainderList[1]);
+
+//                 // Subtract remainder and reinsert if still valid
+//                 // $newEntry = subtractRemainderOnly($remainderList[0], $remainderList[1]);
+//                 // $remainderStore->insertDepartmentsValid($newEntry);
+
+//         $newEntry = subtractRemainderOnly($remainderList[0], $remainderList[1]);
+//         // Insert only if valid and not empty or zero
+//         if (!empty($newEntry) && $newEntry['totalStudent'] > 0) {
+//             $remainderStore->insertDepartmentsValid($newEntry);
+//         }
+//             } else {
+//                 // In any other case, break to prevent infinite loop
+//                 break;
+//             }
+//         }
+
+########################################################################################################
+
+$totalDepartments = calculateTotalDepartments($fetchStudents);
+$finalArrayX = [];
+
+if ($totalDepartments == 1) {
+    $pairData = pairSubtractRemainder($fetchStudents);
+    $remainderStore->insertDepartmentsIfValid($pairData['pairs']);
+    $remainderStore->bulkInsert($pairData['remainder']);
+
+} else if ($totalDepartments == 2) {
+    for ($i = 0; $i < count($fetchStudents); $i += 2) {
+        if (isset($fetchStudents[$i + 1])) {
+            $finalArrayX[] = buildFinalArrayX($fetchStudents[$i], $fetchStudents[$i + 1]);
+        }
+    }
+    $combinationStore->bulkInsert($finalArrayX);
+
+    $pairData = pairSubtractRemainder($fetchStudents);
+    $remainderStore->insertDepartmentsIfValid($pairData['pairs']);
+    $remainderStore->bulkInsert($pairData['remainder']);
+
+} else if ($totalDepartments == 3) {
+    for ($i = 0; $i < count($fetchStudents); $i += 3) {
+        if (
+            isset($fetchStudents[$i]) &&
+            isset($fetchStudents[$i + 1]) &&
+            isset($fetchStudents[$i + 2])
+        ) {
+            $finalArrayX[] = buildFinalArray3X(
+                $fetchStudents[$i],
+                $fetchStudents[$i + 1],
+                $fetchStudents[$i + 2]
+            );
+        }
+    }
+    $combinationStore->bulkInsert($finalArrayX);
+    $remainderStore->insertDepartmentsIfValid(getDeptStudentRemaindersFor3($fetchStudents));
+
+} else if($totalDepartments == 4) {
+    // Handle 4 or more departments
+    for ($i = 0; $i <  count($fetchStudents); $i += 4) {
+        if (
+            isset($fetchStudents[$i]) &&
+            isset($fetchStudents[$i + 1]) &&
+            isset($fetchStudents[$i + 2]) &&
+            isset($fetchStudents[$i + 3])
+        ) {
+            $finalArrayX[] = buildFinalArray4X(
+                $fetchStudents[$i],
+                $fetchStudents[$i + 1],
+                $fetchStudents[$i + 2],
+                $fetchStudents[$i + 3]
+            );
+        }
+    }
+    $combinationStore->bulkInsert($finalArrayX);
+    $remainderStore->insertDepartmentsIfValid(getDeptStudentRemaindersFor4($fetchStudents));
+} else {
+    // $pairData = pairSubtractRemainder($fetchStudents);
+    // $remainderStore->insertDepartmentsIfValid($pairData['pairs']);
+    $remainderStore->bulkInsert($fetchStudents);
+}
+###########################################################################################################################
+
+
+echo '<pre>';
+// print_r($remainderStore->findTotal());
+// $remainderList = $remainderStore->findAll();
+// $deptA = $remainderList[0];
+
+// print_r($deptA);
+// echo '</pre>';
+// $remainderArrayX = [];
+// $trashArrayX = [];
+
+// $remainderList = $remainderStore->findAll();
+echo '<pre>';
+//     usort($remainderList, function ($a, $b) {
+//         return $b['totalStudent'] <=> $a['totalStudent'];
+//     });
+// print_r($remainderList);
+// echo '</pre>';
+
+    $debug_1 = [];
+    $debug_2 = [];
+    do {
+
+
+    $total = $remainderStore->findTotal();
+    if ($total <= 1) {
+        break; 
+    }
+
+    $remainderList = $remainderStore->findAll();
+    usort($remainderList, function ($a, $b) {
+        return $b['totalStudent'] <=> $a['totalStudent'];
+    });
+
+    if ($total == 2) {
+        echo 'two';      
+        // $deptA = $remainderList[0];
+        // $deptB = $remainderList[1];
+
+        // $finalCombo = buildFinalArrayX($deptA, $deptB);
+        // $remainderArrayX[] = $finalCombo;
+
+        // $combinationStore->bulkInsert($finalCombo); 
+
+        // $check_remainder_debug = $remainderArrayX;
+
+        // $remainderStore->deleteByArray($deptA);
+        // $remainderStore->deleteByArray($deptB);
+
+        // $newEntry = subtractRemainderOnly($deptA, $deptB);
+        // $remainderStore->insertDepartmentsValid($newEntry);
+        // echo "2 TIMES-";
+        break;
+
+    } 
+    elseif ($total == 3) {
+        echo 'three';
+        // $remainderList = $remainderStore->findAll();
+
+        // usort($remainderList, function ($a, $b) {
+        //     return $b['totalStudent'] <=> $a['totalStudent'];
+        // });
+
+        // $deptA = $remainderList[0];
+        // $deptB = $remainderList[1];
+        // $deptC = $remainderList[2];
+
+        // $remainderArrayX[] = buildFinalArray3X($deptA, $deptB, $deptC);
+        // $combinationStore->bulkInsert($remainderArrayX);
+
+        // $remainderStore->deleteByArray($deptA);
+        // $remainderStore->deleteByArray($deptB);
+        // $remainderStore->deleteByArray($deptC);
+
+        // $remainderStore->insertDepartmentsIfValid(subtractRemainderOnly($deptA, $deptB));
+        // $remainderStore->insertDepartmentsIfValid(getDeptStudentRemaindersFor3($remainderList));
+        // echo "3 TIMES- ";
+        // break;
+        continue;
+
+    } 
+     else {
+
+        $deptA = $remainderList[0];
+        $deptB = $remainderList[1];
+        $deptC = $remainderList[2];
+        $deptD = $remainderList[3];
+
+
+        
+        $remainderArrayX[] = buildFinalArray4X($deptA, $deptB, $deptC, $deptD);
+        $combinationStore->bulkInsert($remainderArrayX);
+        
+        
+        
+        $remainderStore->deleteByArray($deptA);
+        $remainderStore->deleteByArray($deptB);
+        $remainderStore->deleteByArray($deptC);
+        $remainderStore->deleteByArray($deptD);
+        
+        $debug_1 = $deptA;
+        $debug_2 = $deptB;
+
+        // $remainderStore->insertDepartmentsIfValid(subtractRemainderOnly($deptA, $deptB));
+        // $remainderStore->insertDepartmentsIfValid(subtractRemainderOnly($deptC, $deptD));
+
+        echo "4 TIME-";
+        continue;
+    } 
+   
+}
+ while(true);
+
+print_r(subtractRemainderOnly($debug_1,$debug_2));
+// print_r($debug_2);
+
+
+##########################################################################################################################
+// Remainder combination loop
+// $remainderArrayX = [];
+// $trashArrayX = [];
+
+// while (true) {
+//     $total = $remainderStore->findTotal();
+
+//     if ($total <= 1) {
+//         break; // Nothing to process
+//     }
+
+//     if ($total == 2) {
+//         $remainderList = $remainderStore->findAll();
+
+//         // Sort by totalStudent descending
+//         usort($remainderList, function ($a, $b) {
+//             return $b['totalStudent'] <=> $a['totalStudent'];
+//         });
+
+//         $deptA = $remainderList[0];
+//         $deptB = $remainderList[1];
+
+//         // Build final combo and insert
+//         $finalCombo = buildFinalArrayX($deptA, $deptB);
+//         $remainderArrayX[] = $finalCombo;
+//         $combinationStore->bulkInsert($remainderArrayX);
+
+//         // Delete processed departments
+//         $remainderStore->deleteByArray($deptA);
+//         $remainderStore->deleteByArray($deptB);
+
+//         // Subtract and re-insert only if valid and >0
+//         $newEntry = subtractRemainderOnly($deptA, $deptB);
+//         if (
+//             !empty($newEntry) &&
+//             isset($newEntry['deptCode']) &&
+//             $newEntry['totalStudent'] > 0 &&
+//             !$remainderStore->exists($newEntry['deptCode']) // <--- Avoid duplicates
+//         ) {
+//             $remainderStore->insertDepartmentsValid($newEntry);
+//         }
+
+//     } else {
+//         break; // Avoid infinite loop on >2 departments
+//     }
+// }
+
+// ##################################################################################################3
     // $combinationStore->bulkInsert($finalArrayX);   
     // $remainderStore->insertDepartmentsIfValid(pairSubtractRemainder($fetchStudents)['pairs']);
     // $remainderStore->bulkInsert(pairSubtractRemainder($fetchStudents)['remainder']);
@@ -315,67 +648,31 @@ foreach ($tableData as $data) {
 
         // }
 
-        $remainderArrayX = [];
-        $trashArrayX = [];
 
-        while (true) {
-            $total = $remainderStore->findTotal();
-
-            // Stop the loop if no more pairs to process
-            if ($total <= 1) {
-                break;
-            }
-
-            if ($total == 2) {
-                $remainderList = $remainderStore->findAll();
-
-                // Sort in descending order by totalStudent
-                usort($remainderList, function ($a, $b) {
-                    return $b['totalStudent'] <=> $a['totalStudent'];
-                });
-
-                // Build final combination
-                $finalCombo = buildFinalArrayX($remainderList[0], $remainderList[1]);
-                $remainderArrayX[] = $finalCombo;
-
-                // Insert into combination store
-                $combinationStore->bulkInsert($remainderArrayX);
-
-                // Remove used pairs from the store
-                $remainderStore->deleteByArray($remainderList[0]);
-                $remainderStore->deleteByArray($remainderList[1]);
-
-                // Subtract remainder and reinsert if still valid
-                $newEntry = subtractRemainderOnly($remainderList[0], $remainderList[1]);
-                $remainderStore->insertDepartmentsValid($newEntry);
-            } else {
-                // In any other case, break to prevent infinite loop
-                break;
-            }
-        }
 
     // }   
+#######################################################################################
 
-    $combinations_list = $combinationStore->findAll();
-    $zigzagBlocks = getZigzagMergedStudents($combinations_list);
+    // $combinations_list = $combinationStore->findAll();
+    // $zigzagBlocks = getZigzagMergedStudents($combinations_list);
     
-    foreach ($zigzagBlocks as $block) {
-        $seatAllocationStore->insertDept($block); // Store one block at a time
-    }
+    // foreach ($zigzagBlocks as $block) {
+    //     $seatAllocationStore->insertDept($block); // Store one block at a time
+    // }
     
    
 
-    $groups = $remainderStore->findAll();
+    // $groups = $remainderStore->findAll();
     
-    foreach ($groups as $group) {
-        $block = transformGroupToBlockAuto($group);    
-        // Insert into database
-        $seatAllocationStore->insertDept($block);
-    }
+    // foreach ($groups as $group) {
+    //     $block = transformGroupToBlockAuto($group);    
+    //     // Insert into database
+    //     $seatAllocationStore->insertDept($block);
+    // }
        
 
-    require_once $draw_layoutPath;
-
+    // require_once $draw_layoutPath;
+######################################################################################
 }
 
 
@@ -452,6 +749,7 @@ function computeSeatCounts(array $blocks): array {
  *                     department, semester, course, totalStudent, students (array)
  * @return array{pairs: array, remainder: array}
  */
+
 function pairSubtractRemainder(array $items): array {
     $pairs     = [];
     $remainder = [];

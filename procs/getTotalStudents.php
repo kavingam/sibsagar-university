@@ -11,7 +11,7 @@ if (!$pdo) {
 }
 
 // Check if table exists
-$tableCheck = $pdo->query("SHOW TABLES LIKE 'student'");
+$tableCheck = $pdo->query("SHOW TABLES LIKE 'student_info'");
 if ($tableCheck->rowCount() == 0) {
     echo json_encode(["error" => "Table 'students' does not exist"]);
     exit();
@@ -30,7 +30,7 @@ if (empty($department) || empty($course) || empty($semester)) {
 
 // Fetch total students from database
 try {
-    $stmt = $pdo->prepare("SELECT COUNT(*) AS total FROM student WHERE department = ? AND course = ? AND semester = ?");
+    $stmt = $pdo->prepare("SELECT COUNT(*) AS total FROM student_info WHERE department = ? AND course = ? AND semester = ?");
     $stmt->execute([$department, $course, $semester]);
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     

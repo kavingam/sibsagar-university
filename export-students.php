@@ -14,7 +14,7 @@ if (!isset($_SESSION['user_email'])) {
 
 <?php
 // Fetch total students count
-$sql = 'SELECT COUNT(*) AS total_students FROM student';
+$sql = 'SELECT COUNT(*) AS total_students FROM student_info';
 $stmt = $pdo->prepare($sql);
 $stmt->execute();
 $row = $stmt->fetch(PDO::FETCH_ASSOC);

@@ -40,7 +40,7 @@ class RemainderJSON {
         foreach ($deptList as $dept) {
             // Check if totalStudent is 0, if so, skip the insert for this department
             if ($dept['totalStudent'] === 0) {
-                // echo "⚠️ Skipping department {$dept['department']} because totalStudent is 0.<br>";
+                echo "⚠️ Skipping department {$dept['department']} because totalStudent is 0.<br>";
                 continue; // Skip this department and move to the next one
             }
             // Insert the department if totalStudent is not 0
@@ -49,16 +49,18 @@ class RemainderJSON {
     }
      public function insertDepartmentsValid($deptList) {
         foreach ($deptList as $dept) {
-            // Check if totalStudent is 0, if so, skip the insert for this department
-            // if ($dept['totalStudent'] === 0) {
-                // echo "⚠️ Skipping department {$dept['department']} because totalStudent is 0.<br>";
-                // continue; // Skip this department and move to the next one
-            // }
-            // Insert the department if totalStudent is not 0
             $this->insertDept($dept);
         }
     }     
-
+        public function exists($deptCode) {
+            // Example for array-based or DB-backed store
+            foreach ($this->store as $item) {
+                if ($item['deptCode'] === $deptCode) {
+                    return true;
+                }
+            }
+            return false;
+        }
     public function findTotal() {
         $totalCount = $this->store->count();
         // echo "Total number of departments: {$totalCount}<br>";

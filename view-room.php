@@ -49,7 +49,7 @@ if (!isset($_SESSION['user_email'])) {
                     <th style="width: 15%;">Room No</th>
                     <th style="width: 25%;">Room Name</th>
                     <th style="width: 20%;">Bench Order</th>
-                    <th style="width: 10%;">Capacity</th>
+                    <th style="width: 10%;">Bench Capacity</th>
                     <th style="width: 30%;">Action</th>
                 </tr>
             </thead>
@@ -90,7 +90,7 @@ if (!isset($_SESSION['user_email'])) {
                     </select>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Capacity:</label>
+                    <label class="form-label">Bench Capacity:</label>
                     <input type="number" id="editCapacity" class="form-control">
                 </div>
             </div>

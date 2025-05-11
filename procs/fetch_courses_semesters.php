@@ -5,7 +5,7 @@ if (isset($_GET['department_id'])) {
     $departmentId = intval($_GET['department_id']);
 
     // Fetch courses related to the department
-    $sqlCourses = "SELECT DISTINCT course FROM student WHERE department = ?";
+    $sqlCourses = "SELECT DISTINCT course FROM student_info WHERE department = ?";
     $stmtCourses = $pdo->prepare($sqlCourses);
     $stmtCourses->execute([$departmentId]);
     $courses = [];
@@ -14,7 +14,7 @@ if (isset($_GET['department_id'])) {
     }
 
     // Fetch semesters related to the department
-    $sqlSemesters = "SELECT DISTINCT semester FROM student WHERE department = ?";
+    $sqlSemesters = "SELECT DISTINCT semester FROM student_info WHERE department = ?";
     $stmtSemesters = $pdo->prepare($sqlSemesters);
     $stmtSemesters->execute([$departmentId]);
     $semesters = [];

@@ -48,7 +48,7 @@ if (!isset($_SESSION['user_email'])) {
         </div>
         <div class="col-md-2 col-12 mb-3">
             <div class="container p-2">
-                <label for="seatCapacity">Total Bench:</label>
+                <label for="seatCapacity">Bench Capacity:</label>
                 <input type="number" id="seatCapacity" class="form-control" required min="1">
             </div>
         </div>

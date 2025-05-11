@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_email'])) {
 
 <?php include 'includes/header.php'; ?>
 
-<div class="container mt-5">
+<div class="container" style="margin-top:100px">
     <h5>Student Manage</h5>
     <table id="student-table" class="table table-bordered">
         <thead>

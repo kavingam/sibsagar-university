@@ -51,7 +51,7 @@ $course = isset($_POST['course']) ? $_POST['course'] : null;
 try {
     $sql = "
         SELECT s.*, d.department_name 
-        FROM student s 
+        FROM student_info s 
         LEFT JOIN departments d ON s.department = d.department_id 
         WHERE 1"; 
     if ($department) {

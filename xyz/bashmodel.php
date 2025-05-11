@@ -238,7 +238,6 @@ class Student extends BaseModel {
             ':course' => $course
         ]);
     }
-
     /**
      * Find students who have the same department, course, and semester.
      * 
@@ -260,7 +259,7 @@ class Student extends BaseModel {
 
     public function findSimilarStudents($department, $course, $semester) {
     $sql = "SELECT roll_no, reg_no, name, department, semester, course 
-            FROM student 
+            FROM student_info
             WHERE department = :department 
               AND course = :course 
               AND semester = :semester";
@@ -277,7 +276,7 @@ class Student extends BaseModel {
 
     
     public function getAllStudents() {
-        return $this->getAll('student');
+        return $this->getAll('student_info');
     }
 
 
@@ -300,7 +299,7 @@ class Student extends BaseModel {
     }
 
     public function getStudentCount() {
-        return $this->getCount('student');
+        return $this->getCount('student_info');
     }
 }
 

@@ -112,9 +112,27 @@ include 'includes/header.php';
                     var courseSelect = $('#courseSelect');
                     courseSelect.empty().append('<option value="">Select Course</option>');
                     if (response.courses && response.courses.length > 0) {
+                        // response.courses.forEach(function (course) {
+                            // courseSelect.append('<option value="' + course.course + '">' + course.course + '</option>');
+                        // });
                         response.courses.forEach(function (course) {
-                            courseSelect.append('<option value="' + course.course + '">' + course.course + '</option>');
+                            var courseName = '';
+
+                            if (course.course == 1) {
+                                courseName = 'UG';
+                            } else if (course.course == 2) {
+                                courseName = 'PG';
+                            } else if (course.course == 3) {
+                                courseName = 'TDC';
+                            } else if (course.course == 4) {
+                                courseName = 'FYUG';
+                            } else {
+                                courseName = 'Unknown';
+                            }
+
+                            courseSelect.append('<option value="' + course.course + '">' + courseName + '</option>');
                         });
+
                     } else {
                         courseSelect.append('<option value="">No courses available</option>');
                     }
