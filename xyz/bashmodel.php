@@ -257,13 +257,37 @@ class Student extends BaseModel {
     //     return $stmt->fetchAll(PDO::FETCH_ASSOC);
     // }
 
-    public function findSimilarStudents($department, $course, $semester) {
-    $sql = "SELECT roll_no, reg_no, name, department, semester, course 
-            FROM student_info
-            WHERE department = :department 
-              AND course = :course 
-              AND semester = :semester";
+//     public function findSimilarStudents($department, $course, $semester) {
+//     $sql = "SELECT roll_no, reg_no, name, department, semester, course 
+//             FROM student_info
+//             WHERE department = :department 
+//               AND course = :course 
+//               AND semester = :semester";
     
+//     $stmt = $this->conn->prepare($sql);
+//     $stmt->execute([
+//         ':department' => $department,
+//         ':course' => $course,
+//         ':semester' => $semester
+//     ]);
+    
+//     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+// }
+public function findSimilarStudents($department, $course, $semester) {
+    $sql = "SELECT 
+                s.roll_no, 
+                s.reg_no, 
+                s.name, 
+                s.department AS department_id, 
+                d.department_name, 
+                s.semester, 
+                s.course 
+            FROM student_info s
+            JOIN departments d ON s.department = d.department_id
+            WHERE s.department = :department 
+              AND s.course = :course 
+              AND s.semester = :semester";
+
     $stmt = $this->conn->prepare($sql);
     $stmt->execute([
         ':department' => $department,

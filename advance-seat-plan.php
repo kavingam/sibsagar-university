@@ -7,7 +7,11 @@ if (!isset($_SESSION['user_email'])) {
     exit;
 }
 ?>
-<?php include 'includes/header.php'; ?>
+<?php 
+
+include 'includes/header.php'; 
+
+?>
 <div class="container bg-light vh-100">
     <div class="row g-0">
         <div class="col-md-12 col-12 import-section my-5">
@@ -195,8 +199,141 @@ if (!isset($_SESSION['user_email'])) {
 <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script> -->
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+// function downloadPDF() {
+//     const element = document.getElementById('printSection');
+//     const opt = {
+//         margin:       0.5,
+//         filename:     'Seat-Allotment-Report.pdf',
+//         image:        { type: 'jpeg', quality: 0.98 },
+//         html2canvas:  { scale: 2 },
+//         jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+//     };
+//     html2pdf().set(opt).from(element).save();
+// }
+
+function downloadPDF() {
+    const element = document.getElementById("modalBodyContent");
+
+    if (!element) {
+        console.error("Element with ID 'modalBodyContent' not found.");
+        return;
+    }
+
+    const options = {
+        margin: 0, 
+        filename: 'seat_plan.pdf',
+        image: { type: 'jpeg', quality: 1 }, 
+        html2canvas: {
+            scale: 3,
+            useCORS: true,
+            logging: false,
+        },
+        jsPDF: {
+            unit: 'mm',
+            format: 'letter',
+            orientation: 'portrait'
+        }
+    };
+
+    element.style.backgroundColor = "#ffffff"; // Ensure the background is white
+
+    html2pdf()
+        .set(options)
+        .from(element)
+        .toPdf()
+        .get('pdf')
+        .then(function (pdf) {
+            let totalPages = pdf.internal.getNumberOfPages();
+            pdf.setFontSize(10);
+            for (let i = 1; i <= totalPages; i++) {
+                pdf.text('Page ' + i + ' of ' + totalPages, 200, 290); // Add page numbers
+            }
+        })
+        .save();
+}
+
+</script>
 
 <script>
+
+// Function to print the seat plan content
+function printContent() {
+    var printWindow = window.open('', '_blank');
+    printWindow.document.write('<html><head><title>Print</title>');
+    printWindow.document.write('</head><body>');
+    printWindow.document.write(document.getElementById('modalBodyContent').innerHTML);
+    printWindow.document.write('</body></html>');
+    printWindow.document.close();
+    printWindow.print();
+}
+
+// Function to print the seat plan content
+// function printContent() {
+//     // Open a new window for printing
+//     var printWindow = window.open('', '_blank');
+    
+//     // Add HTML structure to the new print window
+//     printWindow.document.write('<html><head><title>Print Seat Plan</title>');
+//     printWindow.document.write('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">');
+//     // Add necessary CSS styles for printing
+//     printWindow.document.write('<style>');
+//     printWindow.document.write(`
+//         @page { 
+//             size: A4 portrait; 
+//             margin: 1cm; 
+//         }
+//     `);
+//     printWindow.document.write('</style>');
+    
+//     // Add content from the modal to the print window
+//     printWindow.document.write('</head><body>');
+//     printWindow.document.write('<h2>Seat Plan</h2>');  // Title for the printout
+//     printWindow.document.write(document.getElementById('modalBodyContent').innerHTML);  // Seat plan content from modal
+//     printWindow.document.write('</body></html>');
+    
+//     // Close the document to ensure everything is rendered properly
+//     printWindow.document.close();
+    
+//     // Wait for content to load and then trigger the print dialog
+//     setTimeout(function () {
+//         printWindow.print();  // Trigger the print dialog
+//         printWindow.close();  // Close the print window after printing
+//     }, 1000);  // Delay to ensure content has loaded before printing
+// }
+
+
+
+// function printContent() {
+//     const content = document.getElementById("printSection").innerHTML;
+
+//     // Open a new window for printing
+//     const win = window.open('', '', 'height=900,width=800');
+    
+//     // Write the HTML and CSS to the new window
+//     win.document.write('<html><head><title>Print</title>');
+//     win.document.write('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">');
+//     win.document.write('<style>');
+//     win.document.write(`
+//         @page { size: A4 portrait; margin: 1cm; }
+//         body { font-size: 11pt; }
+//         .student-cardx { border: 1px solid #000; padding: 5px; margin-bottom: 5px; border-radius: 4px; page-break-inside: avoid; }
+//         .container.mb-5 { page-break-inside: avoid; margin-bottom: 10px; break-after: page; }
+//         .row { page-break-inside: avoid; }
+//     `);
+//     win.document.write('</style></head><body>');
+//     win.document.write(content);
+//     win.document.write('</body></html>');
+//     win.document.close();  // Important: closes the document to allow rendering
+    
+//     // Give the new window a moment to fully load before printing
+//     setTimeout(function () {
+//         win.focus();  // Focus on the new window
+//         win.print();  // Trigger the print dialog
+//         win.close();  // Close the print window
+//     }, 1000);  // 1-second delay to ensure everything is rendered
+// }
+
 // Function to switch between "Exam Type" and "Exam Name"
 function toggleSelection() {
     var examSelectContainer = document.getElementById('examSelectContainer');
@@ -299,58 +436,10 @@ function deleteRow(button) {
     rowCount--;
 }
 
-// Function to print the seat plan content
-function printContent() {
-    var printWindow = window.open('', '_blank');
-    printWindow.document.write('<html><head><title>Print</title>');
-    printWindow.document.write('</head><body>');
-    printWindow.document.write(document.getElementById('modalBodyContent').innerHTML);
-    printWindow.document.write('</body></html>');
-    printWindow.document.close();
-    printWindow.print();
-}
+
+
 
 // Function to download the seat plan as a PDF
-function downloadPDF() {
-    const element = document.getElementById("modalBodyContent");
-
-    if (!element) {
-        console.error("Element with ID 'modalBodyContent' not found.");
-        return;
-    }
-
-    const options = {
-        margin: 0, 
-        filename: 'seat_plan.pdf',
-        image: { type: 'jpeg', quality: 1 }, 
-        html2canvas: {
-            scale: 3,
-            useCORS: true,
-            logging: false,
-        },
-        jsPDF: {
-            unit: 'mm',
-            format: 'letter',
-            orientation: 'portrait'
-        }
-    };
-
-    element.style.backgroundColor = "#ffffff"; // Ensure the background is white
-
-    html2pdf()
-        .set(options)
-        .from(element)
-        .toPdf()
-        .get('pdf')
-        .then(function (pdf) {
-            let totalPages = pdf.internal.getNumberOfPages();
-            pdf.setFontSize(10);
-            for (let i = 1; i <= totalPages; i++) {
-                pdf.text('Page ' + i + ' of ' + totalPages, 200, 290); // Add page numbers
-            }
-        })
-        .save();
-}
 
 document.getElementById('generate').addEventListener('click', async function () {
     const startTime = document.getElementById('startTime').value.trim();
@@ -441,6 +530,97 @@ document.getElementById('generate').addEventListener('click', async function () 
         alert("An error occurred while processing the request. Please try again.");
     }
 });
+
+// document.getElementById('generate').addEventListener('click', async function () {
+//     const startTime = document.getElementById('startTime').value.trim();
+//     const benchSeat = parseInt(document.getElementById('benchSeat').value.trim(), 10);
+//     const selectedExam = document.getElementById('examSelect').value.trim();
+//     const enteredExamName = document.getElementById('examInput').value.trim();
+//     const startDate = document.getElementById('startDate').value.trim();
+//     const rows = document.querySelectorAll("#tableBody tr");
+
+//     // Validation for exam selection and date
+//     if (selectedExam === "" && enteredExamName === "") {
+//         alert("Please select an exam or enter an exam name.");
+//         return;
+//     }
+
+//     if (startDate === "") {
+//         alert("Please select a date.");
+//         return;
+//     }
+
+//     // Validation for start time, bench seat, and rows
+//     if (!startTime || isNaN(benchSeat) || rows.length === 0) {
+//         alert("Please select a valid Start Time, Bench Seat (number), and add at least one row.");
+//         return;
+//     }
+
+//     let tableData = [];
+//     rows.forEach(row => {
+//         let department = row.cells[1]?.getAttribute('data-department') || row.cells[1]?.textContent.trim();
+//         let course = row.cells[2]?.getAttribute('data-course') || row.cells[2]?.textContent.trim();
+//         let semester = row.cells[3]?.getAttribute('data-semester') || row.cells[3]?.textContent.trim();
+//         let subject = row.cells[4]?.getAttribute('data-subject') || row.cells[4]?.textContent.trim();  // Added subject extraction
+//         let totalStudent = parseInt(row.cells[5]?.getAttribute('data-totalStudent') || row.cells[5]?.textContent.trim(), 10);
+
+//         // If all required fields are present and totalStudent is a valid number
+//         if (department && course && semester && subject && !isNaN(totalStudent)) {
+//             tableData.push({ department, course, semester, subject, totalStudent });  // Added subject to the table data
+//         }
+//     });
+
+//     // If no valid rows are found, show error
+//     if (tableData.length === 0) {
+//         alert("No valid data found in the table.");
+//         return;
+//     }
+
+//     // Ask user to confirm save
+//     const userChoice = confirm("Do you want to save this data to the database? Press OK for YES, Cancel for NO.");
+//     const save = userChoice ? 1 : 0;
+
+//     try {
+//         const response = await fetch('xyz/dev/main_activity.php', {
+//             method: 'POST',
+//             headers: { 'Content-Type': 'application/json' },
+//             body: JSON.stringify({ 
+//                 startTime, 
+//                 benchSeat, 
+//                 selectedExam, 
+//                 enteredExamName, 
+//                 startDate, 
+//                 tableData,
+//                 save 
+//             }),
+//         });
+
+//         if (!response.ok) {
+//             throw new Error(`Server error: ${response.statusText}`);
+//         }
+
+//         const responseData = await response.text();
+
+//         if (save === 1) {
+//             // If user clicked YES (save)
+//             alert("Successfully saved to database!");
+
+//             // Redirect to a new blank page after saving
+//             window.open('xyz/dev/print-hall-ticket.php', '_blank'); // Open in a new blank tab or window
+
+//         } else {
+//             // If user clicked NO (not save)
+//             // alert("Data not saved!");
+
+//             // Redirect to a different page if not saving
+//             window.open('xyz/dev/print-hall-ticket.php', '_blank'); // Open in a new blank tab or window
+//         }
+
+//     } catch (error) {
+//         console.error("Fetch Error:", error);
+//         alert("An error occurred while processing the request. Please try again.");
+//     }
+// });
 
 
 // ok

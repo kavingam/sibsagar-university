@@ -1,0 +1,404 @@
+<style>
+    /* Ensure table cells have consistent dimensions */
+    .table td {
+        width: 25%; /* 4 columns in 100% width */
+        height: 150px;
+        padding: 0;
+        border: 1px solid #000;
+        vertical-align: middle;
+        text-align: center;
+    }
+    
+    /* Two equal inner columns in each TD */
+    .td-inner {
+        display: flex;
+        height: 100%;
+        width: 100%;
+    }
+    
+    .td-inner div {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-right: 1px dashed #999;
+        padding: 5px;
+        font-size: 14px;
+    }
+    
+    .td-inner div:last-child {
+        border-right: none;
+    }
+    
+    /* For printing: make sure layout doesn't shift */
+    @media print {
+        .table td {
+            page-break-inside: avoid;
+            border: 1px solid #000;
+            height: 150px;
+        }
+    
+        .td-inner div {
+            font-size: 12pt;
+        }
+    }
+    
+        </style>
+    
+    
+    
+    
+    
+    </head>
+    
+    <body>
+    <table class="table table-bordered">
+        <tbody>
+            <tr>
+                <td>
+                    <div class="td-inner">
+                        <div>1A</div>
+                        <div>1B</div>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <table class="table table-bordered">
+        <tbody>
+            <tr>
+                <td>
+                    <div class="td-inner">
+                        <div>1A</div>
+                        <div>1B</div>
+                    </div>
+                </td>
+                <td>
+                    <div class="td-inner">
+                        <div>2A</div>
+                        <div>2B</div>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <table class="table table-bordered">
+        <tbody>
+            <tr>
+                <td>
+                    <div class="td-inner">
+                        <div>1A</div>
+                        <div>1B</div>
+                    </div>
+                </td>
+                <td>
+                    <div class="td-inner">
+                        <div>2A</div>
+                        <div>2B</div>
+                    </div>
+                </td>
+                <td>
+                    <div class="td-inner">
+                        <div>3A</div>
+                        <div>3B</div>
+                    </div>
+                </td>
+                <td>
+                    <div class="td-inner">
+                        <div>4A</div>
+                        <div>4B</div>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-bordered">
+        <tbody>
+            <tr>
+                <td>
+                    <div class="td-inner">
+                        <div>1A</div>
+                        <div>1B</div>
+                    </div>
+                </td>
+                <td>
+                    <div class="td-inner">
+                        <div>2A</div>
+                        <div>2B</div>
+                    </div>
+                </td>
+                <td>
+                    <div class="td-inner">
+                        <div>3A</div>
+                        <div>3B</div>
+                    </div>
+                </td>
+                <td>
+                    <div class="td-inner">
+                        <div>4A</div>
+                        <div>4B</div>
+                    </div>
+                </td>
+                <td>
+                    <div class="td-inner">
+                        <div>4A</div>
+                        <div>4B</div>
+                    </div>
+                </td>
+                <td>
+                    <div class="td-inner">
+                        <div>4A</div>
+                        <div>4B</div>
+                    </div>
+                </td>
+                <td>
+                    <div class="td-inner">
+                        <div>K</div>
+                        <div>KK</div>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+        <div class="container-fluid my-4">
+            <h3 class="text-center mb-4">1X1 (Each cell has 2 items)</h3>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="row">
+                                <div class="col-6">1A</div>
+                                <div class="col-6">1B</div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    
+        <div class="container-fluid my-4">
+            <h3 class="text-center mb-4">1X2 (Each cell has 2 items)</h3>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="row">
+                                <div class="col-6">1A</div>
+                                <div class="col-6">1B</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="row">
+                                <div class="col-6">2A</div>
+                                <div class="col-6">2B</div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    
+    
+    
+        <div class="container-fluid">
+            <h3 class="text-center mb-4">1X3 (Each cell has 2 items)</h3>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="row">
+                                <div class="col-6">Item 1A</div>
+                                <div class="col-6">Item 1B</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="row">
+                                <div class="col-6">Item 2A</div>
+                                <div class="col-6">Item 2B</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="row">
+                                <div class="col-6">Item 3A</div>
+                                <div class="col-6">Item 3B</div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    
+        <div class="container-fluid">
+            <h3 class="text-center mb-4">1X4 (Each cell has 2 items)</h3>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="row">
+                                <div class="col-6">Item 1A</div>
+                                <div class="col-6">Item 1B</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="row">
+                                <div class="col-6">Item 2A</div>
+                                <div class="col-6">Item 2B</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="row">
+                                <div class="col-6">Item 3A</div>
+                                <div class="col-6">Item 3B</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="row">
+                                <div class="col-6">Item 4A</div>
+                                <div class="col-6">Item 4B</div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    
+        <div class="container-fluid my-4">
+            <h3 class="text-center mb-4">1X5 (Each cell has 2 items)</h3>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="row">
+                                <div class="col-6">1A</div>
+                                <div class="col-6">1B</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="row">
+                                <div class="col-6">2A</div>
+                                <div class="col-6">2B</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="row">
+                                <div class="col-6">3A</div>
+                                <div class="col-6">3B</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="row">
+                                <div class="col-6">4A</div>
+                                <div class="col-6">4B</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="row">
+                                <div class="col-6">5A</div>
+                                <div class="col-6">5B</div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    
+        <div class="container-fluid my-4">
+            <h3 class="text-center mb-4">1X6 (Each cell has 2 items)</h3>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="row">
+                                <div class="col-6">1A</div>
+                                <div class="col-6">1B</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="row">
+                                <div class="col-6">2A</div>
+                                <div class="col-6">2B</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="row">
+                                <div class="col-6">3A</div>
+                                <div class="col-6">3B</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="row">
+                                <div class="col-6">4A</div>
+                                <div class="col-6">4B</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="row">
+                                <div class="col-6">5A</div>
+                                <div class="col-6">5B</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="row">
+                                <div class="col-6">6A</div>
+                                <div class="col-6">6B</div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    
+    
+        <div class="container-fluid my-4">
+            <h3 class="text-center mb-4">1X7 (Each cell has 2 items)</h3>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="row">
+                                <div class="col-6">1A</div>
+                                <div class="col-6">1B</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="row">
+                                <div class="col-6">2A</div>
+                                <div class="col-6">2B</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="row">
+                                <div class="col-6">3A</div>
+                                <div class="col-6">3B</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="row">
+                                <div class="col-6">4A</div>
+                                <div class="col-6">4B</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="row">
+                                <div class="col-6">5A</div>
+                                <div class="col-6">5B</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="row">
+                                <div class="col-6">6A</div>
+                                <div class="col-6">6B</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="row">
+                                <div class="col-6">7A</div>
+                                <div class="col-6">7B</div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>

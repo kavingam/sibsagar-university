@@ -734,15 +734,17 @@ INSERT INTO `subject_info` (`subject_id`, `department_id`, `department_name`, `c
 --
 
 DROP TABLE IF EXISTS `users_info`;
-CREATE TABLE IF NOT EXISTS `users_info` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `email` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `password_hash` blob NOT NULL,
-  `salt` binary(16) NOT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `subject_info` (
+  `subject_id` int NOT NULL AUTO_INCREMENT,
+  `department_id` int NOT NULL,
+  `department_name` varchar(100) NOT NULL,
+  `course` int NOT NULL,
+  `semester` int NOT NULL,
+  `subject` varchar(100) NOT NULL,
+  `subject_code` varchar(50) NOT NULL,
+  PRIMARY KEY (`subject_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=269 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users_info`

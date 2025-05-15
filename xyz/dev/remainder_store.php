@@ -40,7 +40,7 @@ class RemainderJSON {
         foreach ($deptList as $dept) {
             // Check if totalStudent is 0, if so, skip the insert for this department
             if ($dept['totalStudent'] === 0) {
-                echo "⚠️ Skipping department {$dept['department']} because totalStudent is 0.<br>";
+                // echo "⚠️ Skipping department {$dept['department']} because totalStudent is 0.<br>";
                 continue; // Skip this department and move to the next one
             }
             // Insert the department if totalStudent is not 0
@@ -113,12 +113,12 @@ class RemainderJSON {
 
             // Check if any records were deleted
             if ($deletedCount > 0) {
-                echo "✅ Successfully deleted {$deletedCount} records for department {$department}, semester {$semester}, course {$course}.<br>";
+                // echo "✅ Successfully deleted {$deletedCount} records for department {$department}, semester {$semester}, course {$course}.<br>";
             } else {
-                echo "⚠️ No records found for department {$department}, semester {$semester}, course {$course}.<br>";
+                // echo "⚠️ No records found for department {$department}, semester {$semester}, course {$course}.<br>";
             }
         } else {
-            echo "⚠️ Invalid data. Please provide a valid array with department, semester, and course.<br>";
+            // echo "⚠️ Invalid data. Please provide a valid array with department, semester, and course.<br>";
         }
     }
 

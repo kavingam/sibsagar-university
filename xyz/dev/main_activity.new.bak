@@ -1,0 +1,1412 @@
+<?php 
+/*
+ *   Debug Version 0.1
+ */
+error_reporting(E_ALL);
+ini_set('display_errors',1);
+
+
+$bashmodelPath = __DIR__ . '/../bashmodel.php';
+$seatAllocationPath = __DIR__ . '/../seat_allocation/seat_allocation.php';
+
+$remainderPath = __DIR__ . '/remainder_store.php';
+$combinationPath = __DIR__ . '/combination_store.php';
+$allocationPath = __DIR__ . '/seatallocation_store.php';
+
+// debug_seat_plaing
+$draw_layoutPath = __DIR__ . '/layout/draw_layout.php';
+
+$remove_cache_x = __DIR__ . '/json_database/combination_json/data/';
+$remove_cache_y = __DIR__ . '/json_database/remainder_json/data/';
+$remove_cache_a = __DIR__ . '/json_database/seatallocation_json/data/';
+
+if (file_exists('debugs/debugs_logs.php')) {
+    include_once 'debugs/debugs_logs.php';
+} else {
+    echo "Error: debugs/debugs_logs.php not found<br>";
+}
+
+
+
+#######################################################################################
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    if (!$data) {
+        echo "<p class='text-danger'>Invalid data received!</p>";
+        exit;
+    }
+
+    if (!$data) {
+        echo "<p class='text-danger'>Invalid data received!</p>";
+        exit;
+    }
+
+    $examTime24 = htmlspecialchars($data['startTime']);
+    $examTime = date("g:i A", strtotime($data['startTime'])); 
+    $benchSeat = htmlspecialchars($data['benchSeat']);
+    $examName = htmlspecialchars($data['selectedExam']);
+    $examDate = htmlspecialchars($data['startDate']);
+    $saveData = htmlspecialchars($data['save']);
+
+    $tableData = $data['tableData'];
+    usort($tableData, function ($a, $b) {
+        return $b['totalStudent'] <=> $a['totalStudent'];
+    });
+
+    // $students = new Student();
+    // $fetchStudents = [];
+    // foreach ($tableData as $data) {
+    //     $similarStudents = $students->findSimilarStudents(
+    //         $data['department'],
+    //         $data['semester'],
+    //         $data['course'],
+    //         $data['totalStudent']            
+    //     );
+
+    //     $fetchStudents[] = [
+    //         'department' => $data['department'],
+    //         'semester' => $data['semester'],
+    //         'course' => $data['course'],
+    //         'subject' => $data['subject'],
+    //         'totalStudent' => $data['totalStudent'],
+    //         'students' => $similarStudents
+    //     ];
+    // }
+$students = new Student();
+$fetchStudents = [];
+
+foreach ($tableData as $data) {
+    $similarStudents = $students->findSimilarStudents(
+        $data['department'],
+        $data['course'],
+        $data['semester']
+    );
+
+    $fetchStudents[] = [
+        'department' => $data['department'],
+        'semester' => $data['semester'],
+        'course' => $data['course'],
+        'subject' => $data['subject'],
+        'totalStudent' => $data['totalStudent'],
+        'students' => $similarStudents
+    ];
+}
+
+    $stdObj = new SeatAllocation();
+    $totalStudent = $stdObj->getTotalStudents($tableData);
+    $totalDept = count($tableData);
+
+    $deptObj = new Department();
+    $allDept = $deptObj->getAllDepartments();
+
+
+
+    $roomObj = new Room();
+    $rooms = $roomObj->getAllRooms();
+
+    $attendance = new AttendanceSheet();
+    $dateTimes = $attendance->getAllAttendanceDateTime();
+
+    $attendance->checkExamTimeConflict($examDate, $examTime);
+
+    deleteJsonFiles($remove_cache_x);
+    deleteJsonFiles($remove_cache_y);
+    deleteJsonFiles($remove_cache_a);
+
+    $remainderStore = new RemainderJSON();
+    $remainderStore = new NewRemainderJSON($remainderStore);
+
+    $seatAllocationStore = new SeatallocationJSON();
+    $seatAllocationStore = new NewSeatallocationJSON($seatAllocationStore);
+
+    $combinationStore = new CombinationJSON();
+    $combinationStore = new NewCombinationJSON($combinationStore);
+    
+    $finalArrayX = []; // initialize before use
+    
+
+#######################################################################################
+$totalDepartments = calculateTotalDepartments($fetchStudents);
+$finalArrayX = [];
+
+if ($totalDepartments == 1) {
+    $pairData = pairSubtractRemainder($fetchStudents);
+    $remainderStore->insertDepartmentsIfValid($pairData['pairs']);
+    $remainderStore->bulkInsert($pairData['remainder']);
+
+} else if ($totalDepartments == 2) {
+    for ($i = 0; $i < count($fetchStudents); $i += 2) {
+        if (isset($fetchStudents[$i + 1])) {
+            $finalArrayX[] = buildFinalArrayX($fetchStudents[$i], $fetchStudents[$i + 1]);
+        }
+    }
+    $combinationStore->bulkInsert($finalArrayX);
+
+    $pairData = pairSubtractRemainder($fetchStudents);
+    $remainderStore->insertDepartmentsIfValid($pairData['pairs']);
+    $remainderStore->bulkInsert($pairData['remainder']);
+
+} else if ($totalDepartments == 3) {
+    for ($i = 0; $i < count($fetchStudents); $i += 3) {
+        if (
+            isset($fetchStudents[$i]) &&
+            isset($fetchStudents[$i + 1]) &&
+            isset($fetchStudents[$i + 2])
+        ) {
+            $finalArrayX[] = buildFinalArray3X(
+                $fetchStudents[$i],
+                $fetchStudents[$i + 1],
+                $fetchStudents[$i + 2]
+            );
+        }
+    }
+    $combinationStore->bulkInsert($finalArrayX);
+    $remainderStore->insertDepartmentsIfValid(getDeptStudentRemaindersFor3($fetchStudents));
+
+} else if($totalDepartments == 4) {
+    // Handle 4 or more departments
+    for ($i = 0; $i <  count($fetchStudents); $i += 4) {
+        if (
+            isset($fetchStudents[$i]) &&
+            isset($fetchStudents[$i + 1]) &&
+            isset($fetchStudents[$i + 2]) &&
+            isset($fetchStudents[$i + 3])
+        ) {
+            $finalArrayX[] = buildFinalArray4X(
+                $fetchStudents[$i],
+                $fetchStudents[$i + 1],
+                $fetchStudents[$i + 2],
+                $fetchStudents[$i + 3]
+            );
+        }
+    }
+    $combinationStore->bulkInsert($finalArrayX);
+    $remainderStore->insertDepartmentsIfValid(getDeptStudentRemaindersFor4($fetchStudents));
+} else {
+    $remainderStore->bulkInsert($fetchStudents);
+}
+
+#######################################################################################
+    $debug_0 = [];
+    $debug_1 = [];
+    $debug_2 = [];
+    $debug_3 = [];
+
+    do {
+        $total = $remainderStore->findTotal();
+        if ($total <= 1) break;
+    
+        $remainderList = $remainderStore->findAll();
+        usort($remainderList, function ($a, $b) {
+            return $b['totalStudent'] <=> $a['totalStudent'];
+        });
+    
+        $debug_0 = $remainderList;
+    
+        if ($total == 2) {
+    
+            $deptA = $remainderList[0];
+            $deptB = $remainderList[1];
+    
+            $finalCombo = buildFinalArrayX($deptA, $deptB);
+            $combinationStore->bulkInsert($finalCombo);
+    
+            $remainderStore->deleteByArray($deptA);
+            $remainderStore->deleteByArray($deptB);
+    
+            $trimmed = selectDepartmentsXv($debug_0, 2);
+            if (!empty($trimmed)) $remainderStore->insertDepartmentsIfValid($trimmed);
+    
+            continue;
+    
+        } elseif ($total == 3) {
+    
+            $deptA = $remainderList[0];
+            $deptB = $remainderList[1];
+            $deptC = $remainderList[2];
+    
+            $finalCombo = buildFinalArray3X($deptA, $deptB, $deptC);
+            $combinationStore->bulkInsert($finalCombo);
+    
+            $remainderStore->deleteByArray($deptA);
+            $remainderStore->deleteByArray($deptB);
+            $remainderStore->deleteByArray($deptC);
+    
+            $trimmed = selectDepartmentsXv($debug_0, 3);
+            if (!empty($trimmed)) $remainderStore->insertDepartmentsIfValid($trimmed);
+            
+            continue;
+    
+        }
+        else {
+        
+            $deptA = $remainderList[0];
+            $deptB = $remainderList[1];
+            $deptC = $remainderList[2];
+            $deptD = $remainderList[3];
+        
+            $finalCombo = buildFinalArray4X($deptA, $deptB, $deptC, $deptD);
+            $debug_1 = $finalCombo;
+        
+            // ✅ SAFE INSERTION
+            $combinationStore->bulkInsert($finalCombo); // no duplicate
+        
+            // ✅ DELETE FROM REMAINDER
+            $departmentsToDelete = [$deptA, $deptB, $deptC, $deptD];
+            foreach ($departmentsToDelete as $dept) {
+                $remainderStore->deleteByArray($dept);
+            }
+        
+            // ✅ INSERT BACK IF REQUIRED
+            $trimmed = selectDepartmentsXv($debug_0, 4);
+            if (!empty($trimmed)) {
+                $remainderStore->insertDepartmentsIfValid($trimmed);
+            }
+          
+            continue;
+            // break;
+        }
+        
+    
+    } while (true);
+    
+# TESTING BUGS 0.0.1
+
+#######################################################################################
+print_r('<pre>');
+// print_r($debug_0);
+// print_r(selectDepartmentsXv($debug_0,4));
+print_r('</pre>');
+#######################################################################################
+// v.0.0 debug seat planing
+
+$combinations_list = $combinationStore->findAll();
+$zigzagBlocks = getZigzagMergedStudentsPerBlock($combinations_list);
+echo '<pre>';
+// print_r($zigzagBlocks);
+// print_r($combinations_list);
+
+foreach ($zigzagBlocks as $block) {
+    $seatAllocationStore->insertDept($block); // Store one block at a time
+}
+
+
+$groups = $remainderStore->findAll();
+
+foreach ($groups as $group) {
+    $block = transformGroupToBlockAuto($group);    
+    // Insert into database
+    $seatAllocationStore->insertDept($block);
+}
+
+
+
+// require_once $draw_layoutPath;
+######################################################################################
+}
+/**
+ * Sorts an array of associative arrays by a specified key.
+ *
+ * @param array  $array The array to sort.
+ * @param string $key   The key to sort by.
+ * @param string $order 'asc' for ascending, 'desc' for descending.
+ *
+ * @return array The sorted array.
+ */
+function sortByField(array $array, string $key, string $order = 'asc'): array {
+    usort($array, function ($a, $b) use ($key, $order) {
+        if (!isset($a[$key], $b[$key])) {
+            return 0;
+        }
+        if ($order === 'asc') {
+            return strcmp($a[$key], $b[$key]);
+        } else {
+            return strcmp($b[$key], $a[$key]);
+        }
+    });
+    return $array;
+}
+
+
+?>
+
+<?php
+/** Testing Ok
+ * Check if a number is even or odd.
+ *
+ * @param int $num The number to check.
+ * @return int 1 if the number is even, 0 if it’s odd.
+ */
+function isEven(int $num): int {
+    return ($num % 2 === 0) ? 1 : 0;
+}
+
+/** Testing Ok
+ * Delete all JSON files in a given directory.
+ *
+ * @param string $directory The directory path to delete JSON files from.
+ */
+function deleteJsonFiles($directory) {
+    if (!is_dir($directory)) {
+        die("Error: Directory '$directory' does not exist.<br>");
+    }
+    $files = glob($directory . '*.json');
+    if (empty($files)) {
+        return;
+    }
+    foreach ($files as $file) {
+        if (unlink($file)) {
+            // echo "Deleted: $file<br/>";
+        } else {
+            echo "Failed to delete: $file<br/>";
+        }
+    }
+}
+
+/**
+ * Computes student seat counts by pairing every two elements:
+ * - For each pair, uses the second element’s totalStudent * 2
+ * - If a lone element remains (odd length), uses its totalStudent
+ *
+ * @param array $blocks Array of associative arrays, each with a 'totalStudent' key.
+ * @return int[]        Array of computed seat counts.
+ */
+function computeSeatCounts(array $blocks): array {
+    $seatCounts = [];
+
+    $n = count($blocks);
+    for ($i = 0; $i < $n; $i += 2) {
+        // If there is a next (paired) block...
+        if (isset($blocks[$i + 1])) {
+            $seatCounts[] = $blocks[$i + 1]['totalStudent'] * 2;
+        } else {
+            // No pair—take the last block’s own total
+            $seatCounts[] = $blocks[$i]['totalStudent'];
+        }
+    }
+
+    return $seatCounts;
+}
+
+/** Testing Ok
+ * Pair up department blocks two‑by‑two, subtract their 'totalStudent' values,
+ * and for each pair return a new block with:
+ *   - department/semester/course (from the first block)
+ *   - totalStudent (the subtraction result)
+ *   - students        (the first block’s students, truncated to the new total)
+ *
+ * Any unpaired (odd) block is returned in 'remainder' exactly as‑is.
+ *
+ * @param array $items Indexed array of department‑blocks, each with:
+ *                     department, semester, course, totalStudent, students (array)
+ * @return array{pairs: array, remainder: array}
+ */
+
+function pairSubtractRemainder(array $items): array {
+    $pairs     = [];
+    $remainder = [];
+    $n         = count($items);
+
+    for ($i = 0; $i + 1 < $n; $i += 2) {
+        $first  = $items[$i];
+        $second = $items[$i + 1];
+
+        // Ensure both have totalStudent and students:
+        if (isset($first['totalStudent'], $second['totalStudent'], $first['students']) 
+            && is_array($first['students'])) {
+            
+            // Compute new total
+            $newTotal = $first['totalStudent'] - $second['totalStudent'];
+            $newTotal = max(0, $newTotal); // avoid negative
+
+            // Truncate the students list to the new total count
+            $newStudents = array_slice($first['students'], -$newTotal);
+
+            // Build the resulting block
+            $pairs[] = [
+                'department'   => $first['department'],
+                'semester'     => $first['semester'],
+                'course'       => $first['course'],
+                'subject'      => $first['subject'],
+                'totalStudent' => $newTotal,
+                'students'     => $newStudents,
+            ];
+        }
+    }
+
+    // Odd one out?
+    if ($n % 2 !== 0) {
+        $remainder[] = $items[$n - 1];
+    }
+
+    return [
+        'pairs'     => $pairs,
+        'remainder' => $remainder,
+    ];
+}
+
+
+function pairSubtractRemainder4X(array $items): array {
+    $pairs     = [];
+    $remainder = [];
+    $n         = count($items);
+
+    // Check if we have at least 4 departments to process in pairs
+    if ($n >= 4) {
+        // First pair (0 and 1)
+        $first  = $items[0];
+        $second = $items[1];
+
+        // Ensure both have totalStudent and students:
+        if (isset($first['totalStudent'], $second['totalStudent'], $first['students']) 
+            && is_array($first['students'])) {
+            
+            $newTotal = $first['totalStudent'] - $second['totalStudent'];
+            $newTotal = max(0, $newTotal); // Avoid negative
+
+            $newStudents = array_slice($first['students'], -$newTotal);
+
+            // Add first pair to the results
+            $pairs[] = [
+                'department'   => $first['department'],
+                'semester'     => $first['semester'],
+                'course'       => $first['course'],
+                'subject'      => $first['subject'],
+                'totalStudent' => $newTotal,
+                'students'     => $newStudents,
+            ];
+        }
+
+        // Second pair (2 and 3)
+        $third  = $items[2];
+        $fourth = $items[3];
+
+        // Ensure both have totalStudent and students:
+        if (isset($third['totalStudent'], $fourth['totalStudent'], $third['students']) 
+            && is_array($third['students'])) {
+            
+            $newTotal = $third['totalStudent'] - $fourth['totalStudent'];
+            $newTotal = max(0, $newTotal); // Avoid negative
+
+            $newStudents = array_slice($third['students'], -$newTotal);
+
+            // Add second pair to the results
+            $pairs[] = [
+                'department'   => $third['department'],
+                'semester'     => $third['semester'],
+                'course'       => $third['course'],
+                'subject'      => $third['subject'],
+                'totalStudent' => $newTotal,
+                'students'     => $newStudents,
+            ];
+        }
+    }
+
+    // Store the remainder (everything after the fourth department)
+    if ($n > 4) {
+        $remainder = array_slice($items, 4);
+    }
+
+    return [
+        'pairs'     => $pairs,
+        'remainder' => $remainder,
+    ];
+}
+
+
+
+function pairSubtractRemainderY(array $department1, array $department2): array {
+    $pairs     = [];
+    $remainder = [];
+    
+    // The total count of students in both departments
+    $n1 = count($department1);
+    $n2 = count($department2);
+
+    // Loop through both departments, pairing them
+    while (count($department1) > 0 && count($department2) > 0) {
+        // Take the first student from each department
+        $first  = array_shift($department1); // Get the first student from department1
+        $second = array_shift($department2); // Get the first student from department2
+
+        // Ensure both have totalStudent and students
+        if (isset($first['totalStudent'], $second['totalStudent'], $first['students']) 
+            && isset($second['students']) && is_array($first['students']) && is_array($second['students'])) {
+            
+            // Compute new total
+            $newTotal = $first['totalStudent'] - $second['totalStudent'];
+            $newTotal = max(0, $newTotal); // avoid negative total
+
+            // Truncate the students list to the new total count
+            $newStudents = array_slice($first['students'], -$newTotal);
+
+            // Build the resulting pair
+            $pairs[] = [
+                'department'   => $first['department'],
+                'semester'     => $first['semester'],
+                'course'       => $first['course'],
+                'subject'      => $first['subject'],
+                'totalStudent' => $newTotal,
+                'students'     => $newStudents,
+            ];
+        }
+    }
+
+    // Add remaining students to the remainder
+    if (count($department1) > 0) {
+        $remainder[] = array_shift($department1); // Remaining from department1
+    }
+
+    if (count($department2) > 0) {
+        $remainder[] = array_shift($department2); // Remaining from department2
+    }
+
+    return [
+        'pairs'     => $pairs,
+        'remainder' => $remainder,
+    ];
+}
+
+function subtractRemainderOnly(array $deptA, array $deptB): array {
+    // Ensure both have 'totalStudent' and 'students'
+    if (
+        !isset($deptA['totalStudent'], $deptA['students']) ||
+        !isset($deptB['totalStudent'], $deptB['students']) ||
+        !is_array($deptA['students']) ||
+        !is_array($deptB['students'])
+    ) {
+        return [];
+    }
+
+    // Calculate the new total after subtracting
+    $newTotal = $deptA['totalStudent'] - $deptB['totalStudent'];
+    $newTotal = max(0, $newTotal); // Ensure it's not negative
+
+    // Get only the remaining students from the end
+    $remainingStudents = array_slice($deptA['students'], -$newTotal);
+
+    // Return only the remainder info
+    return [[
+        'department'   => $deptA['department'],
+        'semester'     => $deptA['semester'],
+        'course'       => $deptA['course'],
+        'subject'      => $deptA['subject'],
+        'totalStudent' => $newTotal,
+        'students'     => $remainingStudents,
+    ]];
+}
+
+function allocateStudentsToRooms(array $rooms, int $total_students): array {
+    $assigned_rooms = [];
+
+    foreach ($rooms as $room) {
+        if ($total_students <= 0) break;
+
+        $room_capacity = $room['seat_capacity'] * 2; // 2 seats per bench
+        $students_in_room = min($room_capacity, $total_students);
+
+        $assigned_rooms[] = [
+            "room_no" => $room['room_no'],
+            "room_name" => $room['room_name'],
+            "banch_order" => $room['bench_order'],
+            "room_capacity" => $room['seat_capacity'],
+            "students_assigned" => $students_in_room
+        ];
+
+        $total_students -= $students_in_room;
+    }
+
+    return $assigned_rooms;
+}
+   
+// function getZigzagMergedStudents($data) {
+//     $result = [];
+
+//     foreach ($data as $blockIndex => $block) {
+//         $departments = [];
+
+//         // Skip '_id' and collect students by department
+//         foreach ($block as $key => $group) {
+//             if ($key === '_id') continue;
+
+//             $deptId = $group['department'];
+//             foreach ($group['students'] as $student) {
+//                 $departments[$deptId][] = $student;
+//             }
+//         }
+
+//         // Zigzag merge
+//         $zigzag = [];
+//         $max = max(array_map('count', $departments));
+
+//         for ($i = 0; $i < $max; $i++) {
+//             foreach ($departments as $students) {
+//                 if (isset($students[$i])) {
+//                     $zigzag[] = $students[$i];
+//                 }
+//             }
+//         }
+
+//         $result[] = [
+//             'block_id' => $block['_id'] ?? null,
+//             'zigzag_students' => $zigzag
+//         ];
+//     }
+
+//     return $result;
+// }
+function getZigzagMergedStudents($data) {
+    $result = [];
+
+    foreach ($data as $blockIndex => $block) {
+        $departments = [];
+
+        // Skip '_id' and collect students by department
+        foreach ($block as $key => $group) {
+            if ($key === '_id') continue;
+
+            // Check if both keys exist
+            if (!isset($group['department']) || !isset($group['students']) || !is_array($group['students'])) {
+                continue; // Skip invalid entries
+            }
+
+            $deptId = $group['department'];
+            foreach ($group['students'] as $student) {
+                $departments[$deptId][] = $student;
+            }
+        }
+
+        // Zigzag merge
+        $zigzag = [];
+        if (!empty($departments)) {
+            $max = max(array_map('count', $departments));
+
+            for ($i = 0; $i < $max; $i++) {
+                foreach ($departments as $students) {
+                    if (isset($students[$i])) {
+                        $zigzag[] = $students[$i];
+                    }
+                }
+            }
+        }
+
+        $result[] = [
+            'block_id' => $block['_id'] ?? null,
+            'zigzag_students' => $zigzag
+        ];
+    }
+
+    return $result;
+}
+
+/**
+ * Transform a group of students into a block format.
+ *
+ * @param array $group The group of students to transform.
+ * @return array The transformed block with zigzag students.
+ */
+function transformGroupToBlockAuto($group) {
+    // Automatically create block_id using _id + 300
+    $blockId = isset($group['_id']) ? (int)$group['_id'] + 300 : rand(1000, 9999);
+
+    $output = [
+        'block_id' => $blockId,
+        'zigzag_students' => []
+    ];
+
+    // Check if the group has students
+    if (isset($group['students']) && is_array($group['students'])) {
+        foreach ($group['students'] as $student) {
+            // Add original student
+            // $output['zigzag_students'][] = [
+            //     'roll_no' => (string)$student['roll_no'],
+            //     'name' => (string)$student['name'],
+            //     'department' => (string)$student['department'],
+            //     'semester' => (string)$student['semester'],
+            //     'course' => (string)$student['course'],
+            // ];
+            $output['zigzag_students'][] = [
+                'roll_no' => (string)$student['roll_no'],
+                'name' => (string)$student['name'],
+                'department' => (string)$student['department'],
+                'semester' => (string)$student['semester'],
+                'course' => (string)$student['course'],
+                'subject' => isset($student['subject']) ? (string)$student['subject'] : 'N/A',
+            ];
+            
+            // Add NIL student after the original student
+            $output['zigzag_students'][] = [
+                'roll_no' => 'NIL',
+                'name' => 'NIL',
+                'department' => 'NIL',
+                'semester' => 'NIL',
+                'course' => 'NIL',
+            ];
+        }
+    }
+
+    return $output;
+}
+
+function getDepartmentNameById($departments, $id) {
+    foreach ($departments as $dept) {
+        if ($dept['department_id'] == $id) {
+            return $dept['department_name'];
+        }
+    }
+    return null; // or return "Unknown Department";
+}
+
+function getSessionLabel($time) {
+    $hour = date('H', strtotime($time)); // Convert to 24-hour format
+
+    if ($hour < 12) {
+        return 'Morning';
+    } elseif ($hour >= 12 && $hour < 17) {
+        return 'Afternoon';
+    } else {
+        return 'Evening';
+    }
+}
+
+function calculateTotalDepartments($fetchStudents) {
+    $uniqueDepartments = [];
+
+    foreach ($fetchStudents as $entry) {
+        // Unique key: department-semester-course
+        $key = $entry['department'] . '-' . $entry['semester'] . '-' . $entry['course'];
+        $uniqueDepartments[$key] = true;
+    }
+
+    // Return count of unique combinations
+    return count($uniqueDepartments);
+}
+
+
+// Function to get the key for each department
+// This is used to uniquely identify each department
+function getDeptKey($dept) {
+    return $dept["department"] . "-" . $dept["semester"] . "-" . $dept["course"];
+}
+// Function to slice the student data from the first department based on the total students in the second department
+function getDeptStudentSlice($firstDept, $secondDept) {
+    return array_slice($firstDept["students"], 0, $secondDept["totalStudent"]);
+}
+function getDeptStudentSlicesFor3Depts($firstDept, $secondDept, $thirdDept) {
+    $lastTotal = $thirdDept["totalStudent"];
+
+    return [
+        array_slice($firstDept["students"], 0, $lastTotal),
+        array_slice($secondDept["students"], 0, $lastTotal),
+        array_slice($thirdDept["students"], 0, $lastTotal) // also sliced to match
+    ];
+}
+function getDeptStudentSlicesFor4Depts($firstDept, $secondDept, $thirdDept, $fourthDept) {
+    $lastTotal = $fourthDept["totalStudent"];
+
+    return [
+        array_slice($firstDept["students"], 0, $lastTotal),
+        array_slice($secondDept["students"], 0, $lastTotal),
+        array_slice($thirdDept["students"], 0, $lastTotal),
+        array_slice($fourthDept["students"], 0, $lastTotal) // also sliced to match
+    ];
+}
+// Function to build department information for each student
+function buildDeptArray($dept, $studentSlice = null, $overrideTotal = null) {
+    // For each student, include department, semester, and course information
+    $students = array_map(function($student) use ($dept) {
+        return [
+            "roll_no" => $student["roll_no"],
+            "name" => $student["name"],
+            "department" => $dept["department"],
+            "semester" => $dept["semester"],
+            "course" => $dept["course"],
+            "subject" => $dept["subject"]
+        ];
+    }, $studentSlice ?? $dept["students"]);
+
+    return [
+        "department" => $dept["department"],
+        "semester" => $dept["semester"],
+        "course" => $dept["course"],
+        "subject" => $dept["subject"],
+        "totalStudent" => $overrideTotal ?? $dept["totalStudent"], // Override totalStudent if provided
+        "students" => $students
+    ];
+}
+// Create the final array with department keys and data
+function buildFinalArray($departments) {
+    $finalArray = [];
+    
+    $firstDept = $departments[0];
+    $secondDept = $departments[1];
+    
+    // Get the student slice for the first department
+    $varBiggestDeptSlice = getDeptStudentSlice($firstDept, $secondDept);
+    
+    // Build the final array for the first department, overriding totalStudent with secondDept's totalStudent
+    $finalArray[] = buildDeptArray($firstDept, $varBiggestDeptSlice, $secondDept["totalStudent"]);
+    
+    // Build the final array for the second department with its own totalStudent
+    $finalArray[] = buildDeptArray($secondDept);
+    
+    return $finalArray;
+}
+function buildFinalArrayX($firstDept, $secondDept) {
+    $finalArray = [];
+    
+    // Get the student slice for the first department
+    $varBiggestDeptSlice = getDeptStudentSlice($firstDept, $secondDept);
+    
+    // Build the final array for the first department, overriding totalStudent with secondDept's totalStudent
+    $finalArray[] = buildDeptArray($firstDept, $varBiggestDeptSlice, $secondDept["totalStudent"]);
+    
+    // Build the final array for the second department with its own totalStudent
+    $finalArray[] = buildDeptArray($secondDept);
+    
+    return $finalArray;
+}
+function buildFinalArray3X($firstDept, $secondDept, $thirdDept) {
+    $finalArray = [];
+
+    // Get student slices from each department, all based on the smallest size (from thirdDept)
+    list($slice1, $slice2, $slice3) = getDeptStudentSlicesFor3Depts($firstDept, $secondDept, $thirdDept);
+    $total = $thirdDept["totalStudent"];
+
+    // Build final department arrays with sliced students and override totalStudent
+    $finalArray[] = buildDeptArray($firstDept, $slice1, $total);
+    $finalArray[] = buildDeptArray($secondDept, $slice2, $total);
+    $finalArray[] = buildDeptArray($thirdDept, $slice3, $total);
+
+    return $finalArray;
+}
+
+function buildFinalArray4X($firstDept, $secondDept, $thirdDept, $fourthDept) {
+    $finalArray = [];
+
+    // Get student slices from each department, all based on the smallest size (from fourthDept)
+    list($slice1, $slice2, $slice3, $slice4) = getDeptStudentSlicesFor4Depts($firstDept, $secondDept, $thirdDept, $fourthDept);
+    $total = $fourthDept["totalStudent"];
+
+    // Build final department arrays with sliced students and override totalStudent
+    $finalArray[] = buildDeptArray($firstDept, $slice1, $total);
+    $finalArray[] = buildDeptArray($secondDept, $slice2, $total);
+    $finalArray[] = buildDeptArray($thirdDept, $slice3, $total);
+    $finalArray[] = buildDeptArray($fourthDept, $slice4, $total);
+
+    return $finalArray;
+}
+
+// function getDeptStudentRemaindersFor4($finalArrayX) {
+//     // Ensure we have exactly 4 departments
+//     if (count($finalArrayX) !== 4) {
+//         throw new InvalidArgumentException("Expected exactly 4 departments.");
+//     }
+
+//     $fourthDept = $finalArrayX[3];
+//     $total = $fourthDept["totalStudent"];
+
+//     $remainders = [];
+
+//     foreach ($finalArrayX as $dept) {
+//         $students = $dept["students"];
+//         $remainingStudents = array_slice($students, $total); // get the remaining students
+
+//         // Rebuild department array with remainder students and updated total
+//         $remainders[] = buildDeptArray($dept, $remainingStudents, count($remainingStudents));
+//     }
+
+//     return $remainders;
+// }
+function getDeptStudentRemaindersFor3($finalArrayX) {
+    $remainders = [];
+
+    // Ensure we have at least 3 departments
+    if (count($finalArrayX) < 3) {
+        throw new InvalidArgumentException("Expected at least 3 departments.");
+    }
+
+    // Use the 3rd department as reference
+    $referenceTotal = $finalArrayX[2]["totalStudent"];
+
+    // First: process the first 3 departments for remainders
+    for ($i = 0; $i < 3; $i++) {
+        $dept = $finalArrayX[$i];
+        $students = $dept["students"];
+
+        // Get students beyond the 3rd dept's size
+        $remainingStudents = array_slice($students, $referenceTotal);
+
+        // Add the remainders only if there are any
+        if (count($remainingStudents) > 0) {
+            $remainders[] = buildDeptArray($dept, $remainingStudents, count($remainingStudents));
+        }
+    }
+
+    // Second: Add all departments beyond index 2
+    for ($i = 3; $i < count($finalArrayX); $i++) {
+        $remainders[] = $finalArrayX[$i];
+    }
+
+    return $remainders;
+}
+
+function getDeptStudentRemaindersFor4($finalArrayX) {
+    $remainders = [];
+
+    // Ensure we have at least 4 departments
+    if (count($finalArrayX) < 4) {
+        throw new InvalidArgumentException("Expected at least 4 departments.");
+    }
+
+    // Use the 4th department as reference
+    $referenceTotal = $finalArrayX[3]["totalStudent"];
+
+    // First: process the first 4 departments for remainders
+    for ($i = 0; $i < 4; $i++) {
+        $dept = $finalArrayX[$i];
+        $students = $dept["students"];
+
+        // Get students beyond the 4th dept's size
+        $remainingStudents = array_slice($students, $referenceTotal);
+
+        // Add the remainders only if there are any
+        if (count($remainingStudents) > 0) {
+            $remainders[] = buildDeptArray($dept, $remainingStudents, count($remainingStudents));
+        }
+    }
+
+    // Second: Add all departments beyond index 3
+    for ($i = 4; $i < count($finalArrayX); $i++) {
+        $remainders[] = $finalArrayX[$i];
+    }
+
+    return $remainders;
+}
+
+// function selectDepartmentsXv(array $departments, int $n): array {
+//     // Select the first $n departments
+//     $selectedDepartments = array_slice($departments, 0, $n);
+
+//     // Use totalStudent of the last selected department as the remainder
+//     $remainder = $selectedDepartments[$n - 1]['totalStudent'];
+
+//     // Process each department
+//     foreach ($selectedDepartments as &$dept) {
+//         // Remove _id if it exists
+//         unset($dept['_id']);
+
+//         // Calculate how many students to keep
+//         $countToKeep = max($dept['totalStudent'] - $remainder, 0);
+
+//         // Slice students and update totalStudent
+//         $dept['students'] = array_slice($dept['students'], -$countToKeep,null,true);
+//         // $dept['students'] = array_slice($dept['students'], 0, -$countToKeep);
+//         $dept['totalStudent'] = count($dept['students']);
+
+//         // Optionally remove _id from each student (uncomment if needed)
+//         foreach ($dept['students'] as &$student) {
+//             unset($student['_id']);
+//         }
+//     }
+
+//     return $selectedDepartments;
+// }
+
+// function selectDepartmentsXv(array $departments, int $n): array {
+//     // Step 1: Select the first $n departments
+//     $selectedDepartments = array_slice($departments, 0, $n);
+
+//     // Step 2: Use totalStudent of the last selected department as the remainder
+//     $remainder = $selectedDepartments[$n - 1]['totalStudent'];
+
+//     // Step 3: Process each department
+//     foreach ($selectedDepartments as &$dept) {
+//         // Remove _id if it exists
+//         unset($dept['_id']);
+
+//         // If remainder matches the totalStudent of this department, set totalStudent to 0
+//         if ($dept['totalStudent'] == $remainder) {
+//             $dept['students'] = [];  // No students to keep
+//             $dept['totalStudent'] = 0;  // Set totalStudent to 0
+//         } else {
+//             // Calculate how many students to keep
+//             $countToKeep = max($dept['totalStudent'] - $remainder, 0);
+
+//             // Slice students and update totalStudent
+//             $dept['students'] = array_slice($dept['students'], -$countToKeep, null, true);
+//             $dept['totalStudent'] = count($dept['students']);
+//         }
+
+//         // Optionally remove _id from each student (uncomment if needed)
+//         foreach ($dept['students'] as &$student) {
+//             unset($student['_id']);
+//         }
+//     }
+
+//     return $selectedDepartments;
+// }
+function selectDepartmentsXv(array $departments, int $n): array {
+    // Check if $n is within bounds of the departments array
+    if ($n <= 0 || $n > count($departments)) {
+        // Return an empty array or handle as needed
+        return [];  // or throw an exception, depending on your preference
+    }
+
+    // Step 1: Select the first $n departments
+    $selectedDepartments = array_slice($departments, 0, $n);
+
+    // Step 2: Use totalStudent of the last selected department as the remainder
+    $remainder = $selectedDepartments[$n - 1]['totalStudent'];
+
+    // Step 3: Process each department
+    foreach ($selectedDepartments as &$dept) {
+        // Remove _id if it exists
+        unset($dept['_id']);
+
+        // If remainder matches the totalStudent of this department, set totalStudent to 0
+        if ($dept['totalStudent'] == $remainder) {
+            $dept['students'] = [];  // No students to keep
+            $dept['totalStudent'] = 0;  // Set totalStudent to 0
+        } else {
+            // Calculate how many students to keep
+            $countToKeep = max($dept['totalStudent'] - $remainder, 0);
+
+            // Slice students and update totalStudent
+            $dept['students'] = array_slice($dept['students'], -$countToKeep, null, true);
+            $dept['totalStudent'] = count($dept['students']);
+        }
+
+        // Optionally remove _id from each student (uncomment if needed)
+        foreach ($dept['students'] as &$student) {
+            unset($student['_id']);
+        }
+    }
+
+    return $selectedDepartments;
+}
+
+
+
+// function getZigzagMergedStudentsXY($data) {
+//     $result = [];
+
+//     foreach ($data as $block) {
+//         $departments = [];
+//         $blockId = $block['_id'] ?? null;
+
+//         // Go through subject groups inside the block
+//         foreach ($block as $key => $groups) {
+//             if ($key === '_id' || !is_array($groups)) continue;
+
+//             foreach ($groups as $group) {
+//                 if (!isset($group['department'], $group['students']) || !is_array($group['students'])) {
+//                     continue;
+//                 }
+
+//                 $deptId = $group['department'];
+//                 foreach ($group['students'] as $student) {
+//                     $departments[$deptId][] = $student;
+//                 }
+//             }
+//         }
+
+//         // Zigzag merge
+//         $zigzag = [];
+//         if (!empty($departments)) {
+//             $max = max(array_map('count', $departments));
+
+//             for ($i = 0; $i < $max; $i++) {
+//                 foreach ($departments as $students) {
+//                     if (isset($students[$i])) {
+//                         $zigzag[] = $students[$i];
+//                     }
+//                 }
+//             }
+//         }
+
+//         $result[] = [
+//             'block_id' => $blockId,
+//             'zigzag_students' => $zigzag
+//         ];
+//     }
+
+//     return $result;
+// }
+// function getZigzagMergedStudentsXY($data) {
+//     $allGroups = [];
+
+//     // Traverse the main data array (blocks)
+//     foreach ($data as $block) {
+//         // Traverse each subject group in the block
+//         foreach ($block as $key => $group) {
+//             if ($key === '_id' || !is_array($group)) continue;
+
+//             // Each $group is a subject group containing students
+//             if (isset($group['students']) && is_array($group['students'])) {
+//                 $allGroups[] = $group['students'];
+//             }
+//         }
+//     }
+
+//     // Determine the max number of students across groups
+//     $maxLength = max(array_map('count', $allGroups));
+
+//     // Perform zigzag/round-robin merge
+//     $zigzag = [];
+//     for ($i = 0; $i < $maxLength; $i++) {
+//         foreach ($allGroups as $group) {
+//             if (isset($group[$i])) {
+//                 $zigzag[] = $group[$i];
+//             }
+//         }
+//     }
+
+//     return [
+//         [
+//             'block_id' => 'combined',
+//             'zigzag_students' => $zigzag
+//         ]
+//     ];
+// }
+// function getZigzagMergedStudentsPerBlock($data) {
+//     $result = [];
+
+//     foreach ($data as $block) {
+//         $subjectGroups = [];
+//         $blockId = $block['_id'] ?? null;
+
+//         // Gather all student lists from this block
+//         foreach ($block as $key => $group) {
+//             if ($key === '_id' || !is_array($group)) continue;
+
+//             if (isset($group['students']) && is_array($group['students'])) {
+//                 $subjectGroups[] = $group['students'];
+//             }
+//         }
+
+//         // Perform zigzag (round-robin) merge for this block
+//         $zigzag = [];
+//         if (!empty($subjectGroups)) {
+//             $max = max(array_map('count', $subjectGroups));
+//             for ($i = 0; $i < $max; $i++) {
+//                 foreach ($subjectGroups as $group) {
+//                     if (isset($group[$i])) {
+//                         $zigzag[] = $group[$i];
+//                     }
+//                 }
+//             }
+//         }
+
+//         $result[] = [
+//             'block_id' => $blockId,
+//             'zigzag_students' => $zigzag
+//         ];
+//     }
+
+//     return $result;
+// }
+// function getZigzagMergedStudentsPerBlock($data) {
+//     $result = [];
+
+//     foreach ($data as $block) {
+//         $blockId = $block['_id'] ?? null;
+//         $subjectGroups = [];
+
+//         // Gather all student groups inside the block
+//         foreach ($block as $key => $group) {
+//             if ($key === '_id' || !is_array($group)) continue;
+
+//             if (isset($group['students']) && is_array($group['students'])) {
+//                 $subjectGroups[] = $group['students'];
+//             }
+//         }
+
+//         // Zigzag merge with deduplication
+//         $zigzag = [];
+//         $seenRollNos = []; // To track already added students by roll_no
+
+//         if (!empty($subjectGroups)) {
+//             $max = max(array_map('count', $subjectGroups));
+
+//             for ($i = 0; $i < $max; $i++) {
+//                 foreach ($subjectGroups as $group) {
+//                     if (isset($group[$i])) {
+//                         $student = $group[$i];
+//                         $rollNo = $student['roll_no'];
+
+//                         if (!isset($seenRollNos[$rollNo])) {
+//                             $zigzag[] = $student;
+//                             $seenRollNos[$rollNo] = true;
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+
+//         $result[] = [
+//             'block_id' => $blockId,
+//             'zigzag_students' => $zigzag
+//         ];
+//     }
+
+//     return $result;
+// }
+
+// okey
+// function getZigzagMergedStudentsPerBlock($data) {
+//     $result = [];
+
+//     foreach ($data as $block) {
+//         $blockId = $block['_id'] ?? null;
+//         $subjectGroups = [];
+
+//         // Collect all 'students' arrays from each subject group
+//         foreach ($block as $key => $group) {
+//             if ($key === '_id' || !is_array($group)) continue;
+
+//             if (isset($group['students']) && is_array($group['students'])) {
+//                 // Normalize indexes (some arrays might have numeric keys starting at 2, 3, etc.)
+//                 $subjectGroups[] = array_values($group['students']);
+//             }
+//         }
+
+//         // Zigzag merging logic
+//         $zigzag = [];
+//         $seenRollNos = [];
+
+//         $maxLength = 0;
+//         foreach ($subjectGroups as $group) {
+//             $maxLength = max($maxLength, count($group));
+//         }
+
+//         for ($i = 0; $i < $maxLength; $i++) {
+//             foreach ($subjectGroups as $group) {
+//                 if (isset($group[$i])) {
+//                     $student = $group[$i];
+//                     $rollNo = $student['roll_no'];
+
+//                     if (!isset($seenRollNos[$rollNo])) {
+//                         $zigzag[] = $student;
+//                         $seenRollNos[$rollNo] = true;
+//                     }
+//                 }
+//             }
+//         }
+
+//         $result[] = [
+//             'block_id' => $blockId,
+//             'zigzag_students' => $zigzag
+//         ];
+//     }
+
+//     return $result;
+// }
+
+// function getZigzagMergedStudentsPerBlock($data) {
+//     $result = [];
+
+//     foreach ($data as $block) {
+//         // $blockId = $block['_id'] ?? null;
+//         $subjectGroups = [];
+    
+//         // Collect all 'students' arrays from each subject group
+//         foreach ($block as  $group) {
+//             if (!is_array($group)) continue;
+    
+//             if (isset($group['students']) && is_array($group['students'])) {
+//                 // Normalize indexes (some arrays might have numeric keys starting at 2, 3, etc.)
+//                 $subjectGroups[] = array_values($group['students']);
+//             }
+//         }
+    
+//         // Zigzag merging logic
+//         $zigzag = [];
+//         $seenRollNos = [];
+    
+//         $maxLength = 0;
+//         $totalSubjectGroups = 0;
+    
+//         foreach ($subjectGroups as $group) {
+//             $totalSubjectGroups++;
+//             $maxLength = max($maxLength, count($group));
+//         }
+    
+//         // echo "Block ID: {$blockId}<br>";
+//         echo "Total Subject Groups: " . $totalSubjectGroups . "<br>";
+//         echo "Maximum Group Length: " . $maxLength . "<br>";
+//     }
+
+// }
+
+function getZigzagMergedStudentsPerBlock($data) {
+    $result = [];
+
+    foreach ($data as $block) {
+        $blockId = $block['_id'] ?? null;
+        $subjectGroups = [];
+
+        // STEP 1: Handle nested structure
+        if (isset($block[0]) && is_array($block[0]) && isset($block[0][0]['students'])) {
+            // Case: $block[0] contains an array of subject groups
+            foreach ($block[0] as $group) {
+                if (isset($group['students']) && is_array($group['students'])) {
+                    $subjectGroups[] = array_values($group['students']);
+                }
+            }
+        } else {
+            // Case: $block is a single-level subject group array
+            foreach ($block as $key => $group) {
+                if ($key === '_id' || !is_array($group)) continue;
+                if (isset($group['students']) && is_array($group['students'])) {
+                    $subjectGroups[] = array_values($group['students']);
+                }
+            }
+        }
+
+        // Zigzag logic
+        $zigzag = [];
+        $seenRollNos = [];
+
+        $maxLength = 0;
+        $totalSubjectGroups = count($subjectGroups);
+
+        foreach ($subjectGroups as $group) {
+            $maxLength = max($maxLength, count($group));
+        }
+
+        // echo "<strong>Block ID: {$blockId}</strong><br>";
+        // echo "Total Subject Groups: $totalSubjectGroups<br>";
+        // echo "Maximum Group Length: $maxLength<br>";
+
+        for ($i = 0; $i < $maxLength; $i++) {
+            for ($j = 0; $j < $totalSubjectGroups; $j++) {
+                if (isset($subjectGroups[$j][$i])) {
+                    $student = $subjectGroups[$j][$i];
+                    $rollNo = $student['roll_no'] ?? null;
+                    if ($rollNo && !in_array($rollNo, $seenRollNos)) {
+                        $zigzag[] = $student;
+                        $seenRollNos[] = $rollNo;
+                    }
+                }
+            }
+        }
+
+        // Optional: Display result
+        // foreach ($zigzag as $s) {
+        //     echo $s['roll_no'] . ' - ' . $s['name'] . '<br>';
+        // }
+
+        $result[] = [
+            'block_id' => $blockId,
+            'zigzag_students' => $zigzag
+        ];
+    }
+
+    return $result;
+}
+
+
+
+?>
