@@ -1,5 +1,6 @@
 # Enable URL rewriting
-RewriteEngine On
+# RewriteEngine On
+
 
 # Redirect all requests to index.php if needed (uncomment if you're using a front controller)
 # RewriteCond %{REQUEST_FILENAME} !-f
@@ -7,9 +8,9 @@ RewriteEngine On
 # RewriteRule ^ index.php [QSA,L]
 
 # Custom Error Pages
-ErrorDocument 403 /errors/403.php
-ErrorDocument 404 /errors/404.php
-ErrorDocument 500 /errors/500.php
+# ErrorDocument 403 /errors/403.php
+# ErrorDocument 404 /errors/404.php
+# ErrorDocument 500 /errors/500.php
 
 # Force HTTPS (optional)
 # RewriteCond %{HTTPS} off
@@ -27,7 +28,7 @@ ErrorDocument 500 /errors/500.php
 
 
 # Disable directory listing
-Options -Indexes
+# Options -Indexes
 
 # Set default index file
-DirectoryIndex index.php
+# DirectoryIndex index.php

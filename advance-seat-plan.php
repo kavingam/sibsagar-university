@@ -441,6 +441,80 @@ function deleteRow(button) {
 
 // Function to download the seat plan as a PDF
 
+// document.getElementById('generate').addEventListener('click', function () {
+//     const startTime = document.getElementById('startTime').value.trim();
+//     const benchSeat = document.getElementById('benchSeat').value.trim();
+//     const selectedExam = document.getElementById('examSelect').value.trim();
+//     const enteredExamName = document.getElementById('examInput').value.trim();
+//     const startDate = document.getElementById('startDate').value.trim();
+//     const rows = document.querySelectorAll("#tableBody tr");
+
+//     if (!startDate || (!selectedExam && !enteredExamName) || rows.length === 0 || !startTime || isNaN(benchSeat)) {
+//         alert("Please fill all required fields.");
+//         return;
+//     }
+
+//     // let tableData = [];
+//     // rows.forEach(row => {
+//     //     let department = row.cells[1]?.textContent.trim();
+//     //     let course = row.cells[2]?.textContent.trim();
+//     //     let semester = row.cells[3]?.textContent.trim();
+//     //     let subject = row.cells[4]?.textContent.trim();
+//     //     let totalStudent = row.cells[5]?.textContent.trim();
+
+//     //     if (department && course && semester && subject && totalStudent) {
+//     //         tableData.push({ department, course, semester, subject, totalStudent });
+//     //     }
+//     // });
+
+//     let tableData = [];
+//     rows.forEach((row, index) => {
+//         if (index === 0) return; // Skip header row
+
+//         let department = row.cells[1]?.textContent.trim();
+//         let course = row.cells[2]?.textContent.trim();
+//         let semester = row.cells[3]?.textContent.trim();
+//         let subject = row.cells[4]?.textContent.trim();
+//         let totalStudent = row.cells[5]?.textContent.trim();
+
+//         if (department && course && semester && subject && totalStudent) {
+//             tableData.push({ department, course, semester, subject, totalStudent });
+//         }
+//     });
+
+
+//     if (tableData.length === 0) {
+//         alert("No valid data in the table.");
+//         return;
+//     }
+
+//     const form = document.createElement('form');
+//     form.method = 'POST';
+//     form.action = 'xyz/dev/main_activity_new.php';
+//     form.target = '_blank'; // 🔥 Open the form submission in a new tab
+
+//     const addField = (name, value) => {
+//         const input = document.createElement('input');
+//         input.type = 'hidden';
+//         input.name = name;
+//         input.value = value;
+//         form.appendChild(input);
+//     };
+
+//     addField('startTime', startTime);
+//     addField('benchSeat', benchSeat);
+//     addField('selectedExam', selectedExam);
+//     addField('enteredExamName', enteredExamName);
+//     addField('startDate', startDate);
+//     addField('save', 1);
+//     addField('tableData', JSON.stringify(tableData));
+
+//     document.body.appendChild(form);
+//     form.submit();
+// });
+
+
+
 document.getElementById('generate').addEventListener('click', async function () {
     const startTime = document.getElementById('startTime').value.trim();
     const benchSeat = parseInt(document.getElementById('benchSeat').value.trim(), 10);
@@ -530,6 +604,8 @@ document.getElementById('generate').addEventListener('click', async function () 
         alert("An error occurred while processing the request. Please try again.");
     }
 });
+
+
 
 // document.getElementById('generate').addEventListener('click', async function () {
 //     const startTime = document.getElementById('startTime').value.trim();

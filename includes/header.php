@@ -1,13 +1,12 @@
-<?php 
+<?php
 // include 'config.php';
-// include 'db/pdo_connect.php'; 
+// include 'db/pdo_connect.php';
 ?>
 
-<?php 
+<?php
 // Include configuration and DB connection files
 include 'config.php';
 include 'db/pdo_connect.php';
-
 
 ?>
 
@@ -179,6 +178,38 @@ td.text-center {
         /* padding: 10mm !important; */
         /* margin-bottom: 10mm !important; */
       }
+
+      @media print {
+        body {
+            margin: 0;
+            padding: 10px;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        .container-fluid {
+            padding: 0 !important;
+            margin: 0 auto;
+        }
+
+        /* .row {
+            page-break-inside: avoid;
+            margin: 0;
+        }
+
+        .col {
+            border: 1px solid #ccc;
+            padding: 10px;
+            font-size: 12px;
+            width: 166px !important;
+            height: 65px !important;
+            flex: 0 0 auto !important;
+            page-break-inside: avoid;
+        } */
+    }
+
     </style>
   </head>
   <body class="mt-5">

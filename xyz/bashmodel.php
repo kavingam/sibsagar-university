@@ -16,7 +16,7 @@ class BaseModel {
 
     // // 🔥 Fetch all records
     public function getAll($table) {
-        $allowedTables = ['student', 'rooms', 'departments'];
+        $allowedTables = ['student_info', 'rooms', 'departments'];
 
         if (!in_array($table, $allowedTables)) {
             die("Invalid table name!");
@@ -278,8 +278,8 @@ public function findSimilarStudents($department, $course, $semester) {
                 s.roll_no, 
                 s.reg_no, 
                 s.name, 
-                s.department AS department_id, 
                 d.department_name, 
+                s.department AS department_id, 
                 s.semester, 
                 s.course 
             FROM student_info s
@@ -297,6 +297,16 @@ public function findSimilarStudents($department, $course, $semester) {
     
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+// public function findSimilarStudents($department, $course, $semester) {
+//     $sql = "SELECT * FROM students WHERE department = :department AND course = :course AND semester = :semester";
+//     $stmt = $this->conn->prepare($sql);
+//     $stmt->execute([
+//         ':department' => $department,
+//         ':course' => $course,
+//         ':semester' => $semester
+//     ]);
+//     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+// }
 
     
     public function getAllStudents() {
@@ -522,6 +532,17 @@ class Department extends BaseModel {
         $stmt = $this->conn->prepare($sql);
         return $stmt->execute([':department_id' => $department_id]);
     }
+
+    public function getDepartmentNameById($department_id) {
+        $sql = "SELECT department_name FROM departments WHERE department_id = :department_id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([':department_id' => $department_id]);
+    
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result ? $result['department_name'] : null;
+    }
+    
+
 
     public function getDepartmentCount() {
         return $this->getCount('departments');
