@@ -159,25 +159,91 @@ function fetchRooms() {
 
                 //     </tr>
                 // `;
+
+                // <tr>
+                //     <td style="width: 15%;">${room.room_no}</td>
+                //     <td style="width: 25%;">${room.room_name}</td>
+                //     <td style="width: 20%;">${benchOrderText}</td>
+                //     <td style="width: 10%;">${room.seat_capacity}</td>
+                //     <td style="width: 100%;" class="text-center">
+                //         <div class="d-flex justify-content-center align-items-center gap-2">
+                //             <button class="btn btn-primary d-flex align-items-center gap-1"
+                //                 onclick="editRoom('${room.room_no}', '${room.room_name}', '${room.bench_order}', '${room.seat_capacity}')">
+                //                 <i class="bi bi-pencil-square"></i> <span>Edit</span>
+                //             </button>
+                //             <button class="btn btn-danger d-flex align-items-center gap-1"
+                //                 onclick="deleteRoom('${room.room_no}')">
+                //                 <i class="bi bi-trash-fill"></i> <span>Remove</span>
+                //             </button>
+                //         </div>
+                //     </td>
+                // </tr>`
+                // const row = `
+
+                // <tr>
+                //     <td style="width: 15%;">${room.room_no}</td>
+                //     <td style="width: 25%;">${room.room_name}</td>
+                //     <td style="width: 20%;">${benchOrderText}</td>
+                //     <td style="width: 10%;">${room.seat_capacity}</td>
+
+                //     <td class="text-center" style="width: 100%;">
+                //         <div class="d-flex justify-content-center align-items-center gap-2 flex-wrap">
+                //             <button class="btn btn-outline-primary d-flex align-items-center gap-2 px-3 py-1"
+                //                 onclick="editRoom('${room.room_no}', '${room.room_name}', '${room.bench_order}', '${room.seat_capacity}')">
+                //                 <i class="fas fa-pen"></i> <span>Edit</span>
+                //             </button>
+
+                //             <button class="btn btn-outline-danger d-flex align-items-center gap-2 px-3 py-1"
+                //                 onclick="deleteRoom('${room.room_no}')">
+                //                 <i class="fas fa-trash"></i> <span>Remove</span>
+                //             </button>
+
+                //             <button class="btn btn-outline-warning d-flex align-items-center gap-2 px-3 py-1"
+                //                 onclick="toggleRoomStatus('${room.room_no}')">
+                //                 <i class="fas fa-toggle-on" id="toggle-icon-${room.room_no}"></i>
+                //                 <span id="toggle-label-${room.room_no}">Disable</span>
+                //             </button>
+                //         </div>
+                //     </td>
+
+
+
+                // </tr>
+                // `;
+
+                
+                const toggleIconClass = room.status == 1 ? "fa-toggle-on" : "fa-toggle-off";
+                const toggleLabelText = room.status == 1 ? "Disable" : "Enable";
+
                 const row = `
                 <tr>
                     <td style="width: 15%;">${room.room_no}</td>
                     <td style="width: 25%;">${room.room_name}</td>
                     <td style="width: 20%;">${benchOrderText}</td>
                     <td style="width: 10%;">${room.seat_capacity}</td>
-                    <td style="width: 100%;" class="text-center">
-                        <div class="d-flex justify-content-center align-items-center gap-2">
-                            <button class="btn btn-primary d-flex align-items-center gap-1"
+
+                    <td class="text-center" style="width: 100%;">
+                        <div class="d-flex justify-content-center align-items-center gap-2 flex-wrap">
+                            <button class="btn btn-outline-primary d-flex align-items-center gap-2 px-3 py-1"
                                 onclick="editRoom('${room.room_no}', '${room.room_name}', '${room.bench_order}', '${room.seat_capacity}')">
-                                <i class="bi bi-pencil-square"></i> <span>Edit</span>
+                                <i class="fas fa-pen"></i> <span>Edit</span>
                             </button>
-                            <button class="btn btn-danger d-flex align-items-center gap-1"
+
+                            <button class="btn btn-outline-danger d-flex align-items-center gap-2 px-3 py-1"
                                 onclick="deleteRoom('${room.room_no}')">
-                                <i class="bi bi-trash-fill"></i> <span>Remove</span>
+                                <i class="fas fa-trash"></i> <span>Remove</span>
+                            </button>
+
+                            <button class="btn btn-outline-warning d-flex align-items-center gap-2 px-3 py-1"
+                                onclick="toggleRoomStatus('${room.room_no}')">
+                                <i class="fas ${toggleIconClass}" id="toggle-icon-${room.room_no}"></i>
+                                <span id="toggle-label-${room.room_no}">${toggleLabelText}</span>
                             </button>
                         </div>
                     </td>
-                </tr>`;
+                </tr>
+                `;
+
 
                 tableBody.innerHTML += row;
             });
@@ -273,5 +339,59 @@ function deleteRoom(roomNo) {
                 Swal.fire("⚠️ Error", "An error occurred while deleting the room.", "error");
             });
         }
+    });
+}
+
+
+// function toggleRoomStatus(roomNo) {
+//     const icon = document.getElementById(`toggle-icon-${roomNo}`);
+//     const label = document.getElementById(`toggle-label-${roomNo}`);
+
+//     const isEnabled = icon.classList.contains('fa-toggle-on');
+
+//     if (isEnabled) {
+//         icon.classList.remove('fa-toggle-on');
+//         icon.classList.add('fa-toggle-off');
+//         label.textContent = 'Enable';
+//     } else {
+//         icon.classList.remove('fa-toggle-off');
+//         icon.classList.add('fa-toggle-on');
+//         label.textContent = 'Disable';
+//     }
+// }
+function toggleRoomStatus(roomNo) {
+    const icon = document.getElementById(`toggle-icon-${roomNo}`);
+    const label = document.getElementById(`toggle-label-${roomNo}`);
+
+    const isEnabled = icon.classList.contains('fa-toggle-on');
+    // Compute new status to send to backend
+    const newStatus = isEnabled ? 0 : 1;
+
+    fetch('xyz/space/toggle_room_status.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ room_no: roomNo, status: newStatus })
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            // Toggle UI icon and label
+            if (newStatus === 1) {
+                icon.classList.remove('fa-toggle-off');
+                icon.classList.add('fa-toggle-on');
+                label.textContent = 'Disable';
+            } else {
+                icon.classList.remove('fa-toggle-on');
+                icon.classList.add('fa-toggle-off');
+                label.textContent = 'Enable';
+            }
+            Swal.fire('Success', `Room ${newStatus === 1 ? 'enabled' : 'disabled'} successfully.`, 'success');
+        } else {
+            Swal.fire('Error', result.message || 'Failed to update room status.', 'error');
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        Swal.fire('Error', 'Network or server error.', 'error');
     });
 }
