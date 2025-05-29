@@ -272,6 +272,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $roomData = allocateStudentsToRooms($rooms->getAllRooms(), $totalStudents);
 
+
+    print_r($roomData);
+
     foreach ($roomData as $room) {
         $cols = (int) $room['banch_order'];
         $rows = (int) floor($room['room_capacity'] / $cols);
@@ -286,39 +289,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ];
         }
     }
-    // $rooms_layout = [
-    //     ['rows' => 8, 'cols' => 3],
-    //     ['rows' => 8, 'cols' => 3], 
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 15, 'cols' => 3],
-    //     ['rows' => 15, 'cols' => 3],
-    //     ['rows' => 15, 'cols' => 2],
-    //     ['rows' => 5, 'cols' => 2],
-    //     ['rows' => 10, 'cols' => 2],
-    //     ['rows' => 5, 'cols' => 2],
-    //     ['rows' => 6, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 5],
-    //     ['rows' => 20, 'cols' => 3],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2]
 
-    
-    // ];
-
-    // print_r($rooms_layout);
 }
 
 $rooms = [];

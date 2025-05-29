@@ -17,19 +17,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     usort($tableData, function ($a, $b) {
         $aEven = $a['totalStudent'] % 2 === 0;
         $bEven = $b['totalStudent'] % 2 === 0;
-    
+
         // First group by evenness: even before odd
         if ($aEven !== $bEven) {
-            return $bEven <=> $aEven; // true (1) < false (0) — so even comes first
+            return $bEven <=> $aEven;  // true (1) < false (0) — so even comes first
         }
-    
+
         // If both even or both odd, sort by totalStudent descending
         return $b['totalStudent'] <=> $a['totalStudent'];
     });
-    
 
     $students = new Student();
     $rooms = new Room();
+
+
+    print_r('<pre>');
+    // print_r($rooms->getAll('rooms'));
 
     $fetchStudents = [];
 
@@ -171,7 +174,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //     }
     // }
 
-    
     $steps = $processingLog;
 
     $flat_students = [];
@@ -234,7 +236,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // }
     // echo "</pre>";
 
-    print_r('<pre>');
+    // print_r('<pre>');
     // print_r($fetchStudents);
     // print_r($dept_students);
     // print_r($processingLog);
@@ -242,7 +244,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // print_r($benches);
     // print_r($rooms->getAllRooms());
     // print_r(allocateStudentsToRooms($rooms->getAllRooms(),$totalStudents));
-    print_r('<pre/>');
+    // print_r('<pre/>');
 
     // === Room Layout: [rows × cols] ===
     // $rooms_layout = [
@@ -277,7 +279,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $rooms_layout = [];
 
+    // print_r($rooms->getAllrooms());
     $roomData = allocateStudentsToRooms($rooms->getAllRooms(), $totalStudents);
+    print_r($roomData);
+    print_r("total students". " : ".$totalStudents);
 
     foreach ($roomData as $room) {
         $cols = (int) $room['banch_order'];
@@ -406,7 +411,7 @@ while ($bench_index < count($benches)) {
     <title>Hall ticket</title>
 
     <!-- Bootstrap 5.3.3 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"> -->
 
     <style>
     @media print {
@@ -453,23 +458,45 @@ while ($bench_index < count($benches)) {
         height: 65px !important;
         flex: 0 0 auto !important;
         /* Prevents Bootstrap from auto-sizing */
-    } 
+    }
+
     .text-label {
         font-size: 6.5px;
         margin-top: -8.2px;
     }
 
-    table { border-collapse: collapse; margin-top: 20px; }
-td, th { border: 1px solid #000; padding: 10px; vertical-align: top; min-width: 200px; text-align: left; }
-.empty { color: #888; font-style: italic; }
-th { background: #eee; }
-h2 { margin-top: 40px; }
+    table {
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    td,
+    th {
+        border: 1px solid #000;
+        padding: 10px;
+        vertical-align: top;
+        min-width: 200px;
+        text-align: left;
+    }
+
+    .empty {
+        color: #888;
+        font-style: italic;
+    }
+
+    th {
+        background: #eee;
+    }
+
+    h2 {
+        margin-top: 40px;
+    }
     </style>
 </head>
 
 <body>
-<div class="container">
-<?php
+    <div class="container">
+        <?php
 
 $departmentObj = new Department();
 // === Display Rooms ===
@@ -511,7 +538,6 @@ foreach ($rooms as $room_index => $room_grid) {
     echo '</table><br>';
     echo '<div class="page-break">';
 }
-
 
 $totalBenches = 0;
 
