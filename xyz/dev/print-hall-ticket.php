@@ -100,81 +100,143 @@ $saveData = 0;
 </head>
 
 <body>
+
 <?php 
+// $student_index = 0;
+// $room_index = 0;
+// foreach ($assignRooms as $room) {
+    
+//     $roomNo = $room['room_no'];
+//     $roomName = $room['room_name'];
+//     $banchOrder = $room['banch_order']; // e.g., 1 means 2 columns per bench
+//     $capacity = $room['room_capacity'];
+//     $assigned = $room['students_assigned'];
+    
+//     $xx = $banchOrder * 2;
+//     $benchRow = ceil($assigned / $xx);
+    
+//     $benchCol = $room['banch_order'];
+
+    
+
+//     if ($room_index == 0) {
+//         echo '<div class="text-center">';
+//         echo "<h4 class='mb-3 fs-6 fw-bold'>Room No: <strong>" . htmlspecialchars($room['room_no']) . "</strong> - " . htmlspecialchars($room['room_name']) . "</h4>";
+//         echo '</div>';
+//         for ($i = 0; $i < $benchRow; $i++) {
+//             echo '<div class="container-fluid text-center mt-2" >';
+//             echo '<div class="row row-cols-8 g-1 gap-3">';
+//             $rowColumns = [];
+//             for ($j = 0; $j < $benchCol; $j++) {
+//                 $seat1 = isset($students[$student_index]) ? $students[$student_index++] : null;
+//                 $seat2 = isset($students[$student_index]) ? $students[$student_index++] : null;
+
+//                 if (!$seat1 && !$seat2) continue;
+//                 ob_start();
+//                 if ($i % 2 === 0) { 
+//                     renderStudentBox($seat1, $saveData, $room, $examDate, $examTime24);
+//                     renderStudentBox($seat2, $saveData, $room, $examDate, $examTime24);
+//                 } else {
+//                     renderStudentBox($seat2, $saveData, $room, $examDate, $examTime24);
+//                     renderStudentBox($seat1, $saveData, $room, $examDate, $examTime24);
+//                 }
+//             }
+//             echo '</div>'; 
+//             echo '</div>'; 
+//         }
+
+//     } else {
+//         echo '<div class="text-center page-break mt-5">';
+//         echo "<h4 class='mb-3 fs-6 fw-bold'>Room No: <strong>" . htmlspecialchars($room['room_no']) . "</strong> - " . htmlspecialchars($room['room_name']) . "</h4>";
+//         echo '</div>';
+//         for ($i = 0; $i < $benchRow; $i++) {
+//             echo '<div class="container-fluid text-center mt-2">';
+//             echo '<div class="row row-cols-8 g-1 gap-3">';
+//             $rowColumns = [];
+//             for ($j = 0; $j < $benchCol; $j++) {
+//                 $seat1 = isset($students[$student_index]) ? $students[$student_index++] : null;
+//                 $seat2 = isset($students[$student_index]) ? $students[$student_index++] : null;
+
+//                 if (!$seat1 && !$seat2) continue;
+//                 ob_start();
+//                 if ($i % 2 === 0) { 
+//                     renderStudentBox($seat1, $saveData, $room, $examDate, $examTime24);
+//                     renderStudentBox($seat2, $saveData, $room, $examDate, $examTime24);
+//                 } else {
+//                     renderStudentBox($seat2, $saveData, $room, $examDate, $examTime24);
+//                     renderStudentBox($seat1, $saveData, $room, $examDate, $examTime24);
+//                 }
+//             }
+//             echo '</div>';
+//             echo '</div>';
+//         }
+
+//     }
+//     $room_index ++;
+//     echo '</div>';
+// }
+
+echo '<style>
+    .student-box { border: 1px solid #000; padding: 10px; margin-bottom: 5px; min-width: 180px; text-align: left; }
+    .student-empty { color: #888; font-style: italic; }
+    h2 { margin-top: 40px; }
+</style>';
+
+$departmentObj = new Department();
 $student_index = 0;
 $room_index = 0;
+
 foreach ($assignRooms as $room) {
-    
     $roomNo = $room['room_no'];
     $roomName = $room['room_name'];
-    $banchOrder = $room['banch_order']; // e.g., 1 means 2 columns per bench
+    $benchOrder = $room['banch_order']; // number of bench columns
     $capacity = $room['room_capacity'];
     $assigned = $room['students_assigned'];
     
-    $xx = $banchOrder * 2;
-    $benchRow = ceil($assigned / $xx);
-    
-    $benchCol = $room['banch_order'];
+    $seatsPerBench = $benchOrder * 2; // 2 seats per bench column (A, B)
+    $benchRow = ceil($assigned / $seatsPerBench);
 
-    
+    // Room header with page break for non-first room
+    echo ($room_index > 0) ? '<div class="page-break mt-5">' : '<div>';
+    echo '<h2>Room ' . htmlspecialchars($roomNo) . ' - ' . htmlspecialchars($roomName) . '</h2>';
 
-    if ($room_index == 0) {
-        echo '<div class="text-center">';
-        echo "<h4 class='mb-3 fs-6 fw-bold'>Room No: <strong>" . htmlspecialchars($room['room_no']) . "</strong> - " . htmlspecialchars($room['room_name']) . "</h4>";
-        echo '</div>';
-        for ($i = 0; $i < $benchRow; $i++) {
-            echo '<div class="container-fluid text-center mt-2" >';
-            echo '<div class="row row-cols-8 g-1 gap-3">';
-            $rowColumns = [];
-            for ($j = 0; $j < $benchCol; $j++) {
-                $seat1 = isset($students[$student_index]) ? $students[$student_index++] : null;
-                $seat2 = isset($students[$student_index]) ? $students[$student_index++] : null;
+    for ($i = 0; $i < $benchRow; $i++) {
+        echo '<div class="container-fluid text-center mt-3">';
+        echo '<div class="row row-cols-' . $benchOrder . ' g-2 justify-content-center">';
 
-                if (!$seat1 && !$seat2) continue;
-                ob_start();
-                if ($i % 2 === 0) { 
-                    renderStudentBox($seat1, $saveData, $room, $examDate, $examTime24);
-                    renderStudentBox($seat2, $saveData, $room, $examDate, $examTime24);
-                } else {
-                    renderStudentBox($seat2, $saveData, $room, $examDate, $examTime24);
-                    renderStudentBox($seat1, $saveData, $room, $examDate, $examTime24);
-                }
+        for ($j = 0; $j < $benchOrder; $j++) {
+            $seatA = isset($students[$student_index]) ? $students[$student_index++] : null;
+            $seatB = isset($students[$student_index]) ? $students[$student_index++] : null;
+
+            echo '<div class="col student-box">';
+            echo "<strong>Bench [$i,$j]</strong><br>";
+
+            // Seat A
+            if ($seatA) {
+                echo "Seat A: " . htmlspecialchars($seatA['name']) . " (" . 
+                    htmlspecialchars($departmentObj->getDepartmentNameById($seatA['department_id'])) . ")<br>";
+            } else {
+                echo "Seat A: <span class='student-empty'>Empty</span><br>";
             }
-            echo '</div>'; 
-            echo '</div>'; 
-        }
 
-    } else {
-        echo '<div class="text-center page-break mt-5">';
-        echo "<h4 class='mb-3 fs-6 fw-bold'>Room No: <strong>" . htmlspecialchars($room['room_no']) . "</strong> - " . htmlspecialchars($room['room_name']) . "</h4>";
-        echo '</div>';
-        for ($i = 0; $i < $benchRow; $i++) {
-            echo '<div class="container-fluid text-center mt-2">';
-            echo '<div class="row row-cols-8 g-1 gap-3">';
-            $rowColumns = [];
-            for ($j = 0; $j < $benchCol; $j++) {
-                $seat1 = isset($students[$student_index]) ? $students[$student_index++] : null;
-                $seat2 = isset($students[$student_index]) ? $students[$student_index++] : null;
-
-                if (!$seat1 && !$seat2) continue;
-                ob_start();
-                if ($i % 2 === 0) { 
-                    renderStudentBox($seat1, $saveData, $room, $examDate, $examTime24);
-                    renderStudentBox($seat2, $saveData, $room, $examDate, $examTime24);
-                } else {
-                    renderStudentBox($seat2, $saveData, $room, $examDate, $examTime24);
-                    renderStudentBox($seat1, $saveData, $room, $examDate, $examTime24);
-                }
+            // Seat B
+            if ($seatB) {
+                echo "Seat B: " . htmlspecialchars($seatB['name']) . " (" . 
+                    htmlspecialchars($departmentObj->getDepartmentNameById($seatB['department_id'])) . ")<br>";
+            } else {
+                echo "Seat B: <span class='student-empty'>Empty</span><br>";
             }
-            echo '</div>';
+
             echo '</div>';
         }
 
+        echo '</div>'; // close row
+        echo '</div>'; // close container
     }
-    $room_index ++;
-    echo '</div>';
-}
 
+    echo '</div>'; // close room div
+    $room_index++;
+}
 
 
 ?>

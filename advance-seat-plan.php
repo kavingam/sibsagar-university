@@ -1,4 +1,4 @@
-<?php 
+<?php
 // Start the session to access session data
 session_start();
 // Check if the user is logged in, redirect to login page if not
@@ -6,10 +6,11 @@ if (!isset($_SESSION['user_email'])) {
     header('Location: login.php');  // Redirect to login page
     exit;
 }
-?>
-<?php 
 
-include 'includes/header.php'; 
+?>
+<?php
+
+include 'includes/header.php';
 
 ?>
 <div class="container bg-light vh-100">
@@ -72,26 +73,35 @@ include 'includes/header.php';
             <div class="container p-3">
                 <div id="dynamicFields">
                     <div class="row fieldGroup container g-0 mb-2 p-2">
-                        <div class="col-3">
+                        <!-- <div class="col-3"> -->
                             <?php
-                            include ('db/pdo_connect.php');
-                            $sql = 'SELECT department_id, department_name FROM departments';
-                            $stmt = $pdo->prepare($sql);
-                            $stmt->execute();
-                            $departments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                            // include ('db/pdo_connect.php');
+                            // $sql = 'SELECT department_id, department_name FROM departments';
+                            // $stmt = $pdo->prepare($sql);
+                            // $stmt->execute();
+                            // $departments = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             ?>
-                            <div class="container p-2 borderx border-end-0">
+                            <!-- <div class="container p-2 borderx border-end-0">
                                 <label>Department:</label>
                                 <select name="department[]" class="form-control departmentSelect" onchange="fetchCoursesAndSemesters(this)">
                                     <option value="">Select Department</option>
-                                    <?php foreach ($departments as $department): ?>
-                                        <option value="<?php echo htmlspecialchars($department['department_id']); ?>">
-                                            <?php echo htmlspecialchars($department['department_name']); ?>
+                                    <?php //foreach ($departments as $department): ?>
+                                        <option value="<?php //echo htmlspecialchars($department['department_id']); ?>">
+                                            <?php //echo htmlspecialchars($department['department_name']); ?>
                                         </option>
-                                    <?php endforeach; ?>
+                                    <?php //endforeach; ?>
+                                </select>
+                            </div> -->
+                        <!-- </div> -->
+                        <div class="col-3">
+                            <div class="container p-2 borderx border-end-0">
+                                <label>Department:</label>
+                                <select name="department[]" class="form-control departmentSelect" id="departmentSelect" onchange="fetchCoursesAndSemesters(this)">
+                                    <option value="">Loading...</option>
                                 </select>
                             </div>
                         </div>
+
                         <div class="col-3">
                             <div class="container p-2 borderx border-start-0 border-end-0">
                                 <label>Course:</label>
@@ -357,40 +367,40 @@ function selectInput() {
     examInput.disabled = !examInput.value;
 }
 
-// Function to handle the department selection and fetch associated courses/semesters
-function fetchCoursesAndSemesters(selectElement) {
-    var departmentId = selectElement.value;
-    var courseSelect = selectElement.closest('.fieldGroup').querySelector('.courseSelect');
-    var semesterSelect = selectElement.closest('.fieldGroup').querySelector('.semesterSelect');
+// // Function to handle the department selection and fetch associated courses/semesters
+// function fetchCoursesAndSemesters(selectElement) {
+//     var departmentId = selectElement.value;
+//     var courseSelect = selectElement.closest('.fieldGroup').querySelector('.courseSelect');
+//     var semesterSelect = selectElement.closest('.fieldGroup').querySelector('.semesterSelect');
     
-    if (departmentId) {
-        // Fetch courses based on department selection
-        fetch('get_courses.php?department_id=' + departmentId)
-            .then(response => response.json())
-            .then(data => {
-                courseSelect.innerHTML = '<option value="">Select Course</option>';
-                data.courses.forEach(course => {
-                    var option = document.createElement('option');
-                    option.value = course.id;
-                    option.textContent = course.name;
-                    courseSelect.appendChild(option);
-                });
-            });
+//     if (departmentId) {
+//         // Fetch courses based on department selection
+//         fetch('get_courses.php?department_id=' + departmentId)
+//             .then(response => response.json())
+//             .then(data => {
+//                 courseSelect.innerHTML = '<option value="">Select Course</option>';
+//                 data.courses.forEach(course => {
+//                     var option = document.createElement('option');
+//                     option.value = course.id;
+//                     option.textContent = course.name;
+//                     courseSelect.appendChild(option);
+//                 });
+//             });
         
-        // Fetch semesters based on department selection
-        fetch('get_semesters.php?department_id=' + departmentId)
-            .then(response => response.json())
-            .then(data => {
-                semesterSelect.innerHTML = '<option value="">Select Semester</option>';
-                data.semesters.forEach(semester => {
-                    var option = document.createElement('option');
-                    option.value = semester.id;
-                    option.textContent = semester.name;
-                    semesterSelect.appendChild(option);
-                });
-            });
-    }
-}
+//         // Fetch semesters based on department selection
+//         fetch('get_semesters.php?department_id=' + departmentId)
+//             .then(response => response.json())
+//             .then(data => {
+//                 semesterSelect.innerHTML = '<option value="">Select Semester</option>';
+//                 data.semesters.forEach(semester => {
+//                     var option = document.createElement('option');
+//                     option.value = semester.id;
+//                     option.textContent = semester.name;
+//                     semesterSelect.appendChild(option);
+//                 });
+//             });
+//     }
+// }
 
 // Function to add a new row to the dynamic form
 // function addRow() {
@@ -436,84 +446,76 @@ function deleteRow(button) {
     rowCount--;
 }
 
-
-
-
 // Function to download the seat plan as a PDF
 
-// document.getElementById('generate').addEventListener('click', function () {
-//     const startTime = document.getElementById('startTime').value.trim();
-//     const benchSeat = document.getElementById('benchSeat').value.trim();
-//     const selectedExam = document.getElementById('examSelect').value.trim();
-//     const enteredExamName = document.getElementById('examInput').value.trim();
-//     const startDate = document.getElementById('startDate').value.trim();
-//     const rows = document.querySelectorAll("#tableBody tr");
+document.getElementById('generate').addEventListener('click', function () {
+    const startTime = document.getElementById('startTime').value.trim();
+    const benchSeat = document.getElementById('benchSeat').value.trim();
+    const selectedExam = document.getElementById('examSelect').value.trim();
+    const enteredExamName = document.getElementById('examInput').value.trim();
+    const startDate = document.getElementById('startDate').value.trim();
+    const rows = document.querySelectorAll("#tableBody tr");
 
-//     if (!startDate || (!selectedExam && !enteredExamName) || rows.length === 0 || !startTime || isNaN(benchSeat)) {
-//         alert("Please fill all required fields.");
-//         return;
-//     }
+    if (!startDate || (!selectedExam && !enteredExamName) || rows.length === 0 || !startTime || isNaN(benchSeat)) {
+        alert("Please fill all required fields.");
+        return;
+    }
 
-//     // let tableData = [];
-//     // rows.forEach(row => {
-//     //     let department = row.cells[1]?.textContent.trim();
-//     //     let course = row.cells[2]?.textContent.trim();
-//     //     let semester = row.cells[3]?.textContent.trim();
-//     //     let subject = row.cells[4]?.textContent.trim();
-//     //     let totalStudent = row.cells[5]?.textContent.trim();
+    let tableData = [];
+    rows.forEach(row => {
+        const deptCell = row.cells[1];
+        const courseCell = row.cells[2];
+        const semCell = row.cells[3];
+        const subjectCell = row.cells[4];
+        const totalStudCell = row.cells[5];
 
-//     //     if (department && course && semester && subject && totalStudent) {
-//     //         tableData.push({ department, course, semester, subject, totalStudent });
-//     //     }
-//     // });
+        if (!deptCell || !courseCell || !semCell || !totalStudCell || !subjectCell) return;
 
-//     let tableData = [];
-//     rows.forEach((row, index) => {
-//         if (index === 0) return; // Skip header row
+        const department = deptCell.getAttribute('data-department')?.trim();
+        const course = courseCell.getAttribute('data-course')?.trim();
+        const semester = semCell.getAttribute('data-semester')?.trim();
+        const subject = subjectCell.textContent.trim();
+        const totalStudent = totalStudCell.getAttribute('data-totalstudent')?.trim();
 
-//         let department = row.cells[1]?.textContent.trim();
-//         let course = row.cells[2]?.textContent.trim();
-//         let semester = row.cells[3]?.textContent.trim();
-//         let subject = row.cells[4]?.textContent.trim();
-//         let totalStudent = row.cells[5]?.textContent.trim();
-
-//         if (department && course && semester && subject && totalStudent) {
-//             tableData.push({ department, course, semester, subject, totalStudent });
-//         }
-//     });
+        if (department && course && semester && subject && totalStudent) {
+            tableData.push({ department, course, semester, subject, totalStudent });
+        }
+    });
 
 
-//     if (tableData.length === 0) {
-//         alert("No valid data in the table.");
-//         return;
-//     }
+    if (tableData.length === 0) {
+        alert("No valid data in the table.");
+        return;
+    }
 
-//     const form = document.createElement('form');
-//     form.method = 'POST';
-//     form.action = 'xyz/dev/main_activity_new.php';
-//     form.target = '_blank'; // 🔥 Open the form submission in a new tab
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'xyz/dev/main_activity_new.php';
+    form.target = '_blank'; // 🔥 Open the form submission in a new tab
 
-//     const addField = (name, value) => {
-//         const input = document.createElement('input');
-//         input.type = 'hidden';
-//         input.name = name;
-//         input.value = value;
-//         form.appendChild(input);
-//     };
+    const addField = (name, value) => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = name;
+        input.value = value;
+        form.appendChild(input);
+    };
 
-//     addField('startTime', startTime);
-//     addField('benchSeat', benchSeat);
-//     addField('selectedExam', selectedExam);
-//     addField('enteredExamName', enteredExamName);
-//     addField('startDate', startDate);
-//     addField('save', 1);
-//     addField('tableData', JSON.stringify(tableData));
+    addField('startTime', startTime);
+    addField('benchSeat', benchSeat);
+    addField('selectedExam', selectedExam);
+    addField('enteredExamName', enteredExamName);
+    addField('startDate', startDate);
+    addField('save', 1);
+    addField('tableData', JSON.stringify(tableData));
 
-//     document.body.appendChild(form);
-//     form.submit();
-// });
+    document.body.appendChild(form);
+    form.submit();
+});
 
 
+
+/*
 
 document.getElementById('generate').addEventListener('click', async function () {
     const startTime = document.getElementById('startTime').value.trim();
@@ -604,6 +606,8 @@ document.getElementById('generate').addEventListener('click', async function () 
         alert("An error occurred while processing the request. Please try again.");
     }
 });
+
+*/
 
 
 
@@ -798,10 +802,111 @@ document.getElementById('generate').addEventListener('click', async function () 
 //     const params = `department=${encodeURIComponent(department)}&course=${encodeURIComponent(course)}&semester=${encodeURIComponent(semester)}&subject=${encodeURIComponent(subject)}`;
 //     xhr.send(params);
 // }
-let rowCount = 1; // Global row count
+// let rowCount = 1; // Global row count
+
+// function addRow() {
+//     // Select dropdowns for department, course, semester, and subject
+//     const departmentSelect = document.querySelector('select[name="department[]"]');
+//     const courseSelect = document.querySelector('select[name="course[]"]');
+//     const semesterSelect = document.querySelector('select[name="semester[]"]');
+//     const subjectSelect = document.querySelector('select[name="subject[]"]');
+
+//     if (!departmentSelect || !courseSelect || !semesterSelect || !subjectSelect) {
+//         alert('Dropdown elements are missing!');
+//         return;
+//     }
+
+//     const department = departmentSelect.value.trim();
+//     const departmentText = departmentSelect.options[departmentSelect.selectedIndex].text;
+
+//     const course = courseSelect.value.trim();
+//     const courseText = courseSelect.options[courseSelect.selectedIndex].text;
+
+//     const semester = semesterSelect.value.trim();
+//     const semesterText = semesterSelect.options[semesterSelect.selectedIndex].text;
+
+//     const subject = subjectSelect.value.trim();
+//     const subjectText = subjectSelect.options[subjectSelect.selectedIndex].text;
+
+//     // Check if all fields are selected
+//     if (!department || !course || !semester || !subject) {
+//         alert('Please select all fields!');
+//         return;
+//     }
+
+//     // Prevent duplicate entries
+//     const existingRows = document.querySelectorAll("#tableBody tr");
+//     for (let row of existingRows) {
+//         const existingDepartment = row.cells[1].getAttribute('data-department');
+//         const existingCourse = row.cells[2].getAttribute('data-course');
+//         const existingSemester = row.cells[3].getAttribute('data-semester');
+//         const existingSubject = row.cells[4].getAttribute('data-subject');
+
+//         // If the combination of department, course, semester, and subject already exists
+//         if (existingDepartment === department && existingCourse === course && existingSemester === semester && existingSubject === subject) {
+//             alert("This combination already exists in the table.");
+//             return;
+//         }
+//     }
+
+//     // AJAX request to fetch total students
+//     const xhr = new XMLHttpRequest();
+//     xhr.open('POST', 'procs/getTotalStudents.php', true);
+//     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+//     xhr.onreadystatechange = function () {
+//         if (xhr.readyState === 4) {
+//             if (xhr.status === 200) {
+//                 try {
+//                     const data = JSON.parse(xhr.responseText);
+
+//                     if (data.error) {
+//                         console.error('Error:', data.error);
+//                         alert('Error fetching student count: ' + data.error);
+//                         return;
+//                     }
+
+//                     const totalStudents = data.total ?? 0; // Default to 0 if not provided
+
+//                     // Insert row into the table
+//                     const tableBody = document.getElementById('tableBody');
+//                     const newRow = document.createElement('tr');
+
+//                     newRow.innerHTML = `
+//                         <td>${rowCount}</td>
+//                         <td data-department="${department}">${departmentText}</td>
+//                         <td data-course="${course}">${courseText}</td>
+//                         <td data-semester="${semester}">${semesterText}</td>
+//                         <td data-subject="${subject}">${subjectText}</td>
+//                         <td data-totalStudent="${totalStudents}">${totalStudents}</td>
+//                         <td>
+//                             <button class="btn btn-transparent" style="background: none; border: none;" onclick="deleteRow(this)">
+//                                 <i class="fad fa-file-times"></i> remove
+//                             </button>
+//                         </td>
+//                     `;
+
+//                     tableBody.appendChild(newRow);
+//                     rowCount++; // Increment row count after adding the new row
+//                 } catch (error) {
+//                     console.error("JSON Parsing Error:", error);
+//                     alert("An error occurred while processing the response.");
+//                 }
+//             } else {
+//                 console.error("AJAX Error:", xhr.statusText);
+//                 alert("An error occurred while fetching student count.");
+//             }
+//         }
+//     };
+
+//     // Send data to get total students
+//     const params = `department=${encodeURIComponent(department)}&course=${encodeURIComponent(course)}&semester=${encodeURIComponent(semester)}&subject=${encodeURIComponent(subject)}`;
+//     xhr.send(params);
+// }
+
+let rowCount = 1;
 
 function addRow() {
-    // Select dropdowns for department, course, semester, and subject
     const departmentSelect = document.querySelector('select[name="department[]"]');
     const courseSelect = document.querySelector('select[name="course[]"]');
     const semesterSelect = document.querySelector('select[name="semester[]"]');
@@ -824,7 +929,6 @@ function addRow() {
     const subject = subjectSelect.value.trim();
     const subjectText = subjectSelect.options[subjectSelect.selectedIndex].text;
 
-    // Check if all fields are selected
     if (!department || !course || !semester || !subject) {
         alert('Please select all fields!');
         return;
@@ -833,13 +937,12 @@ function addRow() {
     // Prevent duplicate entries
     const existingRows = document.querySelectorAll("#tableBody tr");
     for (let row of existingRows) {
-        const existingDepartment = row.cells[1].getAttribute('data-department');
-        const existingCourse = row.cells[2].getAttribute('data-course');
-        const existingSemester = row.cells[3].getAttribute('data-semester');
-        const existingSubject = row.cells[4].getAttribute('data-subject');
-
-        // If the combination of department, course, semester, and subject already exists
-        if (existingDepartment === department && existingCourse === course && existingSemester === semester && existingSubject === subject) {
+        if (
+            row.cells[1].getAttribute('data-department') === department &&
+            row.cells[2].getAttribute('data-course') === course &&
+            row.cells[3].getAttribute('data-semester') === semester &&
+            row.cells[4].getAttribute('data-subject') === subject
+        ) {
             alert("This combination already exists in the table.");
             return;
         }
@@ -847,7 +950,7 @@ function addRow() {
 
     // AJAX request to fetch total students
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', 'procs/getTotalStudents.php', true);
+    xhr.open('POST', 'procs/getTotalStudents.php?cb=' + Date.now(), true); // 🔥 cache buster
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
     xhr.onreadystatechange = function () {
@@ -857,14 +960,12 @@ function addRow() {
                     const data = JSON.parse(xhr.responseText);
 
                     if (data.error) {
-                        console.error('Error:', data.error);
                         alert('Error fetching student count: ' + data.error);
                         return;
                     }
 
-                    const totalStudents = data.total ?? 0; // Default to 0 if not provided
+                    const totalStudents = data.total ?? 0;
 
-                    // Insert row into the table
                     const tableBody = document.getElementById('tableBody');
                     const newRow = document.createElement('tr');
 
@@ -876,14 +977,25 @@ function addRow() {
                         <td data-subject="${subject}">${subjectText}</td>
                         <td data-totalStudent="${totalStudents}">${totalStudents}</td>
                         <td>
-                            <button class="btn btn-transparent" style="background: none; border: none;" onclick="deleteRow(this)">
-                                <i class="fad fa-file-times"></i> remove
+                            <button class="btn btn-transparent" onclick="deleteRow(this)">
+                                <i class="fad fa-file-times"></i> remove 
                             </button>
                         </td>
                     `;
-
                     tableBody.appendChild(newRow);
-                    rowCount++; // Increment row count after adding the new row
+                    rowCount++;
+
+                    // ✅ Reset dropdowns after successful row insert
+                    departmentSelect.selectedIndex = 0;
+                    courseSelect.innerHTML = '<option value="">Select Course</option>';
+                    semesterSelect.innerHTML = '<option value="">Select Semester</option>';
+                    subjectSelect.innerHTML = '<option value="">Select Subject</option>';
+
+                    // Optionally trigger re-fetch for departments
+                    if (typeof fetchCoursesAndSemesters === "function") {
+                        fetchCoursesAndSemesters(departmentSelect);
+                    }
+
                 } catch (error) {
                     console.error("JSON Parsing Error:", error);
                     alert("An error occurred while processing the response.");
@@ -895,10 +1007,10 @@ function addRow() {
         }
     };
 
-    // Send data to get total students
     const params = `department=${encodeURIComponent(department)}&course=${encodeURIComponent(course)}&semester=${encodeURIComponent(semester)}&subject=${encodeURIComponent(subject)}`;
     xhr.send(params);
 }
+
 
 </script>
 
@@ -909,122 +1021,337 @@ document.addEventListener("DOMContentLoaded", function () {
     fetchDepartments();
 });
 
-function fetchDepartments() {
-    fetch("procs/fetch_departments.php")
-        .then(response => response.json())
-        .then(data => {
-            let dropdown = document.getElementById("departmentDropdown");
-            data.forEach(dept => {
-                let option = document.createElement("option");
-                option.value = dept.department_id;
-                option.textContent = dept.department_name;
-                dropdown.appendChild(option);
-            });
-        })
-        .catch(error => console.error("Error fetching departments:", error));
-}
+// function fetchDepartments() {
+//     fetch("procs/fetch_departments.php")
+//         .then(response => response.json())
+//         .then(data => {
+//             let dropdown = document.getElementById("departmentDropdown");
+//             data.forEach(dept => {
+//                 let option = document.createElement("option");
+//                 option.value = dept.department_id;
+//                 option.textContent = dept.department_name;
+//                 dropdown.appendChild(option);
+//             });
+//         })
+//         .catch(error => console.error("Error fetching departments:", error));
+// }
 
-function fetchCoursesAndSemesters(selectElement) {
-    var departmentId = selectElement.value;
-    var row = selectElement.closest('.fieldGroup');
+// function fetchCoursesAndSemesters(selectElement) {
+//     var departmentId = selectElement.value;
+//     var row = selectElement.closest('.fieldGroup');
     
-    if (departmentId) {
-        fetch('procs/fetch_courses_semesters.php?department_id=' + departmentId)
-        .then(response => response.json())
-        .then(data => {
-            var courseDropdown = row.querySelector('.courseSelect');
-            var semesterDropdown = row.querySelector('.semesterSelect');
-            var subjectDropdown = row.querySelector('.subjectSelect');
+//     if (departmentId) {
+//         fetch('procs/fetch_courses_semesters.php?department_id=' + departmentId)
+//         .then(response => response.json())
+//         .then(data => {
+//             var courseDropdown = row.querySelector('.courseSelect');
+//             var semesterDropdown = row.querySelector('.semesterSelect');
+//             var subjectDropdown = row.querySelector('.subjectSelect');
             
-            courseDropdown.innerHTML = '<option value="">Select Course</option>';
-            semesterDropdown.innerHTML = '<option value="">Select Semester</option>';
-            subjectDropdown.innerHTML = '<option value="">Select Subject</option>';
+//             courseDropdown.innerHTML = '<option value="">Select Course</option>';
+//             semesterDropdown.innerHTML = '<option value="">Select Semester</option>';
+//             subjectDropdown.innerHTML = '<option value="">Select Subject</option>';
 
-            data.courses.forEach(course => {
-                courseDropdown.innerHTML += `<option value="${course.id}">${course.name}</option>`;
-            });
+//             data.courses.forEach(course => {
+//                 courseDropdown.innerHTML += `<option value="${course.id}">${course.name}</option>`;
+//             });
 
-            data.semesters.forEach(semester => {
-                semesterDropdown.innerHTML += `<option value="${semester}">Semester ${semester}</option>`;
-            });
+//             data.semesters.forEach(semester => {
+//                 semesterDropdown.innerHTML += `<option value="${semester}">Semester ${semester}</option>`;
+//             });
 
-            // Fetch subjects once courses are selected
-            if (courseDropdown.value && semesterDropdown.value) {
-                fetchSubjects(departmentId, courseDropdown.value, semesterDropdown.value, subjectDropdown);
-            }
+//             // Fetch subjects once courses are selected
+//             if (courseDropdown.value && semesterDropdown.value) {
+//                 fetchSubjects(departmentId, courseDropdown.value, semesterDropdown.value, subjectDropdown);
+//             }
 
-            // Add event listener to fetch subjects when course or semester changes
-            courseDropdown.addEventListener('change', function() {
-                fetchSubjects(departmentId, courseDropdown.value, semesterDropdown.value, subjectDropdown);
-            });
+//             // Add event listener to fetch subjects when course or semester changes
+//             courseDropdown.addEventListener('change', function() {
+//                 fetchSubjects(departmentId, courseDropdown.value, semesterDropdown.value, subjectDropdown);
+//             });
 
-            semesterDropdown.addEventListener('change', function() {
-                fetchSubjects(departmentId, courseDropdown.value, semesterDropdown.value, subjectDropdown);
-            });
-        })
-        .catch(error => console.error('Error fetching courses and semesters:', error));
-    }
-}
+//             semesterDropdown.addEventListener('change', function() {
+//                 fetchSubjects(departmentId, courseDropdown.value, semesterDropdown.value, subjectDropdown);
+//             });
+//         })
+//         .catch(error => console.error('Error fetching courses and semesters:', error));
+//     }
+// }
+// Fetch subjects based on selected department, course, and semester
+// function fetchSubjects(departmentId, courseId, semester, subjectDropdown) {
+//     if (departmentId && courseId && semester) {
+//         const cacheBuster = Date.now(); // 🔥 Force fresh fetch
 
-function fetchSubjects(departmentId, courseId, semester, subjectDropdown) {
-    if (courseId && semester) {
-        fetch(`procs/ex_get_subject.php?department_id=${departmentId}&course_id=${courseId}&semester_id=${semester}`)
-        .then(response => response.json())
-        .then(data => {
-            subjectDropdown.innerHTML = '<option value="">Select Subject</option>';
+//         fetch(`procs/ex_get_subject.php?department_id=${departmentId}&course_id=${courseId}&semester_id=${semester}&cb=${cacheBuster}`, {
+//             cache: 'no-store'
+//         })
+//         .then(response => response.json())
+//         .then(data => {
+//             subjectDropdown.innerHTML = '<option value="">Select Subject</option>';
 
-            if (data.subjects && data.subjects.length) {
-                data.subjects.forEach(subject => {
-                    subjectDropdown.innerHTML += `<option value="${subject.subject_code}">${subject.subject}</option>`;
-                });
-            } else {
-                subjectDropdown.innerHTML = '<option value="">No subjects available</option>';
-            }
-        })
-        .catch(error => console.error('Error fetching subjects:', error));
-    }
-}
+//             if (Array.isArray(data.subjects) && data.subjects.length > 0) {
+//                 data.subjects.forEach(subject => {
+//                     subjectDropdown.innerHTML += `<option value="${subject.subject_code}">${subject.subject}</option>`;
+//                 });
+//             } else {
+//                 subjectDropdown.innerHTML = '<option value="">No subjects available</option>';
+//             }
+//         })
+//         .catch(error => {
+//             console.error('Error fetching subjects:', error);
+//             subjectDropdown.innerHTML = '<option value="">Error loading subjects</option>';
+//         });
+//     } else {
+//         subjectDropdown.innerHTML = '<option value="">Select Subject</option>';
+//     }
+// }
+
+// // Fetch courses and semesters based on selected department
+// function fetchCoursesAndSemesters(selectElement) {
+//     const departmentId = selectElement.value;
+//     const row = selectElement.closest('.fieldGroup');
+
+//     if (departmentId) {
+//         const cacheBuster = Date.now();
+
+//         fetch(`procs/fetch_courses_semesters.php?department_id=${departmentId}&cb=${cacheBuster}`, {
+//             cache: 'no-store'
+//         })
+//         .then(response => response.json())
+//         .then(data => {
+//             const courseDropdown = row.querySelector('.courseSelect');
+//             const semesterDropdown = row.querySelector('.semesterSelect');
+//             const subjectDropdown = row.querySelector('.subjectSelect');
+
+//             // Clear all dropdowns
+//             courseDropdown.innerHTML = '<option value="">Select Course</option>';
+//             semesterDropdown.innerHTML = '<option value="">Select Semester</option>';
+//             subjectDropdown.innerHTML = '<option value="">Select Subject</option>';
+
+//             // Populate courses
+//             if (Array.isArray(data.courses)) {
+//                 data.courses.forEach(course => {
+//                     courseDropdown.innerHTML += `<option value="${course.id}">${course.name}</option>`;
+//                 });
+//             }
+
+//             // Populate semesters
+//             if (Array.isArray(data.semesters)) {
+//                 data.semesters.forEach(semester => {
+//                     semesterDropdown.innerHTML += `<option value="${semester}">Semester ${semester}</option>`;
+//                 });
+//             }
+
+//             // When either course or semester changes, fetch subjects
+//             const fetchAndUpdateSubjects = () => {
+//                 subjectDropdown.innerHTML = '<option value="">Loading...</option>';
+//                 fetchSubjects(departmentId, courseDropdown.value, semesterDropdown.value, subjectDropdown);
+//             };
+
+//             courseDropdown.addEventListener('change', fetchAndUpdateSubjects);
+//             semesterDropdown.addEventListener('change', fetchAndUpdateSubjects);
+//         })
+//         .catch(error => {
+//             console.error('Error fetching courses and semesters:', error);
+//         });
+//     }
+// }
+
+// function fetchCoursesAndSemesters(selectElement) {
+//     var departmentId = selectElement.value;
+//     var courseSelect = selectElement.closest('.fieldGroup').querySelector('.courseSelect');
+//     var semesterSelect = selectElement.closest('.fieldGroup').querySelector('.semesterSelect');
+    
+//     if (departmentId) {
+//         // Fetch courses based on department selection
+//         fetch('get_courses.php?department_id=' + departmentId)
+//             .then(response => response.json())
+//             .then(data => {
+//                 courseSelect.innerHTML = '<option value="">Select Course</option>';
+//                 data.courses.forEach(course => {
+//                     var option = document.createElement('option');
+//                     option.value = course.id;
+//                     option.textContent = course.name;
+//                     courseSelect.appendChild(option);
+//                 });
+//             });
+        
+//         // Fetch semesters based on department selection
+//         fetch('get_semesters.php?department_id=' + departmentId)
+//             .then(response => response.json())
+//             .then(data => {
+//                 semesterSelect.innerHTML = '<option value="">Select Semester</option>';
+//                 data.semesters.forEach(semester => {
+//                     var option = document.createElement('option');
+//                     option.value = semester.id;
+//                     option.textContent = semester.name;
+//                     semesterSelect.appendChild(option);
+//                 });
+//             });
+//     }
+// }
+// // Load departments dynamically on page load
+// document.addEventListener('DOMContentLoaded', function () {
+//     const departmentSelect = document.getElementById('departmentSelect');
+
+//     fetch('procs/get_departments.php?cb=' + Date.now(), {
+//         cache: 'no-store'
+//     })
+//     .then(response => response.json())
+//     .then(data => {
+//         departmentSelect.innerHTML = '<option value="">Select Department</option>';
+
+//         if (Array.isArray(data.departments)) {
+//             data.departments.forEach(dept => {
+//                 const option = document.createElement('option');
+//                 option.value = dept.department_id;
+//                 option.textContent = dept.department_name;
+//                 departmentSelect.appendChild(option);
+//             });
+//         }
+//     })
+//     .catch(error => {
+//         console.error('Error loading departments:', error);
+//         departmentSelect.innerHTML = '<option value="">Failed to load</option>';
+//     });
+// });
+
+</script>
+
+<script>
 
 
 </script>
 
 <script>
-// Function to handle selection from the dropdown
-function selectExam() {
-    const examSelect = document.getElementById('examSelect');
-    console.log("Selected exam:", examSelect.value);
-}
+// Load departments on page load
+document.addEventListener('DOMContentLoaded', function () {
+    const departmentSelect = document.getElementById('departmentSelect');
 
-// Function to handle input field changes
-function selectInput() {
-    const examInput = document.getElementById('examInput');
-    console.log("Entered exam name:", examInput.value);
-}
+    fetch('procs/get_departments.php?cb=' + Date.now(), { cache: 'no-store' })
+        .then(response => response.json())
+        .then(data => {
+            departmentSelect.innerHTML = '<option value="">Select Department</option>';
+            if (Array.isArray(data.departments)) {
+                data.departments.forEach(dept => {
+                    const option = document.createElement('option');
+                    option.value = dept.department_id;
+                    option.textContent = dept.department_name;
+                    departmentSelect.appendChild(option);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error loading departments:', error);
+            departmentSelect.innerHTML = '<option value="">Failed to load</option>';
+        });
+});
 
-// Function to toggle between enabling and disabling the dropdown and input
-function toggleSelection() {
-    const examSelectContainer = document.getElementById('examSelectContainer');
-    const examInputContainer = document.getElementById('examInputContainer');
-    const toggleButton = document.getElementById('toggleButton');
-    const examSelect = document.getElementById('examSelect');
-    const examInput = document.getElementById('examInput');
+// Fetch courses and semesters when department is selected
+function fetchCoursesAndSemesters(selectElement) {
+    const departmentId = selectElement.value;
+    const row = selectElement.closest('.fieldGroup');
 
-    // Check if dropdown is currently enabled or disabled
-    if (examSelectContainer.style.display === "none") {
-        // Enable the dropdown and disable the text input
-        examSelectContainer.style.display = "block";
-        examInputContainer.style.display = "none";
-        examSelect.disabled = false;
-        examInput.disabled = true;
-        toggleButton.textContent = "Switch to Exam Name";
-    } else {
-        // Enable the text input and disable the dropdown
-        examSelectContainer.style.display = "none";
-        examInputContainer.style.display = "block";
-        examSelect.disabled = true;
-        examInput.disabled = false;
-        toggleButton.textContent = "Switch to select exam";
+    let courseDropdown = row.querySelector('.courseSelect');
+    let semesterDropdown = row.querySelector('.semesterSelect');
+    let subjectDropdown = row.querySelector('.subjectSelect');
+
+    // Reset all dropdowns
+    courseDropdown.innerHTML = '<option value="">Select Course</option>';
+    semesterDropdown.innerHTML = '<option value="">Select Semester</option>';
+    subjectDropdown.innerHTML = '<option value="">Select Subject</option>';
+
+    // Remove old listeners by replacing elements
+    const newCourseDropdown = courseDropdown.cloneNode(true);
+    const newSemesterDropdown = semesterDropdown.cloneNode(true);
+
+    courseDropdown.parentNode.replaceChild(newCourseDropdown, courseDropdown);
+    semesterDropdown.parentNode.replaceChild(newSemesterDropdown, semesterDropdown);
+
+    courseDropdown = newCourseDropdown;
+    semesterDropdown = newSemesterDropdown;
+
+    if (departmentId) {
+        const cacheBuster = Date.now();
+
+        fetch(`procs/fetch_courses_semesters.php?department_id=${departmentId}&cb=${cacheBuster}`, {
+            cache: 'no-store'
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Populate courses
+            if (Array.isArray(data.courses)) {
+                data.courses.forEach(course => {
+                    const option = document.createElement('option');
+                    option.value = course.id;
+                    option.textContent = course.name;
+                    courseDropdown.appendChild(option);
+                });
+            }
+
+            // Populate semesters 
+            if (Array.isArray(data.semesters)) {
+                data.semesters.forEach(semester => {
+                    const option = document.createElement('option');
+                    option.value = semester;
+                    option.textContent = `Semester ${semester}`;
+                    semesterDropdown.appendChild(option);
+                });
+            }
+
+            const fetchAndUpdateSubjects = () => {
+                const courseId = courseDropdown.value;
+                const semester = semesterDropdown.value;
+
+                if (departmentId && courseId && semester) {
+                    subjectDropdown.innerHTML = '<option value="">Loading...</option>';
+                    fetchSubjects(departmentId, courseId, semester, subjectDropdown);
+                } else {
+                    subjectDropdown.innerHTML = '<option value="">Select Subject</option>';
+                }
+            };
+
+            // Add listeners to the new elements
+            courseDropdown.addEventListener('change', fetchAndUpdateSubjects);
+            semesterDropdown.addEventListener('change', fetchAndUpdateSubjects);
+        })
+        .catch(error => {
+            console.error('Error fetching courses/semesters:', error);
+        });
     }
-}    
+}
+
+// Fetch subjects based on department, course, semester
+function fetchSubjects(departmentId, courseId, semester, subjectDropdown) {
+    if (departmentId && courseId && semester) {
+        const cacheBuster = Date.now();
+
+        fetch(`procs/ex_get_subject.php?department_id=${departmentId}&course_id=${courseId}&semester_id=${semester}&cb=${cacheBuster}`, {
+            cache: 'no-store'
+        })
+        .then(response => response.json())
+        .then(data => {
+            subjectDropdown.innerHTML = '<option value="">Select Subject</option>';
+
+            if (Array.isArray(data.subjects) && data.subjects.length > 0) {
+                data.subjects.forEach(subject => {
+                    const option = document.createElement('option');
+                    option.value = subject.subject_code;
+                    option.textContent = subject.subject; // <-- Show subject name
+                    subjectDropdown.appendChild(option);
+                });
+            } else {
+                subjectDropdown.innerHTML = '<option value="">No subjects available</option>';
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching subjects:', error);
+            subjectDropdown.innerHTML = '<option value="">Error loading subjects</option>';
+        });
+    }
+}
+
 </script>
+
+
 <?php include 'includes/footer.php'; ?>

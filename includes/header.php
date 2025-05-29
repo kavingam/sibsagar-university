@@ -135,18 +135,19 @@ td.text-center {
 }
 
 
-.fixed-header-table {
-        table-layout: fixed;
-        width: 100%;
-    }
-    .scrollable-body {
-        max-height: 400px;
-        overflow-y: auto;
-    }
-    .scrollable-body table {
-        table-layout: fixed;
-        width: 100%;
-    }
+
+    .fixed-header-table {
+            table-layout: fixed;
+            width: 100%;
+        }
+        .scrollable-body {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .scrollable-body table {
+            table-layout: fixed;
+            width: 100%;
+        }
 
 
       .btn-xs {
