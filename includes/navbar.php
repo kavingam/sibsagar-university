@@ -15,7 +15,7 @@
             <div class="navbar-nav">
                 <li class="nav-item">
                     <a class="nav-link px-4 py-2 text-white fw-semibold 
-        <?php echo ($current_page == 'index') ? 'active' : ''; ?>" href="<?php echo BASE_URL . 'index.php'; ?>">
+                        <?php echo ($current_page == 'index') ? 'active' : ''; ?>" href="<?php echo BASE_URL . 'index.php'; ?>">
                         Home
                     </a>
                 </li>
@@ -25,7 +25,7 @@
                     <a class="nav-link dropdown-toggle px-4 py-2 text-white fw-semibold 
                         <?php echo ($current_page == 'import-students' || $current_page == 'export-students' || $current_page == 'manage-students') ? 'active' : ''; ?>"
                         href="#" id="studentsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Students Manage
+                        Students & Subjects
                     </a>
 
                     <ul class="dropdown-menu dropdown-menu-center shadow-lg border-0 mt-2 rounded-4 px-2 py-2"
@@ -37,19 +37,21 @@
                                 Import Student CSV
                             </a>
                         </li>
-                      
-                        <li>
-                            <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'export-students') ? 'active bg-light fw-bold' : ''; ?>"
-                                href="<?php echo BASE_URL . 'export-students.php'; ?>">
-                                Export Student CSV
-                            </a>
-                        </li>
+                        
                         <li>
                             <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'import-subject') ? 'active bg-light fw-bold' : ''; ?>"
                                 href="<?php echo BASE_URL . 'import-subject.php'; ?>">
                                 Import Subject & Code CSV
                             </a>
                         </li>  
+                        
+                        <li>
+                            <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'export-students') ? 'active bg-light fw-bold' : ''; ?>"
+                                href="<?php echo BASE_URL . 'export-students.php'; ?>">
+                                Export Student CSV
+                            </a>
+                        </li>
+
                         <li>
                             <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'export-subject') ? 'active bg-light fw-bold' : ''; ?>"
                                 href="<?php echo BASE_URL . 'export-subject.php'; ?>">
@@ -76,7 +78,7 @@
                     <a class="nav-link dropdown-toggle px-4 py-2 text-white fw-semibold 
                         <?php echo ($current_page == 'add-room' || $current_page == 'view-room') ? 'active' : ''; ?>"
                         href="#" id="roomDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Room Manage
+                        Room
                     </a>
 
                     <ul class="dropdown-menu dropdown-menu-center shadow-lg border-0 mt-2 rounded-4 px-2 py-2"
@@ -85,7 +87,7 @@
                         <li>
                             <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'add-room') ? 'active bg-light fw-bold' : ''; ?>"
                                 href="<?php echo BASE_URL . 'add-room.php'; ?>">
-                                Add Room
+                                Add New Room
                             </a>
                         </li>
                         <li>
@@ -96,11 +98,17 @@
                         </li>
                     </ul>
                 </li>
-
+                <!-- Manage Department -->
+                <li class="nav-item">
+                    <a class="nav-link px-4 py-2 text-white fw-semibold 
+                    <?php echo ($current_page == 'manage-department') ? 'active' : ''; ?>" href="<?php echo BASE_URL . 'manage-department.php'; ?>">
+                         Department
+                    </a>
+                </li>
                 <!-- Examination Plan Dropdown -->
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle px-4 py-2 text-white fw-semibold 
-                        <?php echo ($current_page == 'advance-seat-plan' || $current_page == 'attendance-sheet' || $current_page == 'top-sheet' || $current_page == 'manage-department') ? 'active' : ''; ?>"
+                        <?php echo ($current_page == 'advance-seat-plan' || $current_page == 'attendance-sheet' || $current_page == 'top-sheet' ) ? 'active' : ''; ?>"
                         href="#" id="examinationPlanDropdown" role="button" data-bs-toggle="dropdown"
                         aria-expanded="false">
                         Examination Planning
@@ -108,12 +116,6 @@
 
                     <ul class="dropdown-menu dropdown-menu-center shadow-lg border-0 mt-2 rounded-4 px-2 py-2"
                         aria-labelledby="examinationPlanDropdown" style="min-width: 250px;">
-                        <li>
-                            <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'manage-department') ? 'active bg-light fw-bold' : ''; ?>"
-                                href="<?php echo BASE_URL . 'manage-department.php'; ?>">
-                                Manage Department
-                            </a>
-                        </li>
                         <li>
                             <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'advance-seat-plan') ? 'active bg-light fw-bold' : ''; ?>"
                                 href="<?php echo BASE_URL . 'advance-seat-plan.php'; ?>">

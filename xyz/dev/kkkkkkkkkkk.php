@@ -76,6 +76,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //     }
     // }
 
+
+
     // $remaining_departments = $group_keys;
     // $step = 1;
     // $flat_students = [];

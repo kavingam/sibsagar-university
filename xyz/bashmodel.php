@@ -16,7 +16,7 @@ class BaseModel {
 
     // // 🔥 Fetch all records
     public function getAll($table) {
-        $allowedTables = ['student_info', 'rooms', 'departments'];
+        $allowedTables = ['student_info', 'rooms_info', 'departments'];
 
         if (!in_array($table, $allowedTables)) {
             die("Invalid table name!");
@@ -327,7 +327,7 @@ public function findSimilarStudents($department, $course, $semester) {
     }
 
     public function deleteStudent($roll_no) {
-        $sql = "DELETE FROM student WHERE roll_no = :roll_no";
+        $sql = "DELETE FROM student_info WHERE roll_no = :roll_no";
         $stmt = $this->conn->prepare($sql);
         return $stmt->execute([':roll_no' => $roll_no]);
     }
@@ -341,7 +341,7 @@ public function findSimilarStudents($department, $course, $semester) {
 class Room extends BaseModel {
 
     public function createRoom($room_no, $room_name, $bench_order, $seat_capacity) {
-        $sql = "INSERT INTO rooms (room_no, room_name, bench_order, seat_capacity) VALUES (:room_no, :room_name, :bench_order, :seat_capacity)";
+        $sql = "INSERT INTO rooms_info (room_no, room_name, bench_order, seat_capacity) VALUES (:room_no, :room_name, :bench_order, :seat_capacity)";
         $stmt = $this->conn->prepare($sql);
         return $stmt->execute([
             ':room_no' => $room_no,
@@ -352,7 +352,7 @@ class Room extends BaseModel {
     }
     public function createRoomJSON($room_no, $room_name, $bench_order, $seat_capacity) {
         try {
-            $sql = "INSERT INTO rooms (room_no, room_name, bench_order, seat_capacity) 
+            $sql = "INSERT INTO rooms_info (room_no, room_name, bench_order, seat_capacity) 
                     VALUES (:room_no, :room_name, :bench_order, :seat_capacity)";
             $stmt = $this->conn->prepare($sql);
             
@@ -370,12 +370,12 @@ class Room extends BaseModel {
     }
     
     public function getAllRooms() {
-        return $this->getAll('rooms');
+        return $this->getAll('rooms_info');
     }
     // Fetch all rooms with JSONS
     public function getAllRoomsJSONS() {
         try {
-            $stmt = $this->conn->prepare("SELECT * FROM rooms ORDER BY room_no ASC");
+            $stmt = $this->conn->prepare("SELECT * FROM rooms_info ORDER BY room_no ASC");
             $stmt->execute();
             return ["status" => "success", "data" => $stmt->fetchAll(PDO::FETCH_ASSOC)];
         } catch (PDOException $e) {
@@ -385,7 +385,7 @@ class Room extends BaseModel {
 
     public function updateRoom($room_no, $room_name, $bench_order, $seat_capacity) {
         try {
-            $sql = "UPDATE rooms SET room_name = :room_name, bench_order = :bench_order, seat_capacity = :seat_capacity WHERE room_no = :room_no";
+            $sql = "UPDATE rooms_info SET room_name = :room_name, bench_order = :bench_order, seat_capacity = :seat_capacity WHERE room_no = :room_no";
             $stmt = $this->conn->prepare($sql);
             return $stmt->execute([
                 ':room_no' => $room_no,
@@ -399,13 +399,13 @@ class Room extends BaseModel {
     }
 
     public function deleteRoom($room_no) {
-        $sql = "DELETE FROM rooms WHERE room_no = :room_no";
+        $sql = "DELETE FROM rooms_info WHERE room_no = :room_no";
         $stmt = $this->conn->prepare($sql);
         return $stmt->execute([':room_no' => $room_no]);
     }
     public function deleteRoomJSON($room_no) {
         try {
-            $sql = "DELETE FROM rooms WHERE room_no = :room_no";
+            $sql = "DELETE FROM rooms_info WHERE room_no = :room_no";
             $stmt = $this->conn->prepare($sql);
             $stmt->bindParam(':room_no', $room_no, PDO::PARAM_STR);
 
@@ -420,7 +420,7 @@ class Room extends BaseModel {
     }
 
     public function getRoomCount() {
-        return $this->getCount('rooms');
+        return $this->getCount('rooms_info');
     }
 }
 

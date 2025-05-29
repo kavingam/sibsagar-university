@@ -27,13 +27,13 @@ if (!isset($_SESSION['user_email'])) {
         </div>
         <div class="col-md-2 col-12 mb-3">
             <div class="container p-2">
-                <label for="roomName">Room Name:</label>
+                <label for="roomName">(*) Room Name:</label>
                 <input type="text" id="roomName" class="form-control" placeholder="Enter room name" required>
             </div>
         </div>
         <div class="col-md-2 col-12 mb-3">
             <div class="container p-2">
-                <label for="bench_order">Bench Order:</label>
+                <label for="bench_order">(*) Bench Order:</label>
                 <select id="bench_order" class="form-select">
                     <option value="1">1 X 1 COLUMN</option>
                     <option value="2">1 X 2 COLUMN</option>
@@ -48,7 +48,7 @@ if (!isset($_SESSION['user_email'])) {
         </div>
         <div class="col-md-2 col-12 mb-3">
             <div class="container p-2">
-                <label for="seatCapacity">Bench Capacity:</label>
+                <label for="seatCapacity">(*) Bench Capacity:</label>
                 <input type="number" id="seatCapacity" class="form-control" required min="1">
             </div>
         </div>

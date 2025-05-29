@@ -9,55 +9,28 @@ if (!isset($_SESSION['user_email'])) {
 ?>
 
 <?php include 'includes/header.php'; ?>
-<div class="container bg-light vh-100">
-    <div class="row g-0 justify-content-center d-flex">
-        <!-- <div class="col-lg-12 my-5">
-            <h4 class="text-center text-primary text-uppercase fw-semi-bold">Room Details</h4>
-        </div> -->
-        <div class="col-md-12 col-12 import-section my-5">
-            <h2 class="section-title"><i class="fad fa-door-open"></i> Manage Room Details</h2>
-            <p class="section-subtext">Easily view, edit, and organize room information and seating capacity</p>
+<div class="container-fluid bg-light min-vh-100 py-4">
+    <div class="row justify-content-center">
+        <div class="col-12 text-center mb-4">
+            <h2 class="section-title"><i class="fas fa-door-open"></i> Manage Room Details</h2>
+            <p class="text-muted">Easily view, edit, and organize room information and seating capacity</p>
         </div>
 
-        <div class="col-lg-12">
-            <!-- <div class="container">
-                <div class="table-responsive">
-                    <table class="table table-striped table-bordered mb-0">
-                        <thead class="text-center">
-                            <tr>
-                                <th>Room No</th>
-                                <th>Room Name</th>
-                                <th>Bench Order</th>
-                                <th>Capacity</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                    </table>
-                    <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
-                        <table class="table table-striped table-bordered mb-0">
-                            <tbody id="roomTableBody"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div> -->
-
-            <div class="container">
-    <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
-        <table class="table table-striped table-bordered mb-0">
-            <thead class="text-center bg-light sticky-top" style="z-index: 1;">
-                <tr>
-                    <th style="width: 15%;">Room No</th>
-                    <th style="width: 25%;">Room Name</th>
-                    <th style="width: 20%;">Bench Order</th>
-                    <th style="width: 10%;">Bench Capacity</th>
-                    <th style="width: 30%;">Action</th>
-                </tr>
-            </thead>
-            <tbody id="roomTableBody"></tbody>
-        </table>
-    </div>
-</div>
-
+        <div class="col-lg-10">
+            <div class="table-responsive rounded-3 shadow-sm">
+                <table class="table table-hover table-bordered align-middle mb-0">
+                    <thead class="text-center text-white bg-dark sticky-top" style="z-index: 1;">
+                        <tr>
+                            <th style="width: 15%;">Room No</th>
+                            <th style="width: 25%;">Room Name</th>
+                            <th style="width: 20%;">Bench Order</th>
+                            <th style="width: 10%;">Capacity</th>
+                            <th style="width: 30%;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="roomTableBody" class="text-center"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -107,7 +80,5 @@ if (!isset($_SESSION['user_email'])) {
     fetchRooms();
 });
 </script>
-<script>
-    
-</script>
+
 <?php include 'includes/footer.php'; ?>

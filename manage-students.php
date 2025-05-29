@@ -38,9 +38,11 @@ if (!isset($_SESSION['user_email'])) {
             </div>
             <div class="modal-body">
                 <div class="container">
-                    <h4>Department: <span id="modalDepartmentName"></span></h4>
-                    <h5>Course: <span id="modalCourseName"></span></h5>
-                    <h6>Semester: <span id="modalSemesterName"></span></h6>
+                    <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
+                        <h5 class="mb-0">Department: <span id="modalDepartmentName"></span></h5>
+                        <h5 class="mb-0">Course: <span id="modalCourseName"></span></h5>
+                        <h5 class="mb-0">Semester: <span id="modalSemesterName"></span></h5>
+                    </div>
 
                     <table class="table table-bordered" id="studentListTable">
                         <thead>
@@ -117,16 +119,21 @@ function loadStudents() {
                     <td>${courseList[group.course] || 'Unknown Course'}</td>
                     <td>${group.semester}</td>
                     <td>${group.count}</td>
+
                     <td class="text-center">
-                        <div class="btn-group">
+                        <div class="btn-groupx">
                             <a href="#" class="btn btn-info btn-sm" onclick="viewGroup(${group.department}, ${group.course}, ${group.semester})">
                                 <i class="fas fa-eye"></i> View
+                            </a>
+                            <a href="#" class="btn btn-warning btn-sm" onclick="editGroup(${group.department}, ${group.course}, ${group.semester})">
+                                <i class="fas fa-edit"></i> Edit
                             </a>
                             <a href="#" class="btn btn-danger btn-sm" onclick="deleteGroup(${group.department}, ${group.course}, ${group.semester})">
                                 <i class="fas fa-trash-alt"></i> Delete All
                             </a>
                         </div>
                     </td>
+
                 `;
                 tbody.appendChild(row);
             });
@@ -137,11 +144,9 @@ function loadStudents() {
         });
 }
 
-// <a href="#" class="btn btn-warning btn-sm" onclick="editGroup(${group.department}, ${group.course}, ${group.semester})">
-//     <i class="fas fa-edit"></i> Edit
-// </a>
-
 function viewGroup(department, course, semester) {
+    console.log("viewGroup called with:", department, course, semester);
+
     const formData = new URLSearchParams();
     formData.append('department', department);
     formData.append('course', course);
@@ -166,7 +171,7 @@ function viewGroup(department, course, semester) {
                 <td>${i + 1}</td>
                 <td>${student.name}</td>
                 <td>${student.roll_no}</td>
-                <td>${departmentList[parseInt(student.department)] || 'Unknown Department'}</td>
+                <td>${departmentList[department] || 'Unknown Department'}</td>
                 <td>${courseList[parseInt(student.course)] || 'Unknown Course'}</td>
             `;
             tbody.appendChild(row);
@@ -209,7 +214,7 @@ function deleteGroup(department, course, semester) {
     });
 }
 
-// Load everything
+// Load everything on page ready
 document.addEventListener('DOMContentLoaded', loadDepartments);
 </script>
 
