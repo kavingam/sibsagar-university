@@ -17,3 +17,5 @@ $students = $studentModel->findSimilarStudents($department, $course, $semester);
 // Return the student data as JSON
 echo json_encode($students);
 ?>
+
+

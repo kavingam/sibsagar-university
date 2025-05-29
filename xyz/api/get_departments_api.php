@@ -10,7 +10,7 @@ header('Content-Type: application/json');
 $department = new Department();
 
 // Get all departments
-$departments = $department->getAllDepartments();
+$departments = $department->getAll('departments');
 
 // Output the result as a JSON response
 echo json_encode($departments);

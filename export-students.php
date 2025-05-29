@@ -101,7 +101,7 @@ try {
                         <h6>Total Students (Filtered): <span id="totalStudentsFiltered">0</span></h6>
                     </div>
                     <div class="p-2">
-                        <h6>Total All Students: <span id="totalStudents"><?= $totalStudents; ?></span></h6>
+
                     </div>
                 </div>
             </div>

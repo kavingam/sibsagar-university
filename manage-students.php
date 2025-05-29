@@ -122,9 +122,6 @@ function loadStudents() {
                             <a href="#" class="btn btn-info btn-sm" onclick="viewGroup(${group.department}, ${group.course}, ${group.semester})">
                                 <i class="fas fa-eye"></i> View
                             </a>
-                            <a href="#" class="btn btn-warning btn-sm" onclick="editGroup(${group.department}, ${group.course}, ${group.semester})">
-                                <i class="fas fa-edit"></i> Edit
-                            </a>
                             <a href="#" class="btn btn-danger btn-sm" onclick="deleteGroup(${group.department}, ${group.course}, ${group.semester})">
                                 <i class="fas fa-trash-alt"></i> Delete All
                             </a>
@@ -139,6 +136,10 @@ function loadStudents() {
             alert('Failed to load student groups.');
         });
 }
+
+// <a href="#" class="btn btn-warning btn-sm" onclick="editGroup(${group.department}, ${group.course}, ${group.semester})">
+//     <i class="fas fa-edit"></i> Edit
+// </a>
 
 function viewGroup(department, course, semester) {
     const formData = new URLSearchParams();

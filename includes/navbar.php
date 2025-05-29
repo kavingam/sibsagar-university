@@ -56,12 +56,18 @@
                                 Export Subject & Code CSV
                             </a>
                         </li>                        
-                        <!-- <li>
+                        <li>
                             <a class="dropdown-item py-2 rounded <?php// echo ($current_page == 'manage-students') ? 'active bg-light fw-bold' : ''; ?>"
-                                href="<?php// echo BASE_URL . 'manage-students.php'; ?>">
-                                View Student
+                                href="<?php echo BASE_URL . 'manage-students.php'; ?>">
+                                Manage Student
                             </a>
-                        </li> -->
+                        </li>
+                        <li>
+                            <a class="dropdown-item py-2 rounded <?php// echo ($current_page == 'manage-students') ? 'active bg-light fw-bold' : ''; ?>"
+                                href="<?php echo BASE_URL . 'manage-subject.php'; ?>">
+                                Manage Subject & Code
+                            </a>
+                        </li>
                     </ul>
                 </li>
 
@@ -85,7 +91,7 @@
                         <li>
                             <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'view-room') ? 'active bg-light fw-bold' : ''; ?>"
                                 href="<?php echo BASE_URL . 'view-room.php'; ?>">
-                                View Room
+                                Manage Room
                             </a>
                         </li>
                     </ul>

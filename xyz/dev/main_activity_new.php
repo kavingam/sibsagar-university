@@ -30,10 +30,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $students = new Student();
     $rooms = new Room();
 
-
-    print_r('<pre>');
-    // print_r($rooms->getAll('rooms'));
-
     $fetchStudents = [];
 
     foreach ($tableData as $data) {
@@ -154,25 +150,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $step++;
     }
 
-    // $steps = $processingLog;
-
-    // $flat_students = [];
-    // $order_id = 1;  // running ID for each student
-
-    // foreach ($steps as $step) {
-    //     // $total_departments = $step['layout'];
-    //     foreach ($step['assigned'] as $student_str) {
-    //         // Match format: "DEPT (StudentName)"
-    //         if (preg_match('/^([A-Z0-9_]+) \(([^)]+)\)$/', $student_str, $matches)) {
-    //             $flat_students[] = [
-    //                 // 'id' => $order_id++,
-    //                 'department' => $matches[1],
-    //                 'name' => $matches[2]
-    //                 // 'layout' => $total_departments
-    //             ];
-    //         }
-    //     }
-    // }
 
     $steps = $processingLog;
 
@@ -196,12 +173,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     }
-
-    echo '<pre>';
-    // print_r($processingLog);
-    // print_r($flat_students);
-    // print_r($steps);
-    // print_r($dept_students);
 
     $benches = [];
     $index = 0;
@@ -228,134 +199,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $benches[] = $bench;
     }
-
-    // === Print Processing Log for Debugging ===
-    // echo "<pre>";
-    // foreach ($processingLog as $log) {
-    //     echo "Step {$log['step']} - Assigned: " . implode(', ', $log['assigned']) . "\n";
-    // }
-    // echo "</pre>";
-
-    // print_r('<pre>');
-    // print_r($fetchStudents);
-    // print_r($dept_students);
-    // print_r($processingLog);
-    // print_r($flat_students);
-    // print_r($benches);
-    // print_r($rooms->getAllRooms());
-    // print_r(allocateStudentsToRooms($rooms->getAllRooms(),$totalStudents));
-    // print_r('<pre/>');
-
-    // === Room Layout: [rows × cols] ===
-    // $rooms_layout = [
-    //     ['rows' => 8, 'cols' => 3],
-    //     ['rows' => 8, 'cols' => 3],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 15, 'cols' => 3],
-    //     ['rows' => 15, 'cols' => 3],
-    //     ['rows' => 15, 'cols' => 2],
-    //     ['rows' => 5, 'cols' => 2],
-    //     ['rows' => 10, 'cols' => 2],
-    //     ['rows' => 5, 'cols' => 2],
-    //     ['rows' => 6, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 5],
-    //     ['rows' => 20, 'cols' => 3],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2]
-    // ];
-
-    $rooms_layout = [];
-
-    // print_r($rooms->getAllrooms());
-    $roomData = allocateStudentsToRooms($rooms->getAllRooms(), $totalStudents);
-    print_r($roomData);
-    print_r("total students". " : ".$totalStudents);
-
-    foreach ($roomData as $room) {
-        $cols = (int) $room['banch_order'];
-        $rows = (int) floor($room['room_capacity'] / $cols);
-        $repeat = (int) ceil($room['students_assigned'] / $room['room_capacity']);
-
-        for ($i = 0; $i < $repeat; $i++) {
-            $rooms_layout[] = [
-                'room_no' => $room['room_no'],
-                'room_name' => $room['room_name'],
-                'rows' => $rows,
-                'cols' => $cols
-            ];
-        }
-    }
-    // $rooms_layout = [
-    //     ['rows' => 8, 'cols' => 3],
-    //     ['rows' => 8, 'cols' => 3],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 15, 'cols' => 3],
-    //     ['rows' => 15, 'cols' => 3],
-    //     ['rows' => 15, 'cols' => 2],
-    //     ['rows' => 5, 'cols' => 2],
-    //     ['rows' => 10, 'cols' => 2],
-    //     ['rows' => 5, 'cols' => 2],
-    //     ['rows' => 6, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 5],
-    //     ['rows' => 20, 'cols' => 3],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2],
-    //     ['rows' => 7, 'cols' => 2]
-    // ];
-
-    // print_r($rooms_layout);
 }
 
+
+$rooms_layout = [];
+$rooms_raw = $rooms->getAllRooms(); // Assume this returns array of rooms
+$students_assigned = 0;
 $rooms = [];
 $bench_index = 0;
 
-foreach ($rooms_layout as $layout) {
-    $rows = $layout['rows'];
-    $cols = $layout['cols'];
-
-    // Initialize grid with empty benches
+foreach ($rooms_raw as $room) {
+    $cols = (int) $room['bench_order'];
+    $capacity = (int) $room['seat_capacity'];
+    $rows = (int) floor($capacity / $cols);
     $grid = array_fill(0, $rows, array_fill(0, $cols, ['A' => null, 'B' => null]));
+
+    $hasStudent = false;
 
     for ($col = 0; $col < $cols; $col++) {
         for ($row = 0; $row < $rows; $row++) {
-            if ($bench_index >= count($benches)) {
-                break 2;  // No more benches to assign
-            }
+            if ($bench_index >= count($benches)) break 2;
 
             $current_bench = $benches[$bench_index];
-
-            // Get departments seated on current bench
             $current_depts = array_filter([
                 $current_bench['A']['department'] ?? null,
                 $current_bench['B']['department'] ?? null
             ]);
 
-            // Departments seated in the previous row same column
             $prev_depts = [];
             if ($row > 0 && !empty($grid[$row - 1][$col])) {
                 $prev = $grid[$row - 1][$col];
@@ -365,7 +235,6 @@ foreach ($rooms_layout as $layout) {
                 ]);
             }
 
-            // Check for department repetition vertically
             $conflict = false;
             foreach ($current_depts as $dept) {
                 if (in_array($dept, $prev_depts)) {
@@ -375,21 +244,27 @@ foreach ($rooms_layout as $layout) {
             }
 
             if ($conflict) {
-                // Leave bench empty to avoid department repetition
                 $grid[$row][$col] = ['A' => null, 'B' => null];
             } else {
-                // Assign current bench and move to next
                 $grid[$row][$col] = $current_bench;
                 $bench_index++;
+                $hasStudent = true;
             }
         }
     }
 
-    $rooms[] = $grid;
+    if ($hasStudent) {
+        $rooms[] = $grid;
+        $rooms_layout[] = [
+            'room_no' => $room['room_no'],
+            'room_name' => $room['room_name'],
+            'rows' => $rows,
+            'cols' => $cols
+        ];
+    }
 }
 
-// print_r($rooms);
-// === Collect remaining students who couldn't be seated ===
+// Collect unseated students
 $unseated_students = [];
 while ($bench_index < count($benches)) {
     $bench = $benches[$bench_index++];
@@ -399,123 +274,149 @@ while ($bench_index < count($benches)) {
         }
     }
 }
-
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Hall ticket</title>
-
+    <title>Hall Ticket</title>
     <!-- Bootstrap 5.3.3 CSS -->
-    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"> -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 
     <style>
-    @media print {
-        body {
-            margin: 0;
-            padding: 10px;
-        }
+        /* Screen styling */
+body {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    padding: 20px;
+    margin: 0;
+    background: #f9f9f9;
+}
 
-        .page-break {
-            page-break-before: always;
-        }
+h5 {
+    margin-top: 25px;
+    font-size: 18px;
+    color: #333;
+}
 
-        .container-fluid {
-            padding: 0 !important;
-            margin: 0 auto;
-        }
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
 
-        .row {
-            page-break-inside: avoid;
-            margin: 0;
-        }
+/* Table layout */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
 
-        .col {
-            border: 1px solid #ccc;
-            padding: 10px;
-            font-size: 12px;
-            width: 166px !important;
-            height: 65px !important;
-            flex: 0 0 auto !important;
-            page-break-inside: avoid;
-        }
-    }
+th, td {
+    border: 1px solid #000;
+    padding: 8px 10px;
+    vertical-align: top;
+    font-size: 12px;
+    min-width: 160px;
+    text-align: left;
+}
 
-    /* Optional screen styling */
-    .container-fluid {
-        padding: 20px;
-    }
+th {
+    background: #eaeaea;
+}
 
-    .col {
-        border: 1px solid #ccc;
+td .empty {
+    color: #888;
+    font-style: italic;
+}
+
+.page-break {
+    page-break-before: always;
+}
+
+ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+ul li {
+    margin-bottom: 4px;
+}
+
+/* Print Styling */
+@media print {
+    body {
         padding: 10px;
-        font-size: 12px;
-        width: 166px !important;
-        height: 65px !important;
-        flex: 0 0 auto !important;
-        /* Prevents Bootstrap from auto-sizing */
+        background: white;
     }
 
-    .text-label {
-        font-size: 6.5px;
-        margin-top: -8.2px;
+    .container {
+        padding: 0;
+        margin: 0;
     }
 
     table {
-        border-collapse: collapse;
-        margin-top: 20px;
+        page-break-inside: avoid;
     }
 
-    td,
-    th {
-        border: 1px solid #000;
-        padding: 10px;
-        vertical-align: top;
-        min-width: 200px;
-        text-align: left;
+    .page-break {
+        page-break-before: always;
     }
 
-    .empty {
-        color: #888;
-        font-style: italic;
+    .no-print {
+        display: none;
     }
 
-    th {
-        background: #eee;
+    td, th {
+        font-size: 11px;
+        padding: 5px;
     }
 
-    h2 {
-        margin-top: 40px;
+    h5 {
+        font-size: 16px;
+        /* margin-top: 20px; */
+        color: black;
     }
+}
+
     </style>
 </head>
-
 <body>
-    <div class="container">
-        <?php
+<div class="container">
 
+<?php
 $departmentObj = new Department();
-// === Display Rooms ===
 foreach ($rooms as $room_index => $room_grid) {
-    $layout = $rooms_layout[$room_index];  // Fetch layout info
-
+    $layout = $rooms_layout[$room_index];
     $room_no = $layout['room_no'];
     $room_name = $layout['room_name'];
-    echo '<h2 class="fs-5">Room ' . htmlspecialchars($room_no) . ' - ' . htmlspecialchars($room_name) . '</h2>';
 
+    echo '<h5 class="fs-5">Room SNO: ' . htmlspecialchars($room_no) . ' - ' . htmlspecialchars($room_name) . '</h5>';
     $row_count = count($room_grid);
     $col_count = count($room_grid[0]);
 
     echo '<table border="1" cellpadding="5" cellspacing="0">';
+    // echo '<tr>';
+    // for ($col = 0; $col < $col_count; $col++) {
+    //     echo "<th>Col $col</th>";
+    // }
+    // echo '</tr>';
+
     echo '<tr>';
+    $middle_start = 1;  // Counter for Middle Benches
     for ($col = 0; $col < $col_count; $col++) {
-        echo "<th>Col $col</th>";
+        if ($col === 0) {
+            $bench_label = "Left Bench";
+        } elseif ($col === $col_count - 1) {
+            $bench_label = "Right Bench";
+        } else {
+            $bench_label = "Middle Bench " . $middle_start++;
+        }
+        echo "<th>$bench_label</th>";
     }
     echo '</tr>';
+    
+    
 
     foreach ($room_grid as $r_index => $row) {
         echo '<tr>';
@@ -527,69 +428,53 @@ foreach ($rooms as $room_index => $room_grid) {
                     $s = $bench[$label];
                     echo "Seat $label: " . htmlspecialchars($s['name']) . ' (' . htmlspecialchars($departmentObj->getDepartmentNameById($s['department_id'])) . ')<br>';
                 } else {
-                    echo "Seat $label: <span class='empty'>Empty</span><br>";
+                    echo "Seat $label: <span class='empty'></span><br>";
+                    // echo "Seat $label: <span class='empty'>Empty</span><br>";
+
                 }
             }
-
             echo '</td>';
         }
         echo '</tr>';
     }
     echo '</table><br>';
-    echo '<div class="page-break">';
+
+    // ✅ Check if room has any seated student
+    $has_students = false;
+    foreach ($room_grid as $row) {
+        foreach ($row as $bench) {
+            if (!empty($bench['A']) || !empty($bench['B'])) {
+                $has_students = true;
+                break 2; // Exit both loops
+            }
+        }
+    }
+    
+    // ✅ Only show page break if there are seated students
+    if ($has_students) {
+        echo '<div class="page-break"></div>';
+    }
+    
 }
 
 $totalBenches = 0;
-
 foreach ($rooms as $room_index => $room_grid) {
-    $row_count = count($room_grid);
-    $col_count = count($room_grid[0]);
-
-    $totalBenches += ($row_count * $col_count);
+    $totalBenches += count($room_grid) * count($room_grid[0]);
 }
+// echo "<h4>Total Benches Used: $totalBenches</h4>";
 
-echo "Total Benches: $totalBenches";
-
-// === Display Unseated Students if any ===
 if (!empty($unseated_students)) {
-    echo '<h2>Unseated Students</h2>';
+    echo '<h5>Unseated Students</h5>';
     echo "<ul style='list-style-type: disc; padding-left: 20px;'>";
     foreach ($unseated_students as $student) {
         echo '<li>' . htmlspecialchars($student['name']) . ' (' . htmlspecialchars($student['department_id']) . ')</li>';
     }
     echo '</ul>';
 }
-
 ?>
-    </div>
-    <!-- Bootstrap 5.3.3 JS (with Popper) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap 5.3.3 JS bundle (includes Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 
-    <script>
-    </script>
+</div>
 </body>
-
 </html>
-<?php
-
-// === Optional Allocation Function (Used elsewhere?) ===
-function allocateStudentsToRooms(array $rooms, int $total_students): array
-{
-    $assigned = [];
-    foreach ($rooms as $room) {
-        if ($total_students <= 0)
-            break;
-        $capacity = $room['seat_capacity'] * 2;
-        $assign = min($capacity, $total_students);
-        $assigned[] = [
-            'room_no' => $room['room_no'],
-            'room_name' => $room['room_name'],
-            'banch_order' => $room['bench_order'],
-            'room_capacity' => $room['seat_capacity'],
-            'students_assigned' => $assign
-        ];
-        $total_students -= $assign;
-    }
-    return $assigned;
-}
-?>
