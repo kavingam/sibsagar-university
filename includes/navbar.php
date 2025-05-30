@@ -59,13 +59,13 @@
                             </a>
                         </li>                        
                         <li>
-                            <a class="dropdown-item py-2 rounded <?php// echo ($current_page == 'manage-students') ? 'active bg-light fw-bold' : ''; ?>"
+                            <a class="dropdown-item py-2 rounded <?php  echo ($current_page == 'manage-students') ? 'active bg-light fw-bold' : ''; ?>"
                                 href="<?php echo BASE_URL . 'manage-students.php'; ?>">
                                 Manage Student
                             </a>
                         </li>
                         <li>
-                            <a class="dropdown-item py-2 rounded <?php// echo ($current_page == 'manage-students') ? 'active bg-light fw-bold' : ''; ?>"
+                            <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'manage-subject') ? 'active bg-light fw-bold' : ''; ?>"
                                 href="<?php echo BASE_URL . 'manage-subject.php'; ?>">
                                 Manage Subject & Code
                             </a>
@@ -123,7 +123,7 @@
                             </a>
                         </li>
                         <li>
-                            <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'advance-seat-plan') ? 'active bg-light fw-bold' : ''; ?>"
+                            <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'seat-summary') ? 'active bg-light fw-bold' : ''; ?>"
                                 href="<?php echo BASE_URL . 'seat-summary.php'; ?>">
                                  Seat Plan Summary
                             </a>
