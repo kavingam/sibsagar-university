@@ -356,112 +356,111 @@ while ($bench_index < count($benches)) {
     }
 }
 
-// print_r('<pre>');
-// print_r($rooms);
-// print_r($fetchStudents);
-// print_r($rooms_layout);
+$assigned_students = [];
+
+foreach ($rooms as $roomIndex => $grid) {
+    $room_no = $rooms_layout[$roomIndex]['room_no'] ?? 'UNKNOWN';
+
+    foreach ($grid as $row) {
+        foreach ($row as $bench) {
+            foreach (['A', 'B'] as $pos) {
+                if (!empty($bench[$pos]) && is_array($bench[$pos])) {
+                    $student = $bench[$pos];
+                    $student['room_no'] = $room_no; // inject room number
+                    $assigned_students[] = $student;
+                }
+            }
+        }
+    }
+}
+
+function groupStudentsByRoom(array $students): array {
+    $roomWiseStudents = [];
+
+    foreach ($students as $student) {
+        if (!isset($student['room_no']) || empty($student['room_no'])) {
+            continue;
+        }
+
+        $room = $student['room_no'];
+        $roomWiseStudents[$room][] = [
+            'name'     => $student['name'] ?? '',
+            'roll_no'  => $student['roll_no'] ?? '',
+            'reg_no'   => $student['reg_no'] ?? '',
+            'subject'  => $student['subject'] ?? 'EDU',
+        ];
+    }
+
+    return $roomWiseStudents;
+}
+
+$roomWiseStudents = groupStudentsByRoom($assigned_students);
+
+?>
+
+
+<?php
+// Assuming you have $rooms, $rooms_layout, and $unseated_students already defined
+$departmentObj = new Department();
+
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Hall Ticket</title>
-    <!-- Bootstrap 5.3.3 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-
+    <title>Room-wise Assigned Students</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        /* Screen styling */
-        body {
-            font-family: Arial, sans-serif;
-            font-size: 13px;
-            padding: 20px;
-            margin: 0;
-            background: #f9f9f9;
-        }
-
-        h5 {
-            margin-top: 25px;
-            font-size: 18px;
-            color: #333;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
-        /* Table layout */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-
-        th, td {
+        .ticket-card {
             border: 1px solid #000;
-            padding: 8px 10px;
-            vertical-align: top;
-            font-size: 12px;
-            min-width: 160px;
-            text-align: left;
+            padding: 12px;
+            height: 180px;
+            font-size: 14px;
+            text-align: center;
         }
-
-        th {
-            background: #eaeaea;
+        .room-title {
+            text-align: center;
+            font-weight: bold;
+            margin: 30px 0 15px;
+            font-size: 18px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 5px;
         }
-
-        td .empty {
-            color: #888;
-            font-style: italic;
-        }
-
-        .page-break {
-            page-break-before: always;
-        }
-
-        ul {
-            margin: 0;
-            padding-left: 20px;
-        }
-
-        ul li {
-            margin-bottom: 4px;
-        }
-
-        /* Print Styling */
         @media print {
-            body {
-                padding: 10px;
-                background: white;
+            /* Container for tickets per room: force 3 columns */
+            .room-section > .row {
+                display: grid !important;
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 10px;
             }
 
-            .container {
-                padding: 0;
-                margin: 0;
-            }
-
-            table {
+            /* Ensure tickets don't break across pages */
+            .ticket-card {
                 page-break-inside: avoid;
+                break-inside: avoid;
+                /* Adjust height if needed */
+                height: auto !important;
+                padding: 10px !important;
+                font-size: 12px !important;
             }
 
+            /* Page break after each room */
             .page-break {
-                page-break-before: always;
+                page-break-after: always;
+                break-after: page;
             }
 
-            .no-print {
-                display: none;
+            /* Remove margins/padding that can cause blank pages */
+            body, .container {
+                margin: 0 !important;
+                padding: 0 !important;
             }
 
-            td, th {
-                font-size: 11px;
-                padding: 5px;
-            }
-
-            h5 {
-                font-size: 16px;
-                /* margin-top: 20px; */
-                color: black;
+            /* Remove Bootstrap print overrides forcing block stacking */
+            .col-md-4, .col-sm-6, .col-12 {
+                float: none !important;
+                width: auto !important;
+                max-width: none !important;
             }
         }
 
@@ -471,97 +470,29 @@ while ($bench_index < count($benches)) {
 <div class="container">
 
 <?php
-$departmentObj = new Department();
-foreach ($rooms as $room_index => $room_grid) {
-    $layout = $rooms_layout[$room_index];
-    $room_no = $layout['room_no'];
-    $room_name = $layout['room_name'];
+// Sample grouped array: $roomWiseStudents = ['UGC1' => [...], 'UGC2' => [...]];
+foreach ($roomWiseStudents as $room => $students): ?>
+    <div class="room-section">
+        <div class="room-title">ROOM: <?= htmlspecialchars($room) ?></div>
+        <div class="row">
+            <?php foreach ($students as $i => $student): ?>
+                <div class="col-md-4 col-sm-6 col-12 mb-3">
+                    <div class="ticket-card">
+                        <strong>4<sup>th</sup> SEM FINAL EXAM-2024</strong><br>
+                        <!-- <small>(UNDER AUTONOMOUS)</small><br> -->
+                        SL. NO: <?= $i + 1 ?> ROOM: <?= htmlspecialchars($room) ?><br><br>
+                        <strong>ROLL NO: <?= htmlspecialchars($student['roll_no']) ?></strong><br><br>
+                        REG. NO: <?= htmlspecialchars($student['reg_no']) ?><br>
 
-    echo '<h5 class="fs-5">Room SNO: ' . htmlspecialchars($room_no) . ' - ' . htmlspecialchars($room_name) . '</h5>';
-    $row_count = count($room_grid);
-    $col_count = count($room_grid[0]);
-
-    echo '<table border="1" cellpadding="5" cellspacing="0">';
-    // echo '<tr>';
-    // for ($col = 0; $col < $col_count; $col++) {
-    //     echo "<th>Col $col</th>";
-    // }
-    // echo '</tr>';
-
-    echo '<tr>';
-    $middle_start = 1;  // Counter for Middle Benches
-    for ($col = 0; $col < $col_count; $col++) {
-        if ($col === 0) {
-            $bench_label = "Left Bench";
-        } elseif ($col === $col_count - 1) {
-            $bench_label = "Right Bench";
-        } else {
-            $bench_label = "Middle Bench " . $middle_start++;
-        }
-        echo "<th>$bench_label</th>";
-    }
-    echo '</tr>';
-    
-    
-
-    foreach ($room_grid as $r_index => $row) {
-        echo '<tr>';
-        foreach ($row as $c_index => $bench) {
-            // echo "<td><strong>Bench [$r_index,$c_index]</strong><br>";
-            echo "<td><strong>Bench : " . ($r_index + 1) . "</strong><br>";
-
-            foreach (['A', 'B'] as $label) {
-                if (!empty($bench[$label])) {
-                    $s = $bench[$label];
-                    echo "Seat $label: " . htmlspecialchars($s['name']) . ' (' . htmlspecialchars($departmentObj->getDepartmentNameById($s['department_id'])) . ')<br>';
-                } else {
-                    echo "Seat $label: <span class='empty'></span><br>";
-                    // echo "Seat $label: <span class='empty'>Empty</span><br>";
-
-                }
-            }
-            echo '</td>';
-        }
-        echo '</tr>';
-    }
-    echo '</table><br>';
-
-    // ✅ Check if room has any seated student
-    $has_students = false;
-    foreach ($room_grid as $row) {
-        foreach ($row as $bench) {
-            if (!empty($bench['A']) || !empty($bench['B'])) {
-                $has_students = true;
-                break 2; // Exit both loops
-            }
-        }
-    }
-    
-    // ✅ Only show page break if there are seated students
-    if ($has_students) {
-        echo '<div class="page-break"></div>';
-    }
-    
-}
-
-$totalBenches = 0;
-foreach ($rooms as $room_index => $room_grid) {
-    $totalBenches += count($room_grid) * count($room_grid[0]);
-}
-// echo "<h4>Total Benches Used: $totalBenches</h4>";
-
-if (!empty($unseated_students)) {
-    echo '<h5>Unseated Students</h5>';
-    echo "<ul style='list-style-type: disc; padding-left: 20px;'>";
-    foreach ($unseated_students as $student) {
-        echo '<li>' . htmlspecialchars($student['name']) . ' (' . htmlspecialchars($student['department_id']) . ')</li>';
-    }
-    echo '</ul>';
-}
-?>
-    <!-- Bootstrap 5.3.3 JS bundle (includes Popper) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    <div class="page-break"></div>
+<?php endforeach; ?>
 
 </div>
 </body>
 </html>
+<!-- SUB: <?php // strtoupper($student['subject'] ?? 'EDU') ?> -->

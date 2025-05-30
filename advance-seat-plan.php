@@ -15,10 +15,12 @@ include 'includes/header.php';
 ?>
 <div class="container bg-light vh-100">
     <div class="row g-0">
-        <div class="col-md-12 col-12 import-section my-5">
+
+        <div class="col-md-12 col-12 import-sectionx text-center bg-light my-5">
             <h2 class="section-title"><i class="fas fa-th-large"></i> Advanced Exam Seat Plan</h2>
             <p class="section-subtext">Generate and manage detailed seating arrangements for examinations</p>
         </div>
+
 
         <div class="col-3 mt-4">
             <div class="container">

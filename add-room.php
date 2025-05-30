@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", function () {
         let seatCapacity = document.getElementById("seatCapacity").value.trim();
 
         // Basic validation
-        if (!roomNo || !roomName || !benchOrder || !seatCapacity) {
+        if (!roomName || !benchOrder || !seatCapacity) {
             alert("⚠️ Please fill out all fields.");
             return;
         }
