@@ -16,7 +16,7 @@ $user = $userInfo->getUserByEmail($_SESSION['user_email']);
 include 'includes/header.php';
 ?>
 
-<div class="container mt-5">
+<div class="container" style="margin-top: 100px">
   <div class="card shadow-lg p-4 rounded-4">
     <h3 class="text-center mb-4">Welcome to Your Profile</h3>
     <div class="row mb-3">
@@ -30,7 +30,7 @@ include 'includes/header.php';
       </div>
     </div>
     <div class="text-center">
-      <a href="logout.php" class="btn btn-danger">Logout</a>
+      <a href="logout.php" class="btn btn-red">Logout</a>
     </div>
   </div>
 </div>

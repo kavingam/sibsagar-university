@@ -85,7 +85,7 @@ try {
                 <input type="file" id="csvFile" name="csvFile" class="form-control" accept=".csv" required>
             </div>
             <div class="col-md-2 col-sm-4 col-6 mb-3 d-flex justify-content-center" style="margin-top: 30px;">
-                <button type="submit" class="btn btn-primary w-100">
+                <button type="submit" class="btn btn-green w-100">
                 <i class="bi bi-database-add"></i>
                  IMPORT
                 </button>

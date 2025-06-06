@@ -67,7 +67,7 @@ try {
             </div>
 
             <div class="col-md-2 col-sm-4 col-6 mb-3 d-flex justify-content-center align-items-end">
-                <button type="submit" id="submitButton" class="btn btn-primary w-100">
+                <button type="submit" id="submitButton" class="btn btn-green w-100">
                     <i class="bi bi-database-add"></i> IMPORT
                 </button>
             </div>

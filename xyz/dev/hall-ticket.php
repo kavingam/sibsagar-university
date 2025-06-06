@@ -209,6 +209,76 @@ usort($rooms_raw, function ($a, $b) {
     return (int)$a['room_no'] - (int)$b['room_no'];
 });
 
+// $students_assigned = 0;
+// $rooms = [];
+// $bench_index = 0;
+
+// foreach ($rooms_raw as $room) {
+//     $cols = (int) $room['bench_order'];
+//     $capacity = (int) $room['seat_capacity'];
+//     $rows = (int) floor($capacity / $cols);
+//     $grid = array_fill(0, $rows, array_fill(0, $cols, ['A' => null, 'B' => null]));
+
+//     $hasStudent = false;
+
+//     for ($col = 0; $col < $cols; $col++) {
+//         for ($row = 0; $row < $rows; $row++) {
+//             if ($bench_index >= count($benches)) break 2;
+
+//             $current_bench = $benches[$bench_index];
+//             $current_depts = array_filter([
+//                 $current_bench['A']['department'] ?? null,
+//                 $current_bench['B']['department'] ?? null
+//             ]);
+
+//             $prev_depts = [];
+//             if ($row > 0 && !empty($grid[$row - 1][$col])) {
+//                 $prev = $grid[$row - 1][$col];
+//                 $prev_depts = array_filter([
+//                     $prev['A']['department'] ?? null,
+//                     $prev['B']['department'] ?? null
+//                 ]);
+//             }
+
+//             $conflict = false;
+//             foreach ($current_depts as $dept) {
+//                 if (in_array($dept, $prev_depts)) {
+//                     $conflict = true;
+//                     break;
+//                 }
+//             }
+
+//             if ($conflict) {
+//                 $grid[$row][$col] = ['A' => null, 'B' => null];
+//             } else {
+//                 $grid[$row][$col] = $current_bench;
+//                 $bench_index++;
+//                 $hasStudent = true;
+//             }
+//         }
+//     }
+
+//     if ($hasStudent) {
+//         $rooms[] = $grid;
+//         $rooms_layout[] = [
+//             'room_no' => $room['room_no'],
+//             'room_name' => $room['room_name'],
+//             'rows' => $rows,
+//             'cols' => $cols
+//         ];
+//     }
+// }
+
+// // Collect unseated students
+// $unseated_students = [];
+// while ($bench_index < count($benches)) {
+//     $bench = $benches[$bench_index++];
+//     foreach (['A', 'B'] as $label) {
+//         if (!empty($bench[$label])) {
+//             $unseated_students[] = $bench[$label];
+//         }
+//     }
+// }
 
 $students_assigned = 0;
 $rooms = [];
@@ -286,291 +356,212 @@ while ($bench_index < count($benches)) {
     }
 }
 
-$assigned_students = [];
-
-foreach ($rooms as $roomIndex => $grid) {
-
-    $room_no = $rooms_layout[$roomIndex]['room_no'] ?? 'UNKNOWN';
-    $room_name = $rooms_layout[$roomIndex]['room_name'] ?? 'UNKNOWN';
-
-    foreach ($grid as $row) {
-        foreach ($row as $bench) {
-            foreach (['A', 'B'] as $pos) {
-                if (!empty($bench[$pos]) && is_array($bench[$pos])) {
-                    $student = $bench[$pos];
-                    $student['room_no'] = $room_no; // inject room number
-                    $student['room_name'] = $room_name;
-                    $assigned_students[] = $student;
-                }
-            }
-        }
-    }
-}
-
-function groupStudentsByRoom(array $students): array {
-    $roomWiseStudents = [];
-
-    foreach ($students as $student) {
-        if (!isset($student['room_no']) || empty($student['room_no'])) {
-            continue;
-        }
-
-        $room = $student['room_no'];
-        // $roomWiseStudents[$room][] = [
-        //     'name'     => $student['name'] ?? '',
-        //     'roll_no'  => $student['roll_no'] ?? '',
-        //     'reg_no'   => $student['reg_no'] ?? '',
-        //     'subject'  => $student['subject'] ?? 'EDU',
-        // ];
-        $roomWiseStudents[$room][] = [
-            'name'        => $student['name'] ?? '',
-            'roll_no'     => $student['roll_no'] ?? '',
-            'reg_no'      => $student['reg_no'] ?? '',
-            'subject'     => $student['subject'] ?? 'others',
-            'department_id' => $student['department_id'] ?? '',
-            'semester'    => $student['semester'] ?? '',
-            'course'      => $student['course'] ?? '',
-            'room_name'      => $student['room_name'] ?? '',
-        ];
-        
-
-    }
-
-    return $roomWiseStudents;
-}
-
-$roomWiseStudents = groupStudentsByRoom($assigned_students);
-
-print_r('<pre>');
-// print_r($assigned_students);
-print_r('</pre>');
-
+// print_r('<pre>');
+// print_r($rooms);
+// print_r($fetchStudents);
+// print_r($rooms_layout);
 ?>
-
-
-<?php
-// Assuming you have $rooms, $rooms_layout, and $unseated_students already defined
-
-$departmentObj = new Department();
-// echo __DIR__; current
-// echo $_SERVER['DOCUMENT_ROOT']; root
-?>
-
-
-
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Room-wise Assigned Students</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
-    <style>
+    <meta charset="UTF-8">
+    <title>Hall Ticket</title>
+    <!-- Bootstrap 5.3.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 
-        .page {
+    <style>
+        /* Screen styling */
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 13px;
             padding: 20px;
-            background: white;
-            min-height: 1122px; /* A4 height in px at 96dpi */
-            box-sizing: border-box;
+            margin: 0;
+            background: #f9f9f9;
+        }
+
+        h5 {
+            margin-top: 25px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* Table layout */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #000;
+            padding: 8px 10px;
+            vertical-align: top;
+            font-size: 12px;
+            min-width: 160px;
+            text-align: left;
+        }
+
+        th {
+            background: #eaeaea;
+        }
+
+        td .empty {
+            color: #888;
+            font-style: italic;
         }
 
         .page-break {
-            /* page-break-before: always; */
-            /* break-before: page; */
-        }       
-        .ticket-card {
-            border: 1px solid #000;
-            padding: 12px;
-            height: 180px;
-            font-size: 14px;
-            text-align: center;
-        }
-        .room-title {
-            text-align: center;
-            font-weight: bold;
-            margin: 30px 0 15px;
-            font-size: 18px;
-            border-bottom: 2px solid #000;
-            padding-bottom: 5px;
+            page-break-before: always;
         }
 
-        .no-print {
-            display: block;
-            }
-            @media print {
-            .no-print {
-                display: none !important;
-            }
+        ul {
+            margin: 0;
+            padding-left: 20px;
         }
+
+        ul li {
+            margin-bottom: 4px;
+        }
+
+        /* Print Styling */
         @media print {
-            /* Container for tickets per room: force 3 columns */
-            .room-section > .row {
-                display: grid !important;
-                grid-template-columns: repeat(3, 1fr) !important;
-                gap: 10px;
+            body {
+                padding: 10px;
+                background: white;
             }
 
-            /* Ensure tickets don't break across pages */
-            .ticket-card {
+            .container {
+                padding: 0;
+                margin: 0;
+            }
+
+            table {
                 page-break-inside: avoid;
-                break-inside: avoid;
-                /* Adjust height if needed */
-                height: auto !important;
-                padding: 10px !important;
-                font-size: 12px !important;
             }
 
-            /* Page break after each room */
             .page-break {
-                page-break-after: always;
-                break-after: page;
+                page-break-before: always;
             }
 
-            /* Remove margins/padding that can cause blank pages */
-            body, .container {
-                margin: 0 !important;
-                padding: 0 !important;
+            .no-print {
+                display: none;
             }
 
-            /* Remove Bootstrap print overrides forcing block stacking */
-            .col-md-4, .col-sm-6, .col-12 {
-                float: none !important;
-                width: auto !important;
-                max-width: none !important;
+            td, th {
+                font-size: 11px;
+                padding: 5px;
+            }
+
+            h5 {
+                font-size: 16px;
+                /* margin-top: 20px; */
+                color: black;
             }
         }
 
     </style>
 </head>
 <body>
+<div class="container">
 
-<div class="fixed-bottom bg-light py-3 border-top text-center no-print">
-  <button id="downloadPdfBtn" class="btn btn-primary mr-2">
-    <i class="fas fa-file-pdf"></i> Download PDF
-  </button>
-  <button id="printBtn" class="btn btn-secondary mr-2">
-    <i class="fas fa-print"></i> Print
-  </button>
-  <button id="saveDbBtn" class="btn btn-success mr-2">
-    <i class="fas fa-save"></i> Save Database
-  </button>
-  <button id="closeBtn" class="btn btn-danger">
-    <i class="fas fa-times"></i> Close
-  </button>
-</div>
-
-
-<div class="container" id="pdfContent">
 <?php
-// Sample grouped array: $roomWiseStudents = ['UGC1' => [...], 'UGC2' => [...]];
-foreach ($roomWiseStudents as $room => $students): ?>
-    <div class="room-section">
-        <div class="room-title">ROOM: <?= htmlspecialchars($room) ?></div>
-        <div class="row">
-            <?php foreach ($students as $i => $student): ?>
-                <div class="col-md-4 col-sm-6 col-12 mb-3">
-                    <div class="ticket-card">
-                        <strong>SU<sup></sup> FINAL EXAM- <?= date('Y') ?></strong><br>
-                        SL. NO: <?= $i + 1 ?> ROOM: <?= htmlspecialchars($student['room_name']) ?><br>
-                        <strong><?= htmlspecialchars($student['name']) ?></strong><br>
-                        <!-- <small>(UNDER AUTONOMOUS)</small><br> -->
-                        <?= htmlspecialchars($departmentObj->getDepartmentName($student['department_id'])) ?><br>
-                        ROLL NO: <?= htmlspecialchars($student['roll_no']) ?><br>
-                        REG. NO: <?= htmlspecialchars($student['reg_no']) ?><br>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-        </div>
-    </div>
-    <div class="page-break"></div>
-<?php endforeach; ?>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script>
+$departmentObj = new Department();
+foreach ($rooms as $room_index => $room_grid) {
+    $layout = $rooms_layout[$room_index];
+    $room_no = $layout['room_no'];
+    $room_name = $layout['room_name'];
 
-document.getElementById("downloadPdfBtn").addEventListener("click", function () {
-    const element = document.getElementById("pdfContent");
+    echo '<h5 class="fs-5">Room SNO: ' . htmlspecialchars($room_no) . ' - ' . htmlspecialchars($room_name) . '</h5>';
+    $row_count = count($room_grid);
+    $col_count = count($room_grid[0]);
 
-    element.classList.add('pdf-page-break-fix');
+    echo '<table border="1" cellpadding="5" cellspacing="0">';
+    // echo '<tr>';
+    // for ($col = 0; $col < $col_count; $col++) {
+    //     echo "<th>Col $col</th>";
+    // }
+    // echo '</tr>';
 
-    const opt = {
-        margin: 0.3,
-        filename: 'Exam-Tickets-<?= date("Y") ?>.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, logging: true },
-        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
-        pagebreak: { mode: ['css', 'legacy'], before: '.page-break' }
-    };
+    echo '<tr>';
+    $middle_start = 1;  // Counter for Middle Benches
+    for ($col = 0; $col < $col_count; $col++) {
+        if ($col === 0) {
+            $bench_label = "Left Bench";
+        } elseif ($col === $col_count - 1) {
+            $bench_label = "Right Bench";
+        } else {
+            $bench_label = "Middle Bench " . $middle_start++;
+        }
+        echo "<th>$bench_label</th>";
+    }
+    echo '</tr>';
+    
+    
 
-    html2pdf().set(opt).from(element).save().then(() => {
-        element.classList.remove('pdf-page-break-fix');
-    });
-});
+    foreach ($room_grid as $r_index => $row) {
+        echo '<tr>';
+        foreach ($row as $c_index => $bench) {
+            // echo "<td><strong>Bench [$r_index,$c_index]</strong><br>";
+            echo "<td><strong>Bench : " . ($r_index + 1) . "</strong><br>";
 
-</script>
+            foreach (['A', 'B'] as $label) {
+                if (!empty($bench[$label])) {
+                    $s = $bench[$label];
+                    echo "Seat $label: " . htmlspecialchars($s['name']) . ' (' . htmlspecialchars($departmentObj->getDepartmentNameById($s['department_id'])) . ')<br>';
+                } else {
+                    echo "Seat $label: <span class='empty'></span><br>";
+                    // echo "Seat $label: <span class='empty'>Empty</span><br>";
 
-<script>
-    document.getElementById("printBtn").addEventListener("click", function () {
-        // Hide the buttons
-        const controls = document.querySelector('.no-print');
-        controls.style.display = 'none';
+                }
+            }
+            echo '</td>';
+        }
+        echo '</tr>';
+    }
+    echo '</table><br>';
 
-        // Wait for print dialog, then re-show
-        window.print();
+    // ✅ Check if room has any seated student
+    $has_students = false;
+    foreach ($room_grid as $row) {
+        foreach ($row as $bench) {
+            if (!empty($bench['A']) || !empty($bench['B'])) {
+                $has_students = true;
+                break 2; // Exit both loops
+            }
+        }
+    }
+    
+    // ✅ Only show page break if there are seated students
+    if ($has_students) {
+        echo '<div class="page-break"></div>';
+    }
+    
+}
 
-        // After print dialog closes, show controls again (some browsers support this better)
-        setTimeout(() => {
-            controls.style.display = 'block';
-        }, 1000);
-    });
-</script>
+$totalBenches = 0;
+foreach ($rooms as $room_index => $room_grid) {
+    $totalBenches += count($room_grid) * count($room_grid[0]);
+}
+// echo "<h4>Total Benches Used: $totalBenches</h4>";
 
-<script>
-document.getElementById("closeBtn").addEventListener("click", function () {
-  // Example: Close the current window or hide modal or redirect
-  if (confirm("Are you sure you want to close?")) {
-    window.close(); // works if window opened by JS, else fallback:
-    // Or redirect to homepage
-    // window.location.href = "index.php";
-  }
-});    
-</script>
-
-
-
-<script>
-  // Pass PHP variables to JS
-  const tableData = <?php echo json_encode($tableData); ?>;
-  const startTime = <?php echo json_encode($startTime); ?>;
-  const startDate = <?php echo json_encode($startDate); ?>;
-  const benchSeat = <?php echo json_encode($benchSeat); ?>;
-  const selectedExam = <?php echo json_encode($selectedExam); ?>;
-  const enteredExamName = <?php echo json_encode($enteredExamName); ?>;
-
-  document.getElementById("saveDbBtn").addEventListener("click", () => {
-    fetch("save_data.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-        tableData: JSON.stringify(tableData),
-        startTime,
-        startDate,
-        benchSeat,
-        selectedExam,
-        enteredExamName
-      })
-    })
-      .then(response => response.text())
-      .then(message => {
-        alert(message);
-      })
-      .catch(error => {
-        console.error("Error:", error);
-        alert("Failed to save data.");
-      });
-  });
-</script>
+if (!empty($unseated_students)) {
+    echo '<h5>Unseated Students</h5>';
+    echo "<ul style='list-style-type: disc; padding-left: 20px;'>";
+    foreach ($unseated_students as $student) {
+        echo '<li>' . htmlspecialchars($student['name']) . ' (' . htmlspecialchars($student['department_id']) . ')</li>';
+    }
+    echo '</ul>';
+}
+?>
+    <!-- Bootstrap 5.3.3 JS bundle (includes Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 
 </div>
 </body>
 </html>
-<!-- SUB: <?php // strtoupper($student['subject'] ?? 'EDU') ?> -->

@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 include 'includes/header.php';
 ?>
 
-<div class="container mt-5">
+<div class="container" style="margin-top: 100px">
     <div class="card shadow-lg p-4 rounded-4">
         <h3 class="text-center mb-4">Change Password</h3>
 
@@ -70,7 +70,7 @@ include 'includes/header.php';
             </div>
 
             <div class="text-center">
-                <button type="submit" class="btn btn-primary">Change Password</button>
+                <button type="submit" class="btn btn-green">Change Password</button>
             </div>
         </form>
     </div>

@@ -37,10 +37,20 @@ if (!isset($_SESSION['user_email'])) {
 <div class="modal fade" id="subjectModal" tabindex="-1" aria-hidden="true" aria-labelledby="subjectModalLabel">
   <div class="modal-dialog modal-fullscreen">
     <div class="modal-content">
-      <div class="modal-header">
+      
+      <!-- <div class="modal-header">
         <h5 class="modal-title" id="subjectModalLabel">Subjects in Group</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div> -->
+      <div class="modal-header justify-content-between">
+          <h5 class="modal-title mb-0" id="studentModalLabel">Subject And Paper Code Details</h5>
+          <div>
+              <button type="button" class="btn btn-red" data-bs-dismiss="modal" aria-label="Close">
+              <i class="fas fa-arrow-left"></i> Back
+              </button>
+          </div>
       </div>
+
       <div class="modal-body">
       <div class="container">
           <!-- Info row -->
@@ -54,7 +64,7 @@ if (!isset($_SESSION['user_email'])) {
           <!-- Subjects Table -->
           <table class="table table-bordered table-striped table-hover">
             <thead class="table-dark">
-              <tr>
+              <tr class="text-center">
                 <th>S.No</th>
                 <th>Subject Title</th>
                 <th>Subject Code</th>
@@ -107,13 +117,13 @@ function loadGroupedSubjects() {
 
             <td class="text-center">
               <div class="btn-groupx d-flex gap-2" role="group" aria-label="Actions" style="gap: 2px;">
-                <button class="btn btn-info btn-sm" onclick="viewGroup(${group.department_id}, ${group.course}, ${group.semester})">
+                <button class="btn btn-blue btn-sm" onclick="viewGroup(${group.department_id}, ${group.course}, ${group.semester})">
                   <i class="fal fa-eye"></i> View
                 </button>
-                <button class="btn btn-warning btn-sm" onclick="editGroup(${group.department_id}, ${group.course}, ${group.semester})">
+                <button class="btn btn-green btn-sm" onclick="editGroup(${group.department_id}, ${group.course}, ${group.semester})">
                   <i class="fal fa-edit"></i> Edit
                 </button>
-                <button class="btn btn-danger btn-sm" onclick="deleteGroup(${group.department_id}, ${group.course}, ${group.semester})">
+                <button class="btn btn-red btn-sm" onclick="deleteGroup(${group.department_id}, ${group.course}, ${group.semester})">
                   <i class="fal fa-trash-alt"></i> Delete
                 </button>
               </div>

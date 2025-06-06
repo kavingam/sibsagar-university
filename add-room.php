@@ -54,7 +54,7 @@ if (!isset($_SESSION['user_email'])) {
         </div>
     </div>
     <div class="text-center my-3">
-        <button type="button" id="submitBtn" class="btn btn-primary">Submit</button>
+        <button type="button" id="submitBtn" class="btn btn-green">Submit</button>
         <!-- onclick="addRoom() -->
     </div>
 </div>

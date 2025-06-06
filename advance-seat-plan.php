@@ -42,7 +42,7 @@ include 'includes/header.php';
                 </div>
 
                 <div class="mb-3">
-                    <button class="btn btn-primary btn-sm" id="toggleButton" onclick="toggleSelection()">Switch to Exam Name</button>
+                    <button class="btn btn-blue btn-sm" id="toggleButton" onclick="toggleSelection()">Switch to Exam Name</button>
                 </div>
 
                 <div class="time-picker-container">
@@ -65,7 +65,7 @@ include 'includes/header.php';
                 </div>
 
                 <div class="container p-3">
-                    <button type="button" class="btn btn-primary btn-sm" id="generate"><i class="fas fa-chevron-circle-right"></i> Generate</button>
+                    <button type="button" class="btn btn-green btn-sm" id="generate"><i class="fas fa-chevron-circle-right"></i> Generate</button>
                 </div>
             </div>
         </div>
@@ -493,6 +493,7 @@ document.getElementById('generate').addEventListener('click', function () {
     const form = document.createElement('form');
     form.method = 'POST';
     form.action = 'xyz/dev/main_activity_new.php';
+    // form.action = 'xyz/dev/seat_summary.php';
     form.target = '_blank'; // 🔥 Open the form submission in a new tab
 
     const addField = (name, value) => {

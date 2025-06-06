@@ -2,18 +2,68 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-require_once ('../bashmodel.php');
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $tableData = json_decode($_POST['tableData'], true);
-    $startTime = $_POST['startTime'];
-    $benchSeat = $_POST['benchSeat'];
-    $selectedExam = $_POST['selectedExam'];
-    $enteredExamName = $_POST['enteredExamName'];
-    $startDate = $_POST['startDate'];
-    $save = $_POST['save'] ?? 0;
+include 'xyz/bashmodel.php';
+session_start();
 
-    // usort($tableData, fn($a, $b) => $b['totalStudent'] <=> $a['totalStudent']);
+// Redirect if user not logged in
+if (!isset($_SESSION['user_email'])) {
+    header('Location: login.php');
+    exit;
+}
+
+// Database credentials
+$host = 'localhost';
+$dbname = 'sibsagar_university';
+$username = 'root';
+$password = 'password';
+
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password, [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+    ]);
+} catch (PDOException $e) {
+    die("Database connection failed: " . $e->getMessage());
+}
+
+// Validate and get ID from URL parameter
+$id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+if ($id <= 0) {
+    die("Invalid ID provided.");
+}
+
+// Fetch seating plan by ID
+$stmt = $pdo->prepare("SELECT * FROM seating_plan WHERE id = ?");
+$stmt->execute([$id]);
+$record = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$record) {
+    die("Seating plan record not found.");
+}
+
+// Extract fields safely with null coalescing operator
+$startTime = $record['start_time'] ?? '';
+$benchSeat = $record['bench_seat'] ?? '';
+$selectedExam = $record['exam_name'] ?? '';
+// $enteredExamName = $record[''] ?? '';
+$startDate = $record['start_date'] ?? '';
+
+// Decode JSON data into associative array
+$tableData = json_decode($record['data_json'], true);
+if (!is_array($tableData)) {
+    die("Invalid or corrupted seating data.");
+}
+
+// Now you can use $startTime, $benchSeat, $selectedExam, $enteredExamName, $startDate, and $tableData below
+// print_r($benchSeat);
+// print_r($startTime);
+// print_r($tableData);
+// print_r($startTime);
+// print_r($benchSeat);
+
+?>
+
+<?php
     usort($tableData, function ($a, $b) {
         $aEven = $a['totalStudent'] % 2 === 0;
         $bEven = $b['totalStudent'] % 2 === 0;
@@ -27,10 +77,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         return $b['totalStudent'] <=> $a['totalStudent'];
     });
 
+
     $students = new Student();
     $rooms = new Room();
 
-    $fetchStudents = [];
 
     foreach ($tableData as $data) {
         $similarStudents = $students->findSimilarStudents(
@@ -48,6 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'students' => $similarStudents
         ];
     }
+
 
     $dept_students = [];
 
@@ -76,9 +127,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // echo 'Total Students: ' . $totalStudents;
 
-    // === Function: Get next department with students (excluding some)
+        // === Function: Get next department with students (excluding some)
     function getNextDept(array $dept_students, array $exclude = []): ?string
     {
         foreach ($dept_students as $dept => $list) {
@@ -150,7 +200,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $step++;
     }
 
-
     $steps = $processingLog;
 
     $flat_students = [];
@@ -199,7 +248,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $benches[] = $bench;
     }
-}
 
 
 $rooms_layout = [];
@@ -207,7 +255,8 @@ $rooms_raw = $rooms->getAllRooms(); // Assume this returns array of rooms
 
 usort($rooms_raw, function ($a, $b) {
     return (int)$a['room_no'] - (int)$b['room_no'];
-});
+});   
+  
 
 
 $students_assigned = 0;
@@ -286,204 +335,248 @@ while ($bench_index < count($benches)) {
     }
 }
 
-$assigned_students = [];
-
-foreach ($rooms as $roomIndex => $grid) {
-
-    $room_no = $rooms_layout[$roomIndex]['room_no'] ?? 'UNKNOWN';
-    $room_name = $rooms_layout[$roomIndex]['room_name'] ?? 'UNKNOWN';
-
-    foreach ($grid as $row) {
-        foreach ($row as $bench) {
-            foreach (['A', 'B'] as $pos) {
-                if (!empty($bench[$pos]) && is_array($bench[$pos])) {
-                    $student = $bench[$pos];
-                    $student['room_no'] = $room_no; // inject room number
-                    $student['room_name'] = $room_name;
-                    $assigned_students[] = $student;
-                }
-            }
-        }
-    }
-}
-
-function groupStudentsByRoom(array $students): array {
-    $roomWiseStudents = [];
-
-    foreach ($students as $student) {
-        if (!isset($student['room_no']) || empty($student['room_no'])) {
-            continue;
-        }
-
-        $room = $student['room_no'];
-        // $roomWiseStudents[$room][] = [
-        //     'name'     => $student['name'] ?? '',
-        //     'roll_no'  => $student['roll_no'] ?? '',
-        //     'reg_no'   => $student['reg_no'] ?? '',
-        //     'subject'  => $student['subject'] ?? 'EDU',
-        // ];
-        $roomWiseStudents[$room][] = [
-            'name'        => $student['name'] ?? '',
-            'roll_no'     => $student['roll_no'] ?? '',
-            'reg_no'      => $student['reg_no'] ?? '',
-            'subject'     => $student['subject'] ?? 'others',
-            'department_id' => $student['department_id'] ?? '',
-            'semester'    => $student['semester'] ?? '',
-            'course'      => $student['course'] ?? '',
-            'room_name'      => $student['room_name'] ?? '',
-        ];
-        
-
-    }
-
-    return $roomWiseStudents;
-}
-
-$roomWiseStudents = groupStudentsByRoom($assigned_students);
-
-print_r('<pre>');
-// print_r($assigned_students);
-print_r('</pre>');
-
+// print_r('<pre>');
+// print_r($rooms);
+// print_r($fetchStudents);
+// print_r($rooms_layout);
 ?>
-
-
-<?php
-// Assuming you have $rooms, $rooms_layout, and $unseated_students already defined
-
-$departmentObj = new Department();
-// echo __DIR__; current
-// echo $_SERVER['DOCUMENT_ROOT']; root
-?>
-
-
-
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Room-wise Assigned Students</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <meta charset="UTF-8">
+    <title>Hall Ticket</title>
+    <!-- Bootstrap 5.3.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
     <style>
-
-        .page {
+        /* Screen styling */
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 13px;
             padding: 20px;
-            background: white;
-            min-height: 1122px; /* A4 height in px at 96dpi */
-            box-sizing: border-box;
+            margin: 0;
+            background: #f9f9f9;
+        }
+
+        h5 {
+            margin-top: 25px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* Table layout */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #000;
+            padding: 8px 10px;
+            vertical-align: top;
+            font-size: 12px;
+            min-width: 160px;
+            text-align: left;
+        }
+
+        th {
+            background: #eaeaea;
+        }
+
+        td .empty {
+            color: #888;
+            font-style: italic;
         }
 
         .page-break {
-            /* page-break-before: always; */
-            /* break-before: page; */
-        }       
-        .ticket-card {
-            border: 1px solid #000;
-            padding: 12px;
-            height: 180px;
-            font-size: 14px;
-            text-align: center;
-        }
-        .room-title {
-            text-align: center;
-            font-weight: bold;
-            margin: 30px 0 15px;
-            font-size: 18px;
-            border-bottom: 2px solid #000;
-            padding-bottom: 5px;
+            page-break-before: always;
         }
 
-        .no-print {
-            display: block;
-            }
-            @media print {
-            .no-print {
-                display: none !important;
-            }
+        ul {
+            margin: 0;
+            padding-left: 20px;
         }
+
+        ul li {
+            margin-bottom: 4px;
+        }
+
+        /* Print Styling */
         @media print {
-            /* Container for tickets per room: force 3 columns */
-            .room-section > .row {
-                display: grid !important;
-                grid-template-columns: repeat(3, 1fr) !important;
-                gap: 10px;
+            body {
+                padding: 10px;
+                background: white;
             }
 
-            /* Ensure tickets don't break across pages */
-            .ticket-card {
+            .container {
+                padding: 0;
+                margin: 0;
+            }
+
+            table {
                 page-break-inside: avoid;
-                break-inside: avoid;
-                /* Adjust height if needed */
-                height: auto !important;
-                padding: 10px !important;
-                font-size: 12px !important;
             }
 
-            /* Page break after each room */
             .page-break {
-                page-break-after: always;
-                break-after: page;
+                page-break-before: always;
             }
 
-            /* Remove margins/padding that can cause blank pages */
-            body, .container {
-                margin: 0 !important;
-                padding: 0 !important;
+            .no-print {
+                display: none;
             }
 
-            /* Remove Bootstrap print overrides forcing block stacking */
-            .col-md-4, .col-sm-6, .col-12 {
-                float: none !important;
-                width: auto !important;
-                max-width: none !important;
+            td, th {
+                font-size: 11px;
+                padding: 5px;
+            }
+
+            h5 {
+                font-size: 16px;
+                /* margin-top: 20px; */
+                color: black;
             }
         }
 
     </style>
 </head>
 <body>
+<div class="container">
 
-<div class="fixed-bottom bg-light py-3 border-top text-center no-print">
+<?php
+$departmentObj = new Department();
+foreach ($rooms as $room_index => $room_grid) {
+    $layout = $rooms_layout[$room_index];
+    $room_no = $layout['room_no'];
+    $room_name = $layout['room_name'];
+
+    echo '<h5 class="fs-5">Room SNO: ' . htmlspecialchars($room_no) . ' - ' . htmlspecialchars($room_name) . '</h5>';
+    $row_count = count($room_grid);
+    $col_count = count($room_grid[0]);
+
+    echo '<table border="1" cellpadding="5" cellspacing="0">';
+    // echo '<tr>';
+    // for ($col = 0; $col < $col_count; $col++) {
+    //     echo "<th>Col $col</th>";
+    // }
+    // echo '</tr>';
+
+    echo '<tr>';
+    $middle_start = 1;  // Counter for Middle Benches
+    for ($col = 0; $col < $col_count; $col++) {
+        if ($col === 0) {
+            $bench_label = "Left Bench";
+        } elseif ($col === $col_count - 1) {
+            $bench_label = "Right Bench";
+        } else {
+            $bench_label = "Middle Bench " . $middle_start++;
+        }
+        echo "<th>$bench_label</th>";
+    }
+    echo '</tr>';
+    
+    
+
+    foreach ($room_grid as $r_index => $row) {
+        echo '<tr>';
+        foreach ($row as $c_index => $bench) {
+            // echo "<td><strong>Bench [$r_index,$c_index]</strong><br>";
+            echo "<td><strong>Bench : " . ($r_index + 1) . "</strong><br>";
+
+            foreach (['A', 'B'] as $label) {
+                if (!empty($bench[$label])) {
+                    $s = $bench[$label];
+                    echo "Seat $label: " . htmlspecialchars($s['name']) . ' (' . htmlspecialchars($departmentObj->getDepartmentNameById($s['department_id'])) . ')<br>';
+                } else {
+                    echo "Seat $label: <span class='empty'></span><br>";
+                    // echo "Seat $label: <span class='empty'>Empty</span><br>";
+
+                }
+            }
+            echo '</td>';
+        }
+        echo '</tr>';
+    }
+    echo '</table><br>';
+
+    // ✅ Check if room has any seated student
+    $has_students = false;
+    foreach ($room_grid as $row) {
+        foreach ($row as $bench) {
+            if (!empty($bench['A']) || !empty($bench['B'])) {
+                $has_students = true;
+                break 2; // Exit both loops
+            }
+        }
+    }
+    
+    // ✅ Only show page break if there are seated students
+    if ($has_students) {
+        echo '<div class="page-break"></div>';
+    }
+    
+}
+
+$totalBenches = 0;
+foreach ($rooms as $room_index => $room_grid) {
+    $totalBenches += count($room_grid) * count($room_grid[0]);
+}
+// echo "<h4>Total Benches Used: $totalBenches</h4>";
+
+if (!empty($unseated_students)) {
+    echo '<h5>Unseated Students</h5>';
+    echo "<ul style='list-style-type: disc; padding-left: 20px;'>";
+    foreach ($unseated_students as $student) {
+        echo '<li>' . htmlspecialchars($student['name']) . ' (' . htmlspecialchars($student['department_id']) . ')</li>';
+    }
+    echo '</ul>';
+}
+?>
+    <!-- Bootstrap 5.3.3 JS bundle (includes Popper) -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script> -->
+
+</div>
+
+<!-- <div class="fixed-bottom bg-light py-3 border-top text-center no-print">
   <button id="downloadPdfBtn" class="btn btn-primary mr-2">
     <i class="fas fa-file-pdf"></i> Download PDF
   </button>
   <button id="printBtn" class="btn btn-secondary mr-2">
     <i class="fas fa-print"></i> Print
   </button>
-  <button id="saveDbBtn" class="btn btn-success mr-2">
-    <i class="fas fa-save"></i> Save Database
+  <button id="closeBtn" class="btn btn-success">
+      <i class="fas fa-arrow-left"></i> Back
   </button>
-  <button id="closeBtn" class="btn btn-danger">
-    <i class="fas fa-times"></i> Close
-  </button>
+</div> -->
+
+<!-- Bottom Action Bar -->
+<div class="fixed-bottom bg-light py-3x border-top text-center no-print shadow-sm">
+  <div class="container">
+    <div class="btn-group d-flex justify-content-center" role="group" aria-label="Action Buttons">
+      
+      <button id="downloadPdfBtn" class="btn btn-primary mx-2 rounded-0">
+        <i class="fas fa-file-pdf"></i> <span class="d-none d-sm-inline">Download PDF</span>
+      </button>
+      
+      <button id="printBtn" class="btn btn-secondary mx-2 rounded-0">
+        <i class="fas fa-print"></i> <span class="d-none d-sm-inline">Print</span>
+      </button>
+      
+      <button id="closeBtn" class="btn btn-success mx-2 rounded-0">
+        <i class="fas fa-arrow-left"></i> <span class="d-none d-sm-inline">Back</span>
+      </button>
+
+    </div>
+  </div>
 </div>
 
 
-<div class="container" id="pdfContent">
-<?php
-// Sample grouped array: $roomWiseStudents = ['UGC1' => [...], 'UGC2' => [...]];
-foreach ($roomWiseStudents as $room => $students): ?>
-    <div class="room-section">
-        <div class="room-title">ROOM: <?= htmlspecialchars($room) ?></div>
-        <div class="row">
-            <?php foreach ($students as $i => $student): ?>
-                <div class="col-md-4 col-sm-6 col-12 mb-3">
-                    <div class="ticket-card">
-                        <strong>SU<sup></sup> FINAL EXAM- <?= date('Y') ?></strong><br>
-                        SL. NO: <?= $i + 1 ?> ROOM: <?= htmlspecialchars($student['room_name']) ?><br>
-                        <strong><?= htmlspecialchars($student['name']) ?></strong><br>
-                        <!-- <small>(UNDER AUTONOMOUS)</small><br> -->
-                        <?= htmlspecialchars($departmentObj->getDepartmentName($student['department_id'])) ?><br>
-                        ROLL NO: <?= htmlspecialchars($student['roll_no']) ?><br>
-                        REG. NO: <?= htmlspecialchars($student['reg_no']) ?><br>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-        </div>
-    </div>
-    <div class="page-break"></div>
-<?php endforeach; ?>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
 
@@ -527,50 +620,12 @@ document.getElementById("downloadPdfBtn").addEventListener("click", function () 
 <script>
 document.getElementById("closeBtn").addEventListener("click", function () {
   // Example: Close the current window or hide modal or redirect
-  if (confirm("Are you sure you want to close?")) {
-    window.close(); // works if window opened by JS, else fallback:
+//   if (confirm("Are you sure you want to back?")) {
+    // window.close(); // works if window opened by JS, else fallback:
     // Or redirect to homepage
-    // window.location.href = "index.php";
-  }
+    window.location.href = "seat-summary.php";
+//   }
 });    
 </script>
-
-
-
-<script>
-  // Pass PHP variables to JS
-  const tableData = <?php echo json_encode($tableData); ?>;
-  const startTime = <?php echo json_encode($startTime); ?>;
-  const startDate = <?php echo json_encode($startDate); ?>;
-  const benchSeat = <?php echo json_encode($benchSeat); ?>;
-  const selectedExam = <?php echo json_encode($selectedExam); ?>;
-  const enteredExamName = <?php echo json_encode($enteredExamName); ?>;
-
-  document.getElementById("saveDbBtn").addEventListener("click", () => {
-    fetch("save_data.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-        tableData: JSON.stringify(tableData),
-        startTime,
-        startDate,
-        benchSeat,
-        selectedExam,
-        enteredExamName
-      })
-    })
-      .then(response => response.text())
-      .then(message => {
-        alert(message);
-      })
-      .catch(error => {
-        console.error("Error:", error);
-        alert("Failed to save data.");
-      });
-  });
-</script>
-
-</div>
 </body>
 </html>
-<!-- SUB: <?php // strtoupper($student['subject'] ?? 'EDU') ?> -->

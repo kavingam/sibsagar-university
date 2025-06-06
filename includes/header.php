@@ -24,7 +24,16 @@ include 'db/pdo_connect.php';
     <link rel="stylesheet" href="assets/plugins/package/dist/sweetalert2.min.css">
     <link href="assets/plugins/DataTables/datatables.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/printCss/a4.css">
+    <link rel="stylesheet" href="assets/printCss/a4.css">
+    <link rel="stylesheet" href="assets/css/style.css" type="text/css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+    
     <style>
+      body {
+          font-family: 'Inter', sans-serif;
+      }
       .navbar-nav .nav-link {
           color: white !important;
       }

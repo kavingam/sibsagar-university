@@ -68,8 +68,8 @@ if (!isset($_SESSION['user_email'])) {
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times-square"></i> Close</button>
-                <button type="button" class="btn btn-primary" onclick="updateRoom()"><i class="fas fa-chevron-square-up"></i> Update</button>
+                <button type="button" class="btn btn-red" data-bs-dismiss="modal"><i class="fas fa-times-square"></i> Close</button>
+                <button type="button" class="btn btn-green" onclick="updateRoom()"><i class="fas fa-chevron-square-up"></i> Update</button>
             </div>
         </div>
     </div>

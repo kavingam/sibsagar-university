@@ -19,7 +19,7 @@ if (!isset($_SESSION['user_email'])) {
                         <label for="departmentName" class="form-label">Department Name</label>
                         <input type="text" class="form-control" id="departmentName" required>
                     </div>
-                    <button type="submit" class="btn btn-primary"><i class="fal fa-plus text-white fw-bold"></i> Add
+                    <button type="submit" class="btn btn-green"><i class="fal fa-plus text-white fw-bold"></i> Add
                         Department</button>
                 </form>
             </div>
@@ -78,7 +78,7 @@ if (!isset($_SESSION['user_email'])) {
                         <label for="editDepartmentName" class="form-label">Department Name</label>
                         <input type="text" class="form-control" id="editDepartmentName" required>
                     </div>
-                    <button type="submit" class="btn btn-primary"><i class="far fa-pen-square"></i> Update
+                    <button type="submit" class="btn btn-green"><i class="far fa-pen-square"></i> Update
                         Department</button>
                 </form>
             </div>

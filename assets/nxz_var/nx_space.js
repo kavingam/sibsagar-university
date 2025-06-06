@@ -224,17 +224,17 @@ function fetchRooms() {
 
                     <td class="text-center" style="width: 100%;">
                         <div class="d-flex justify-content-center align-items-center gap-2 flex-wrap">
-                            <button class="btn btn-outline-primary d-flex align-items-center gap-2 px-3 py-1"
+                            <button class="btn btn-green d-flex align-items-center gap-2 px-3 py-1"
                                 onclick="editRoom('${room.room_no}', '${room.room_name}', '${room.bench_order}', '${room.seat_capacity}')">
                                 <i class="fas fa-pen"></i> <span>Edit</span>
                             </button>
 
-                            <button class="btn btn-outline-danger d-flex align-items-center gap-2 px-3 py-1"
+                            <button class="btn btn-red d-flex align-items-center gap-2 px-3 py-1"
                                 onclick="deleteRoom('${room.room_no}')">
                                 <i class="fas fa-trash"></i> <span>Remove</span>
                             </button>
 
-                            <button class="btn btn-outline-warning d-flex align-items-center gap-2 px-3 py-1"
+                            <button class="btn btn-blue d-flex align-items-center gap-2 px-3 py-1"
                                 onclick="toggleRoomStatus('${room.room_no}')">
                                 <i class="fas ${toggleIconClass}" id="toggle-icon-${room.room_no}"></i>
                                 <span id="toggle-label-${room.room_no}">${toggleLabelText}</span>

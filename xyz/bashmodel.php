@@ -16,7 +16,7 @@ class BaseModel {
 
     // // 🔥 Fetch all records
     public function getAll($table) {
-        $allowedTables = ['student_info', 'rooms_info', 'departments'];
+        $allowedTables = ['student_info', 'rooms_info', 'departments','users_info'];
 
         if (!in_array($table, $allowedTables)) {
             die("Invalid table name!");
@@ -221,7 +221,8 @@ class UserInfo extends BaseModel {
      * @return int
      */
     public function getUserCount() {
-        return $this->getCount('users_info');
+        // return $this->getCount('users_info');
+        return $this->getAll('users_info');
     }
 }
 

@@ -45,7 +45,7 @@
                             </a>
                         </li>  
                         
-                        <li>
+                        <!-- <li>
                             <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'export-students') ? 'active bg-light fw-bold' : ''; ?>"
                                 href="<?php echo BASE_URL . 'export-students.php'; ?>">
                                 Export Student CSV
@@ -57,7 +57,7 @@
                                 href="<?php echo BASE_URL . 'export-subject.php'; ?>">
                                 Export Subject & Code CSV
                             </a>
-                        </li>                        
+                        </li>                         -->
                         <li>
                             <a class="dropdown-item py-2 rounded <?php  echo ($current_page == 'manage-students') ? 'active bg-light fw-bold' : ''; ?>"
                                 href="<?php echo BASE_URL . 'manage-students.php'; ?>">

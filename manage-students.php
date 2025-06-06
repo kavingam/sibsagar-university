@@ -32,10 +32,24 @@ if (!isset($_SESSION['user_email'])) {
 <div class="modal fade" id="studentModal" tabindex="-1" aria-labelledby="studentModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollablex modal-fullscreen">
         <div class="modal-content">
-            <div class="modal-header">
+            <!-- <div class="modal-header">
                  <h5 class="modal-title" id="studentModalLabel">Student Manage</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn btn-red me-auto" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+            </div> -->
+
+
+            <div class="modal-header justify-content-between">
+                <h5 class="modal-title mb-0" id="studentModalLabel">Student Details</h5>
+                <div>
+                    <button type="button" class="btn btn-red" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                </div>
             </div>
+
             <div class="modal-body">
                 <div class="container">
                     <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
@@ -45,7 +59,7 @@ if (!isset($_SESSION['user_email'])) {
                     </div>
 
                     <table class="table table-bordered" id="studentListTable">
-                        <thead>
+                        <thead class="text-center">
                             <tr>
                                 <th>#</th>
                                 <th>Name</th>
@@ -122,13 +136,13 @@ function loadStudents() {
 
                     <td class="text-center">
                         <div class="btn-groupx">
-                            <a href="#" class="btn btn-info btn-sm" onclick="viewGroup(${group.department}, ${group.course}, ${group.semester})">
+                            <a href="#" class="btn btn-blue btn-sm " onclick="viewGroup(${group.department}, ${group.course}, ${group.semester})">
                                 <i class="fas fa-eye"></i> View
                             </a>
-                            <a href="#" class="btn btn-warning btn-sm" onclick="editGroup(${group.department}, ${group.course}, ${group.semester})">
+                            <a href="#" class="btn btn-green btn-sm" onclick="editGroup(${group.department}, ${group.course}, ${group.semester})">
                                 <i class="fas fa-edit"></i> Edit
                             </a>
-                            <a href="#" class="btn btn-danger btn-sm" onclick="deleteGroup(${group.department}, ${group.course}, ${group.semester})">
+                            <a href="#" class="btn btn-red btn-sm" onclick="deleteGroup(${group.department}, ${group.course}, ${group.semester})">
                                 <i class="fas fa-trash-alt"></i> Delete All
                             </a>
                         </div>
