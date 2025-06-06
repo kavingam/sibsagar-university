@@ -11,10 +11,11 @@ if (!isset($_SESSION['user_email'])) {
 <?php include 'includes/header.php'; ?>
 
 <div class="container" style="margin-top:100px">
-<h4>Subject & Paper Code</h4>
+<h4>Subject Titles & Codes</h4>
 
-<table class="table table-bordered table-striped" id="subjectTable">
-  <thead class="table-dark">
+
+<table class="table table-bordered table-striped text-center" id="subjectTable">
+  <thead>
     <tr>
       <th>S.No</th>
       <th>Department Name</th>
@@ -29,7 +30,6 @@ if (!isset($_SESSION['user_email'])) {
     <!-- rows loaded dynamically -->
   </tbody>
 </table>
-
 
 
 </div>
@@ -62,8 +62,8 @@ if (!isset($_SESSION['user_email'])) {
           </div>
 
           <!-- Subjects Table -->
-          <table class="table table-bordered table-striped table-hover">
-            <thead class="table-dark">
+          <!-- <table class="table table-borderedx table-stripedx table-hover">
+            <thead class="table-darkx">
               <tr class="text-center">
                 <th>S.No</th>
                 <th>Subject Title</th>
@@ -71,9 +71,23 @@ if (!isset($_SESSION['user_email'])) {
               </tr>
             </thead>
             <tbody id="subjectTableBodyx">
-              <!-- Filled dynamically -->
             </tbody>
-          </table>
+          </table> -->
+          <table class="table table-bordered table-striped table-hover">
+          <thead>
+  <tr class="text-center">
+    <th>S.No</th>
+    <th>Subject Title</th>
+    <th>Subject Code</th>
+  </tr>
+</thead>
+
+  <tbody id="subjectTableBodyx">
+    <!-- Filled dynamically -->
+  </tbody>
+</table>
+
+
         </div>
       </div>
     </div>
@@ -107,7 +121,7 @@ function loadGroupedSubjects() {
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${index + 1}</td>
-          <td>${group.department_name}</td>
+          <td class="text-start">${group.department_name}</td>
           <td>${group.semester}</td>
           <td>${courseMap[group.course] || 'Unknown'}</td>
           <td>${group.total_subjects}</td>
@@ -117,13 +131,13 @@ function loadGroupedSubjects() {
 
             <td class="text-center">
               <div class="btn-groupx d-flex gap-2" role="group" aria-label="Actions" style="gap: 2px;">
-                <button class="btn btn-blue btn-sm" onclick="viewGroup(${group.department_id}, ${group.course}, ${group.semester})">
+                <button class="btn btn-lightweight btn-info-light btn-sm" onclick="viewGroup(${group.department_id}, ${group.course}, ${group.semester})">
                   <i class="fal fa-eye"></i> View
                 </button>
-                <button class="btn btn-green btn-sm" onclick="editGroup(${group.department_id}, ${group.course}, ${group.semester})">
+                <button class="btn btn-lightweight btn-success-light btn-sm" onclick="editGroup(${group.department_id}, ${group.course}, ${group.semester})">
                   <i class="fal fa-edit"></i> Edit
                 </button>
-                <button class="btn btn-red btn-sm" onclick="deleteGroup(${group.department_id}, ${group.course}, ${group.semester})">
+                <button class="btn btn-lightweight btn-danger-light btn-sm" onclick="deleteGroup(${group.department_id}, ${group.course}, ${group.semester})">
                   <i class="fal fa-trash-alt"></i> Delete
                 </button>
               </div>

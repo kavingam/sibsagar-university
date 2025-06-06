@@ -8,13 +8,21 @@ if (!isset($_SESSION['user_email'])) {
 }
 ?>
 
-<?php include 'includes/header.php'; ?>
+<?php include 'includes/header.php'; 
+include 'xyz/bashmodel.php';
+$stdObj = new Student();
+?>
 
 <div class="container" style="margin-top:100px">
-    <h5>Student Manage</h5>
-    <table id="student-table" class="table table-bordered">
+<h5>
+    Student Management Panel | Currently Enrolled Students: 
+    <span class="text-success fw-bold"><?php echo count($stdObj->getAllStudents()); ?></span>
+</h5>
+
+    <table id="student-table" class="table table-bordered text-center">
         <thead>
             <tr>
+                <th>S.No</th>
                 <th>Department</th>
                 <th>Course</th>
                 <th>Semester</th>
@@ -61,7 +69,7 @@ if (!isset($_SESSION['user_email'])) {
                     <table class="table table-bordered" id="studentListTable">
                         <thead class="text-center">
                             <tr>
-                                <th>#</th>
+                                <th>S.No</th>
                                 <th>Name</th>
                                 <th>Roll No</th>
                                 <th>Department</th>
@@ -126,31 +134,59 @@ function loadStudents() {
                 groupMap[key].count++;
             });
 
-            Object.values(groupMap).forEach(group => {
+            // Object.values(groupMap).forEach(group => {
+            //     const row = document.createElement('tr');
+            //     row.innerHTML = `
+            //         <td></td>
+            //         <td class="text-start">${departmentList[group.department] || 'Unknown Department'}</td>
+            //         <td>${courseList[group.course] || 'Unknown Course'}</td>
+            //         <td>${group.semester}</td>
+            //         <td>${group.count}</td>
+
+            //         <td class="text-center">
+            //             <div class="btn-groupx">
+            //                 <a href="#" class="btn btn-lightweight btn-primary-light btn-sm " onclick="viewGroup(${group.department}, ${group.course}, ${group.semester})">
+            //                     <i class="fas fa-eye"></i> View
+            //                 </a>
+            //                 <a href="#" class="btn btn-lightweight btn-success-light btn-sm" onclick="editGroup(${group.department}, ${group.course}, ${group.semester})">
+            //                     <i class="fas fa-edit"></i> Edit
+            //                 </a>
+            //                 <a href="#" class="btn btn-lightweight btn-danger-light btn-sm" onclick="deleteGroup(${group.department}, ${group.course}, ${group.semester})">
+            //                     <i class="fas fa-trash-alt"></i> Delete All
+            //                 </a>
+            //             </div>
+            //         </td>
+
+            //     `;
+            //     tbody.appendChild(row);
+            // });
+            Object.values(groupMap).forEach((group, index) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${departmentList[group.department] || 'Unknown Department'}</td>
+                    <td>${index + 1}</td>
+                    <td class="text-start">${departmentList[group.department] || 'Unknown Department'}</td>
                     <td>${courseList[group.course] || 'Unknown Course'}</td>
                     <td>${group.semester}</td>
                     <td>${group.count}</td>
 
                     <td class="text-center">
                         <div class="btn-groupx">
-                            <a href="#" class="btn btn-blue btn-sm " onclick="viewGroup(${group.department}, ${group.course}, ${group.semester})">
+                            <a href="#" class="btn btn-lightweight btn-primary-light btn-sm" onclick="viewGroup(${group.department}, ${group.course}, ${group.semester})">
                                 <i class="fas fa-eye"></i> View
                             </a>
-                            <a href="#" class="btn btn-green btn-sm" onclick="editGroup(${group.department}, ${group.course}, ${group.semester})">
+                            <a href="#" class="btn btn-lightweight btn-success-light btn-sm" onclick="editGroup(${group.department}, ${group.course}, ${group.semester})">
                                 <i class="fas fa-edit"></i> Edit
                             </a>
-                            <a href="#" class="btn btn-red btn-sm" onclick="deleteGroup(${group.department}, ${group.course}, ${group.semester})">
-                                <i class="fas fa-trash-alt"></i> Delete All
+                            <a href="#" class="btn btn-lightweight btn-danger-light btn-sm" onclick="deleteGroup(${group.department}, ${group.course}, ${group.semester})">
+                                <i class="fas fa-trash-alt"></i> Delete
                             </a>
                         </div>
                     </td>
-
                 `;
                 tbody.appendChild(row);
             });
+
+
         })
         .catch(err => {
             console.error('Error loading student data:', err);
@@ -185,7 +221,7 @@ function viewGroup(department, course, semester) {
                 <td>${i + 1}</td>
                 <td>${student.name}</td>
                 <td>${student.roll_no}</td>
-                <td>${departmentList[department] || 'Unknown Department'}</td>
+                <td class="text-start">${departmentList[department] || 'Unknown Department'}</td>
                 <td>${courseList[parseInt(student.course)] || 'Unknown Course'}</td>
             `;
             tbody.appendChild(row);

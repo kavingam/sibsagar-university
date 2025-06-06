@@ -7,11 +7,10 @@ if (!isset($_SESSION['user_email'])) {
     exit;
 }
 ?>
-
-<?php include 'includes/header.php'; ?>
+<?php include 'includes/header.php';?>
 <div class="container bg-light vh-100">
     <div class="row no-gutters">
-        <div class="col-md-6 col-12 my-5">
+        <!-- <div class="col-md-6 col-12 my-5">
             <div class="container p-3">
                 <h5>Add Department</h5>
                 <form id="departmentForm" class="w-75">
@@ -23,12 +22,67 @@ if (!isset($_SESSION['user_email'])) {
                         Department</button>
                 </form>
             </div>
+            <div class="container p-3">
+                <h5>Total Available Department:</h5>
+            </div>
+        </div> -->
+        <div class="col-md-6 col-12 my-5">
+            <div class="container p-3">
+                <h5>Add New Department</h5>
+                <form id="departmentForm" class="w-75">
+                    <div class="mb-3">
+                        <label for="departmentName" class="form-label">Department Name</label>
+                        <input type="text" class="form-control" id="departmentName" placeholder="Enter department name" required>
+                    </div>
+                    <button type="submit" class="btn btn-green">
+                        <i class="fal fa-plus text-white fw-bold"></i> Add Department
+                    </button>
+                </form>
+            </div>
+
+            <!-- <div class="container p-3">
+                <h5>
+                    Total Departments Available: 
+                    <span id="departmentCount"></span>
+                </h5>
+            </div> -->
         </div>
         
         <div class="col-md-6 col-12 my-5">
             <h5>Department Details</h5>
-            <div class="overflow-auto table-responsive" style="max-height: 720px;">
-                <div class="table-responsive">
+
+
+            <div class="table-responsive" style="max-height: 720px; overflow-y: auto;">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="position: sticky; top: 0; z-index: 2; background-color: #f8f9fa;">Department ID</th>
+                            <th scope="col" style="position: sticky; top: 0; z-index: 2; background-color: #f8f9fa;">Department Name</th>
+                            <th scope="col" style="position: sticky; top: 0; z-index: 2; background-color: #f8f9fa;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="departmentTableBody">
+                        <!-- Dynamic rows will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+
+
+            <!-- <div class="overflow-auto table-responsive" style="max-height: 720px;">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">Department ID</th>
+                        <th scope="col">Department Name</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="departmentTableBody">
+                </tbody>
+            </table> -->
+            
+
+                <!-- <div class="table-responsive">
                     <table class="table table-striped table-bordered fixed-header-table m-0">
                         <colgroup>
                             <col style="width: 20%;">
@@ -54,8 +108,8 @@ if (!isset($_SESSION['user_email'])) {
                             </tbody>
                         </table>
                     </div>
-                </div>
-            </div>
+                </div> -->
+            <!-- </div> -->
             <!-- <p>Total Departments: <span id="totalDepartments">0</span></p> -->
         </div>
 

@@ -9,7 +9,7 @@ if (!isset($_SESSION['user_email'])) {
 ?>
 
 <?php include 'includes/header.php'; ?>
-<div class="container-fluid bg-light min-vh-100 py-4">
+<div class="container-fluid bg-light min-vh-100" style="margin-top: 100px">
     <div class="row justify-content-center">
         <div class="col-12 text-center mb-4">
             <h2 class="section-title"><i class="fas fa-door-open"></i> Manage Room Details</h2>
@@ -17,20 +17,40 @@ if (!isset($_SESSION['user_email'])) {
         </div>
 
         <div class="col-lg-10">
-            <div class="table-responsive rounded-3 shadow-sm">
+            <!-- <div class="table-responsive rounded-3 shadow-sm">
                 <table class="table table-hover table-bordered align-middle mb-0">
                     <thead class="text-center text-white bg-dark sticky-top" style="z-index: 1;">
                         <tr>
-                            <th style="width: 15%;">Room No</th>
-                            <th style="width: 25%;">Room Name</th>
-                            <th style="width: 20%;">Bench Order</th>
-                            <th style="width: 10%;">Capacity</th>
-                            <th style="width: 30%;">Action</th>
+                            <th>S.No</th>
+                            <th>Room No</th>
+                            <th>Room Name</th>
+                            <th>Bench Order</th>
+                            <th>Capacity</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody id="roomTableBody" class="text-center"></tbody>
                 </table>
+            </div> -->
+            <div class="table-responsive" style="max-height: 720px; overflow-y: auto;">
+                <table class="table table-hover table-bordered align-middle mb-0">
+                    <thead class="text-center text-white" style="position: sticky; top: 0; z-index: 2; ">
+                        <tr>
+                            <th style="position: sticky; top: 0; ">S.No</th>
+                            <th style="position: sticky; top: 0; ">Room No</th>
+                            <th style="position: sticky; top: 0; ">Room Name</th>
+                            <th style="position: sticky; top: 0; ">Bench Order</th>
+                            <th style="position: sticky; top: 0; ">Capacity</th>
+                            <th style="position: sticky; top: 0; ">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="roomTableBody" class="text-center">
+                        <!-- Dynamic rows will be inserted here -->
+                    </tbody>
+                </table>
             </div>
+
+
         </div>
     </div>
 </div>

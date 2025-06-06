@@ -1,4 +1,4 @@
-<?php 
+<?php
 // Start the session to access session data
 session_start();
 // Check if the user is logged in, redirect to login page if not
@@ -9,10 +9,11 @@ if (!isset($_SESSION['user_email'])) {
 $userEmail = isset($_SESSION['user_email']) ? $_SESSION['user_email'] : null;
 // echo $userEmail;
 ?>
-<?php include 'includes/header.php';
+<?php
+include 'includes/header.php';
 include 'xyz/bashmodel.php';
 
-$stdObj = new Student(); 
+$stdObj = new Student();
 $deptObj = new Department();
 $roomObj = new Room();
 $userObj = new UserInfo();
@@ -26,6 +27,7 @@ $userObj = new UserInfo();
         </a>
     </p>
 </div> -->
+
 
 
 <div class="mydash-container container">
@@ -51,7 +53,7 @@ $userObj = new UserInfo();
             <div class="card-body">
                 <h5 class="card-title"><?php echo count($stdObj->getAllStudents()); ?></h5>
                 <p class="card-text">Total number of enrolled students.</p>
-                <a href="manage-students.php" class="btn btn-sm btn-outline-primary">
+                <a href="students.php" class="btn btn-sm btn-outline-primary">
                     <i class="fas fa-arrow-circle-right"></i> View Students
                 </a>
             </div>
@@ -67,7 +69,7 @@ $userObj = new UserInfo();
             <div class="card-body">
                 <h5 class="card-title"><?php echo count($deptObj->getAllDepartments()); ?></h5>
                 <p class="card-text">Number of active academic departments.</p>
-                <a href="manage-department.php" class="btn btn-sm btn-outline-primary">
+                <a href="department.php" class="btn btn-sm btn-outline-primary">
                     <i class="fas fa-arrow-circle-right"></i> View Departments
                 </a>
             </div>
@@ -83,7 +85,7 @@ $userObj = new UserInfo();
             <div class="card-body">
                 <h5 class="card-title"><?php echo count($roomObj->getAllRooms()); ?></h5>
                 <p class="card-text">Allotable classrooms for seating plans.</p>
-                <a href="view-room.php" class="btn btn-sm btn-outline-primary">
+                <a href="room.php" class="btn btn-sm btn-outline-primary">
                     <i class="fas fa-arrow-circle-right"></i> View Rooms
                 </a>
             </div>
@@ -99,7 +101,22 @@ $userObj = new UserInfo();
             <div class="card-body">
                 <h5 class="card-title">12</h5>
                 <p class="card-text">Scheduled or past exam sessions.</p>
-                <a href="seat-summary.php" class="btn btn-sm btn-outline-primary">
+                <a href="seat-allotment.php" class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-arrow-circle-right"></i> View Exams
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- Total Topsheet  -->
+    <div class="col-md-4">
+        <div class="card mydash-card">
+            <div class="card-header mydash-card-header">
+                <i class="fas fa-file-alt"></i> Total Top Sheet
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">12</h5>
+                <p class="card-text">Exams Top Sheet List.</p>
+                <a href="top-sheet.php" class="btn btn-sm btn-outline-primary">
                     <i class="fas fa-arrow-circle-right"></i> View Exams
                 </a>
             </div>
@@ -196,6 +213,17 @@ $userObj = new UserInfo();
     </div>
 </div>
 
+
+
+<!-- <a href="#" class="btn-lightweight btn-primary-light rounded-0"><i class="fas fa-info-circle"></i> Primary</a>
+<a href="#" class="btn-lightweight btn-secondary-light"><i class="fas fa-layer-group"></i> Secondary</a>
+<a href="#" class="btn-lightweight btn-success-light"><i class="fas fa-check-circle"></i> Success</a>
+<a href="#" class="btn-lightweight btn-info-light"><i class="fas fa-info"></i> Info</a>
+<a href="#" class="btn-lightweight btn-warning-light"><i class="fas fa-exclamation-triangle"></i> Warning</a>
+<a href="#" class="btn-lightweight btn-danger-light"><i class="fas fa-times-circle"></i> Danger</a>
+<a href="#" class="btn-lightweight btn-light-light"><i class="fas fa-sun"></i> Light</a>
+<a href="#" class="btn-lightweight btn-dark-light"><i class="fas fa-moon"></i> Dark</a> -->
+
 <!-- Countdown Script -->
 <script>
 // function closePopup() {
@@ -223,4 +251,4 @@ $userObj = new UserInfo();
 
 
 
-<?php include 'includes/footer.php';?>
+<?php include 'includes/footer.php'; ?>

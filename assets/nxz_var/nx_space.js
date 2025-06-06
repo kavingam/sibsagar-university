@@ -137,104 +137,72 @@ function fetchRooms() {
                 8: "1 X 8 COLUMN"
             };
 
+            // data.forEach((room, index) => {
+            //     let benchOrderText = benchOrderLabels[room.bench_order] || "Unknown"; 
+                
+            //     const toggleIconClass = room.status == 1 ? "fa-toggle-on" : "fa-toggle-off";
+            //     const toggleLabelText = room.status == 1 ? "Disable" : "Enable";
+
+            //     const row = `
+            //     <tr>
+            //         <td style="width: 15%;">${room.room_no}</td>
+            //         <td style="width: 25%;">${room.room_name}</td>
+            //         <td style="width: 20%;">${benchOrderText}</td>
+            //         <td style="width: 10%;">${room.seat_capacity}</td>
+
+            //         <td class="text-center" style="width: 100%;">
+            //             <div class="d-flex justify-content-center align-items-center gap-2 flex-wrap">
+            //                 <button class="btn btn-green d-flex align-items-center gap-2 px-3 py-1"
+            //                     onclick="editRoom('${room.room_no}', '${room.room_name}', '${room.bench_order}', '${room.seat_capacity}')">
+            //                     <i class="fas fa-pen"></i> <span>Edit</span>
+            //                 </button>
+
+            //                 <button class="btn btn-red d-flex align-items-center gap-2 px-3 py-1"
+            //                     onclick="deleteRoom('${room.room_no}')">
+            //                     <i class="fas fa-trash"></i> <span>Remove</span>
+            //                 </button>
+
+            //                 <button class="btn btn-blue d-flex align-items-center gap-2 px-3 py-1"
+            //                     onclick="toggleRoomStatus('${room.room_no}')">
+            //                     <i class="fas ${toggleIconClass}" id="toggle-icon-${room.room_no}"></i>
+            //                     <span id="toggle-label-${room.room_no}">${toggleLabelText}</span>
+            //                 </button>
+            //             </div>
+            //         </td>
+            //     </tr>
+            //     `;
+
+
+            //     tableBody.innerHTML += row;
+            // });
+
             data.forEach((room, index) => {
                 let benchOrderText = benchOrderLabels[room.bench_order] || "Unknown"; 
                 
-                // let row = `
-                //     <tr>
-                //         <td>${room.room_no}</td>
-                //         <td>${room.room_name}</td>
-                //         <td>${benchOrderText}</td>
-                //         <td>${room.seat_capacity}</td>
-                //         <td class="justify-content-center d-flex">
-                //             <button class="ms-2 btn btn-primary d-flex align-items-center gap-1"
-                //                 onclick="editRoom('${room.room_no}', '${room.room_name}', '${room.bench_order}', '${room.seat_capacity}')">
-                //                 <i class="bi bi-pencil-square"></i> Edit
-                //             </button>
-                //             <button class="ms-2 btn btn-danger d-flex align-items-center gap-1"
-                //                 onclick="deleteRoom('${room.room_no}')">
-                //                 <i class="bi bi-trash-fill"></i> Remove
-                //             </button>
-                //         </td>
-
-                //     </tr>
-                // `;
-
-                // <tr>
-                //     <td style="width: 15%;">${room.room_no}</td>
-                //     <td style="width: 25%;">${room.room_name}</td>
-                //     <td style="width: 20%;">${benchOrderText}</td>
-                //     <td style="width: 10%;">${room.seat_capacity}</td>
-                //     <td style="width: 100%;" class="text-center">
-                //         <div class="d-flex justify-content-center align-items-center gap-2">
-                //             <button class="btn btn-primary d-flex align-items-center gap-1"
-                //                 onclick="editRoom('${room.room_no}', '${room.room_name}', '${room.bench_order}', '${room.seat_capacity}')">
-                //                 <i class="bi bi-pencil-square"></i> <span>Edit</span>
-                //             </button>
-                //             <button class="btn btn-danger d-flex align-items-center gap-1"
-                //                 onclick="deleteRoom('${room.room_no}')">
-                //                 <i class="bi bi-trash-fill"></i> <span>Remove</span>
-                //             </button>
-                //         </div>
-                //     </td>
-                // </tr>`
-                // const row = `
-
-                // <tr>
-                //     <td style="width: 15%;">${room.room_no}</td>
-                //     <td style="width: 25%;">${room.room_name}</td>
-                //     <td style="width: 20%;">${benchOrderText}</td>
-                //     <td style="width: 10%;">${room.seat_capacity}</td>
-
-                //     <td class="text-center" style="width: 100%;">
-                //         <div class="d-flex justify-content-center align-items-center gap-2 flex-wrap">
-                //             <button class="btn btn-outline-primary d-flex align-items-center gap-2 px-3 py-1"
-                //                 onclick="editRoom('${room.room_no}', '${room.room_name}', '${room.bench_order}', '${room.seat_capacity}')">
-                //                 <i class="fas fa-pen"></i> <span>Edit</span>
-                //             </button>
-
-                //             <button class="btn btn-outline-danger d-flex align-items-center gap-2 px-3 py-1"
-                //                 onclick="deleteRoom('${room.room_no}')">
-                //                 <i class="fas fa-trash"></i> <span>Remove</span>
-                //             </button>
-
-                //             <button class="btn btn-outline-warning d-flex align-items-center gap-2 px-3 py-1"
-                //                 onclick="toggleRoomStatus('${room.room_no}')">
-                //                 <i class="fas fa-toggle-on" id="toggle-icon-${room.room_no}"></i>
-                //                 <span id="toggle-label-${room.room_no}">Disable</span>
-                //             </button>
-                //         </div>
-                //     </td>
-
-
-
-                // </tr>
-                // `;
-
-                
                 const toggleIconClass = room.status == 1 ? "fa-toggle-on" : "fa-toggle-off";
                 const toggleLabelText = room.status == 1 ? "Disable" : "Enable";
-
+            
                 const row = `
                 <tr>
+                    <td style="width: 5%;">${index + 1}</td>  <!-- S.No column -->
                     <td style="width: 15%;">${room.room_no}</td>
                     <td style="width: 25%;">${room.room_name}</td>
                     <td style="width: 20%;">${benchOrderText}</td>
                     <td style="width: 10%;">${room.seat_capacity}</td>
-
+            
                     <td class="text-center" style="width: 100%;">
                         <div class="d-flex justify-content-center align-items-center gap-2 flex-wrap">
-                            <button class="btn btn-green d-flex align-items-center gap-2 px-3 py-1"
+                            <button class="btn btn-lightweight btn-success-light d-flex align-items-center gap-2 px-3 py-1"
                                 onclick="editRoom('${room.room_no}', '${room.room_name}', '${room.bench_order}', '${room.seat_capacity}')">
                                 <i class="fas fa-pen"></i> <span>Edit</span>
                             </button>
-
-                            <button class="btn btn-red d-flex align-items-center gap-2 px-3 py-1"
+            
+                            <button class="btn btn-lightweight btn-danger-light d-flex align-items-center gap-2 px-3 py-1"
                                 onclick="deleteRoom('${room.room_no}')">
                                 <i class="fas fa-trash"></i> <span>Remove</span>
                             </button>
-
-                            <button class="btn btn-blue d-flex align-items-center gap-2 px-3 py-1"
+            
+                            <button class="btn btn-lightweight btn-info-light d-flex align-items-center gap-2 px-3 py-1"
                                 onclick="toggleRoomStatus('${room.room_no}')">
                                 <i class="fas ${toggleIconClass}" id="toggle-icon-${room.room_no}"></i>
                                 <span id="toggle-label-${room.room_no}">${toggleLabelText}</span>
@@ -243,10 +211,12 @@ function fetchRooms() {
                     </td>
                 </tr>
                 `;
-
-
+            
                 tableBody.innerHTML += row;
             });
+            
+
+
         })
         .catch(error => {
             console.error("Error fetching rooms:", error);

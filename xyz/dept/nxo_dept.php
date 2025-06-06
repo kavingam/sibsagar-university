@@ -12,11 +12,11 @@ try {
             <tr>
                 <td>{$row['department_id']}</td>
                 <td>{$row['department_name']}</td>
-                <td class='text-center'>
-                    <button class='btn btn-sm edit-btn' data-id='{$row['department_id']}' data-name='{$row['department_name']}'>
+                <td class='text-center gap-2'>
+                    <button class='btn btn-sm btn-lightweight btn-success-light edit-btn' data-id='{$row['department_id']}' data-name='{$row['department_name']}'>
                         <i class='fad fa-edit text-success me-1'></i> Edit
                     </button>
-                    <button class='btn btn-sm delete-btn' data-id='{$row['department_id']}'>
+                    <button class='btn btn-sm btn-lightweight btn-danger-light delete-btn' data-id='{$row['department_id']}'>
                         <i class='fad fa-trash-alt text-danger me-1'></i> Remove
                     </button>
                 </td>

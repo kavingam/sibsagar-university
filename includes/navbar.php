@@ -59,14 +59,14 @@
                             </a>
                         </li>                         -->
                         <li>
-                            <a class="dropdown-item py-2 rounded <?php  echo ($current_page == 'manage-students') ? 'active bg-light fw-bold' : ''; ?>"
-                                href="<?php echo BASE_URL . 'manage-students.php'; ?>">
+                            <a class="dropdown-item py-2 rounded <?php  echo ($current_page == 'students') ? 'active bg-light fw-bold' : ''; ?>"
+                                href="<?php echo BASE_URL . 'students.php'; ?>">
                                 Manage Student
                             </a>
                         </li>
                         <li>
-                            <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'manage-subject') ? 'active bg-light fw-bold' : ''; ?>"
-                                href="<?php echo BASE_URL . 'manage-subject.php'; ?>">
+                            <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'subject') ? 'active bg-light fw-bold' : ''; ?>"
+                                href="<?php echo BASE_URL . 'subject.php'; ?>">
                                 Manage Subject & Code
                             </a>
                         </li>
@@ -76,7 +76,7 @@
                 <!-- Room Dropdown -->
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle px-4 py-2 text-white fw-semibold 
-                        <?php echo ($current_page == 'add-room' || $current_page == 'view-room') ? 'active' : ''; ?>"
+                        <?php echo ($current_page == 'add-room' || $current_page == 'room') ? 'active' : ''; ?>"
                         href="#" id="roomDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Room
                     </a>
@@ -91,8 +91,8 @@
                             </a>
                         </li>
                         <li>
-                            <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'view-room') ? 'active bg-light fw-bold' : ''; ?>"
-                                href="<?php echo BASE_URL . 'view-room.php'; ?>">
+                            <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'room') ? 'active bg-light fw-bold' : ''; ?>"
+                                href="<?php echo BASE_URL . 'room.php'; ?>">
                                 Manage Room
                             </a>
                         </li>
@@ -101,7 +101,7 @@
                 <!-- Manage Department -->
                 <li class="nav-item">
                     <a class="nav-link px-4 py-2 text-white fw-semibold 
-                    <?php echo ($current_page == 'manage-department') ? 'active' : ''; ?>" href="<?php echo BASE_URL . 'manage-department.php'; ?>">
+                    <?php echo ($current_page == 'department') ? 'active' : ''; ?>" href="<?php echo BASE_URL . 'department.php'; ?>">
                          Department
                     </a>
                 </li>
@@ -123,8 +123,8 @@
                             </a>
                         </li>
                         <li>
-                            <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'seat-summary') ? 'active bg-light fw-bold' : ''; ?>"
-                                href="<?php echo BASE_URL . 'seat-summary.php'; ?>">
+                            <a class="dropdown-item py-2 rounded <?php echo ($current_page == 'seat-allotment') ? 'active bg-light fw-bold' : ''; ?>"
+                                href="<?php echo BASE_URL . 'seat-allotment.php'; ?>">
                                  Seat Plan Summary
                             </a>
                         </li>

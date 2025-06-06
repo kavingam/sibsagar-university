@@ -159,9 +159,7 @@
     }
   }
   
-
-
-  
+ 
 .mydash-container {
     padding-top: 20px;
     padding-bottom: 40px;
@@ -235,4 +233,121 @@
     .mydash-navbar {
         padding: 10px;
     }
+  }
+
+  /* ===== Base Lightweight Button Style ===== */
+.btn-lightweight {
+  border: 1px solid transparent;
+  font-weight: 500;
+  padding: 6px 14px;
+  font-size: 0.9rem;
+  border-radius: 6px; 
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  transition: background 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* ===== Primary ===== */
+.btn-primary-light {
+  background: linear-gradient(45deg, #e2e9fb, #cbdcf9);
+  border-color: #a5c5f6;
+  color: #004085;
+}
+.btn-primary-light:hover {
+  background: linear-gradient(45deg, #cbdcf9, #b3cef7);
+  color: #00356b;
+}
+
+/* ===== Secondary ===== */
+.btn-secondary-light {
+  background: linear-gradient(45deg, #e2e3e5, #d6d8db);
+  border-color: #c8cbcf;
+  color: #383d41;
+}
+.btn-secondary-light:hover {
+  background: linear-gradient(45deg, #d6d8db, #c0c2c4);
+  color: #2e3338;
+}
+
+/* ===== Success (Green) ===== */
+.btn-success-light {
+  background: linear-gradient(45deg, #e6f4ea, #d0f0db);
+  border-color: #c3e6cb;
+  color: #218838;
+}
+.btn-success-light:hover {
+  background: linear-gradient(45deg, #d0f0db, #b8e2c7);
+  color: #1c7430;
+}
+
+/* ===== Info (Blue) ===== */
+.btn-info-light {
+  background: linear-gradient(45deg, #e7f6fa, #d0ecf2);
+  border-color: #bee5eb;
+  color: #117a8b;
+}
+.btn-info-light:hover {
+  background: linear-gradient(45deg, #d0ecf2, #b8dfe8);
+  color: #0f6674;
+}
+
+/* ===== Warning (Yellow) ===== */
+.btn-warning-light {
+  background: linear-gradient(45deg, #fff3cd, #ffeeba);
+  border-color: #ffe8a1;
+  color: #856404;
+}
+.btn-warning-light:hover {
+  background: linear-gradient(45deg, #ffeeba, #ffe8a1);
+  color: #6c4e03;
+}
+
+/* ===== Danger (Red) ===== */
+.btn-danger-light {
+  background: linear-gradient(45deg, #f8d7da, #f5c6cb);
+  border-color: #f1b0b7;
+  color: #bd2130;
+}
+.btn-danger-light:hover {
+  background: linear-gradient(45deg, #f5c6cb, #f1aeb5);
+  color: #a71d2a;
+}
+
+/* ===== Light ===== */
+.btn-light-light {
+  background: linear-gradient(45deg, #fefefe, #f8f9fa);
+  border-color: #f1f3f5;
+  color: #6c757d;
+}
+.btn-light-light:hover {
+  background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+  color: #495057;
+}
+
+/* ===== Dark ===== */
+.btn-dark-light {
+  background: linear-gradient(45deg, #d6d8d9, #c6c8ca);
+  border-color: #bfc1c2;
+  color: #343a40;
+}
+.btn-dark-light:hover {
+  background: linear-gradient(45deg, #c6c8ca, #b1b3b5);
+  color: #1d2124;
+}
+
+/* ===== Icon Styling ===== */
+.btn-lightweight i {
+  font-size: 1.1rem;
+  vertical-align: middle;
+}
+@media (max-width: 576px) {
+  .btn-lightweight {
+    width: 100%;
+    max-width: 300px;
+    margin: 6px auto;
+    justify-content: center;
+  }
 }
