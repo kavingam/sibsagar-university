@@ -623,7 +623,7 @@ document.getElementById("closeBtn").addEventListener("click", function () {
 //   if (confirm("Are you sure you want to back?")) {
     // window.close(); // works if window opened by JS, else fallback:
     // Or redirect to homepage
-    window.location.href = "seat-summary.php";
+    window.location.href = "seat-allotment.php";
 //   }
 });    
 </script>

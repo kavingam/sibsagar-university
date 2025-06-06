@@ -126,7 +126,7 @@ function closeOrRedirect() {
   // fallback if close fails
   // setTimeout(() => {
     // if (!window.closed) {
-      window.location.href = 'seat-summary.php';
+      window.location.href = 'seat-allotment.php';
     // }
   // }, 500);
 }

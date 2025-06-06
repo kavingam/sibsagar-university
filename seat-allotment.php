@@ -32,7 +32,7 @@ try {
 
 
 <!-- <h2 style="margin-top: 100px;">Seating Plan List</h2> -->
-<h2 style="margin-top: 100px;">Seat Allocation Summary</h2>
+<h4 style="margin-top: 100px;">Seat Allotment | Print Seat Allotment |Seat Allocations Summary </h4>
 
 <?php $jsonData = json_encode($rows); ?>
 
@@ -56,15 +56,15 @@ try {
           <td><?= htmlspecialchars($row['exam_name']) ?></td>
 
           <td class="text-center gap-2">
-            <button class="btn-print-summary redirectBtn" data-id="<?= htmlspecialchars($row['id']) ?>">
+            <button class="btn-print-summaryx btn-lightweight btn-success-light rounded-0 redirectBtn" data-id="<?= htmlspecialchars($row['id']) ?>">
                 <i class="fas fa-print"></i> Print Seat Summary
             </button>
 
-            <button class="btn-view-summary viewBtn" data-id="<?= htmlspecialchars($row['id']) ?>">
+            <button class="btn-view-summaryx btn-lightweight btn-primary-light rounded-0 viewBtn" data-id="<?= htmlspecialchars($row['id']) ?>">
                 <i class="fas fa-eye"></i> View
             </button>
 
-            <button class="btn-delete-summary deleteBtn" data-id="<?= htmlspecialchars($row['id']) ?>">
+            <button class="btn-delete-summaryx btn-lightweight btn-danger-light rounded-0 deleteBtn" data-id="<?= htmlspecialchars($row['id']) ?>">
                 <i class="fas fa-trash-alt"></i> Delete
             </button>
 
